@@ -1,11 +1,17 @@
-# Welcome to your Jupyter Book
+# Introduction
 
-This is a small sample book to give you a feel for how book content is
-structured.
-It shows off a few of the major file types, as well as some sample content.
-It does not go in-depth into any particular topic - check out [the Jupyter Book documentation](https://jupyterbook.org) for more information.
+This site contains supporting information for a paper in progress on predicting f-divergence measures from catchment attributes.  Catchment attributes are widely used in hydrological modelling and other environmental applications because of their associations with hydrological behaviour.  There is a large body of literature defining and describing the use of hydrological signatures in various fields of hydrology, see "*A review of hydrological signatures and their applications*" {cite}`mcmillan2021review`. 
 
-Check out the content pages bundled with this sample book to see more.
+The f-divergence measures are a family of statistical measures that quantify the difference between two probability distributions.  The aim of this work is to investigate the predictability of f-divergence measures from catchment attributes.  The work is motivated by the potential for f-divergence measures to provide a novel approach to monitoring network design.
+
+
+## Contents of this book
 
 ```{tableofcontents}
+```
+
+## Citations 
+
+```{bibliography}
+:filter: docname in docnames
 ```
