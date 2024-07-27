@@ -6,10 +6,11 @@ root: intro
 chapters:
 - file: notebooks/1_data
 - file: notebooks/1a_Methods
-- file: notebooks/2_Predictability_of_entropy
-- file: notebooks/3_Predictability_of_KL_divergence
-- file: notebooks/4_Predictability_of_TVD
-- file: notebooks/5_Predictability_of_WD
+  sections:
+  - file: notebooks/2_Predictability_of_entropy
+  - file: notebooks/3_Predictability_of_KL_divergence
+  - file: notebooks/4_Predictability_of_TVD
+  - file: notebooks/5_Predictability_of_WD
 - file: notebooks/markdown
 - file: notebooks/notebooks
 - file: notebooks/markdown-notebooks

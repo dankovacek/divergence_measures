@@ -1,0 +1,6 @@
+docs/notebooks/data/hysets_streamflow_timeseries/
+docs/notebooks/data/divergence_test_results/
+docs/notebooks/data/temp_batches/*
+
+docs/_build
+docs/.ipynb_checkpoints
