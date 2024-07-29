@@ -400,7 +400,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-shannon-entropy">
 <h1>Predictability of (Shannon) Entropy<a class="headerlink" href="#predictability-of-shannon-entropy" title="Link to this heading">#</a></h1>
-<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.</p>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.  The dictionary size (number of quantization levels) is varied to test if the additional information in the distribution can be exploited by the model.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -441,6 +441,21 @@ document.write(`
 <span class="n">soil</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logk_ice_x100&#39;</span><span class="p">,</span> <span class="s1">&#39;porosity_x100&#39;</span><span class="p">]</span>
 <span class="n">climate</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prcp&#39;</span><span class="p">,</span> <span class="s1">&#39;srad&#39;</span><span class="p">,</span> <span class="s1">&#39;swe&#39;</span><span class="p">,</span> <span class="s1">&#39;tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;tmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_duration&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_duration&#39;</span><span class="p">]</span>
 <span class="n">all_attributes</span> <span class="o">=</span> <span class="n">terrain</span> <span class="o">+</span> <span class="n">land_cover</span> <span class="o">+</span> <span class="n">soil</span> <span class="o">+</span> <span class="n">climate</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">bitrate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]:</span>
+    <span class="c1"># set the target column</span>
+    <span class="n">target_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;H_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">_bits&#39;</span>
+    <span class="n">test_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># add attribute groups successively</span>
+    <span class="k">for</span> <span class="n">attribute_set</span> <span class="ow">in</span> <span class="p">[</span><span class="n">climate</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">land_cover</span><span class="p">,</span> <span class="n">soil</span><span class="p">]:</span>
+        <span class="n">test_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
+        
+        
 </pre></div>
 </div>
 </div>
