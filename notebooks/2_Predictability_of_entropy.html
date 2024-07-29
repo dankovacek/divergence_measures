@@ -400,7 +400,51 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-shannon-entropy">
 <h1>Predictability of (Shannon) Entropy<a class="headerlink" href="#predictability-of-shannon-entropy" title="Link to this heading">#</a></h1>
-<p>In the data preprocessing, we computed the entropy of each streamflow distribution in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.</p>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;BCUB_HYSETS_properties_with_climate_with_entropy.csv&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Subdivide the attributes into related classes: terrain, land cover, soil, climate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;official_id&#39;, &#39;watershed_id&#39;, &#39;name&#39;, &#39;centroid_lat_deg_n&#39;, &#39;centroid_lon_deg_e&#39;, &#39;drainage_area_km2&#39;, &#39;drainage_area_gsim_km2&#39;, &#39;flag_gsim_boundaries&#39;, &#39;flag_artificial_boundaries&#39;, &#39;elevation_m&#39;, &#39;slope_deg&#39;, &#39;gravelius&#39;, &#39;perimeter&#39;, &#39;flag_shape_extraction&#39;, &#39;aspect_deg&#39;, &#39;flag_terrain_extraction&#39;, &#39;land_use_forest_frac_2010&#39;, &#39;land_use_grass_frac_2010&#39;, &#39;land_use_wetland_frac_2010&#39;, &#39;land_use_water_frac_2010&#39;, &#39;land_use_urban_frac_2010&#39;, &#39;land_use_shrubs_frac_2010&#39;, &#39;land_use_crops_frac_2010&#39;, &#39;land_use_snow_ice_frac_2010&#39;, &#39;flag_land_use_extraction&#39;, &#39;logk_ice_x100&#39;, &#39;porosity_x100&#39;, &#39;flag_subsoil_extraction&#39;, &#39;year_from&#39;, &#39;year_to&#39;, &#39;record_length&#39;, &#39;agency&#39;, &#39;status&#39;, &#39;updated_official_basin&#39;, &#39;in_bcub&#39;, &#39;prcp&#39;, &#39;srad&#39;, &#39;swe&#39;, &#39;tmax&#39;, &#39;tmin&#39;, &#39;vp&#39;, &#39;high_prcp_freq&#39;, &#39;high_prcp_duration&#39;, &#39;low_prcp_freq&#39;, &#39;low_prcp_duration&#39;, &#39;H_4_bits&#39;, &#39;H_6_bits&#39;, &#39;H_8_bits&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
+<span class="n">land_cover</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;land_use_forest_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_grass_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_wetland_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_water_frac_2010&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;land_use_urban_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_shrubs_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_crops_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_snow_ice_frac_2010&#39;</span><span class="p">]</span>
+<span class="n">soil</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logk_ice_x100&#39;</span><span class="p">,</span> <span class="s1">&#39;porosity_x100&#39;</span><span class="p">]</span>
+<span class="n">climate</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prcp&#39;</span><span class="p">,</span> <span class="s1">&#39;srad&#39;</span><span class="p">,</span> <span class="s1">&#39;swe&#39;</span><span class="p">,</span> <span class="s1">&#39;tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;tmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_duration&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_duration&#39;</span><span class="p">]</span>
+<span class="n">all_attributes</span> <span class="o">=</span> <span class="n">terrain</span> <span class="o">+</span> <span class="n">land_cover</span> <span class="o">+</span> <span class="n">soil</span> <span class="o">+</span> <span class="n">climate</span>
+</pre></div>
+</div>
+</div>
+</div>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <span class="target" id="id2"></span></section>
