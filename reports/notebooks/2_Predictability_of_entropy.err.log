@@ -1,0 +1,62 @@
+Traceback (most recent call last):
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1263, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/util.py", line 85, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/util.py", line 60, in just_run
+    return loop.run_until_complete(coro)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 701, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1019, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 913, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# define the amount of data to set aside for final testing
+holdout_pct = 0.05
+
+for bitrate in [4, 6, 8]:
+    # set the target column
+    target_column = f'H_{bitrate}_bits'
+    test_attributes = []
+    # add attribute groups successively
+    for attribute_set in [climate, terrain, land_cover, soil]:
+        test_attributes += attribute_set
+        
+        input_data = df[test_attributes + [target_column]].copy()
+        
+        # reset the index to ensure the random selection is done properly
+        input_data.reset_index(drop=True, inplace=True)
+        
+        # randomly select 5% of the stations to leave out for a hold-out test set
+        # to ensure none of the data are seen in training
+        X_train, X_test, Y_train, Y_test = train_test_split(input_data, target_column, holdout_pct)
+        params = {
+            "objective": "binary:logistic",
+            "eval_metric": "auc",
+            "eta": learning_rate,
+            "max_depth": 6,
+            "min_child_weight": 1,
+            "subsample": subsample,
+            "colsample_bytree": colsample,
+            "seed": 42,
+            "device": "cuda",
+        }
+        xgb_model = 
+        
+        
+        
+------------------
+
+[0;36m  Cell [0;32mIn [7], line 31[0;36m[0m
+[0;31m    xgb_model =[0m
+[0m                ^[0m
+[0;31mSyntaxError[0m[0;31m:[0m invalid syntax
+
+SyntaxError: invalid syntax (3513495511.py, line 31)
+
