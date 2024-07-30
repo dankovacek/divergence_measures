@@ -448,8 +448,13 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split the input data into training and test sets.  </span>
+<span class="sd">    The proportion of test data is holdout_pct.</span>
+<span class="sd">    Return the data as arrays.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_holdout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">holdout_pct</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">))</span>
-    <span class="n">excluded_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">excluded_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">n_holdout</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">feature_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">input_data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">target_column</span><span class="p">]</span>
     <span class="n">X_train</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">input_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">excluded_idxs</span><span class="p">),</span> <span class="n">feature_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
     <span class="n">Y_train</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">input_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">excluded_idxs</span><span class="p">),</span> <span class="n">target_column</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
@@ -462,282 +467,105 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XGBInstance</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">df</span><span class="p">,</span>
-        <span class="n">cv_param</span><span class="p">,</span>
-        <span class="n">bitrate</span><span class="p">,</span>
-        <span class="n">feature_columns</span><span class="p">,</span>
-        <span class="n">loss</span><span class="p">,</span>
-        <span class="n">concurrent_data</span><span class="p">,</span>
-        <span class="n">test_dir</span><span class="p">,</span>
-        <span class="n">target_column</span><span class="p">,</span>
-        <span class="n">n_simulations</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span> <span class="o">=</span> <span class="n">df</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bitrate</span> <span class="o">=</span> <span class="n">bitrate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span> <span class="o">=</span> <span class="n">target_column</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">feature_columns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s2">&quot;proxy&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cv_param</span> <span class="o">=</span> <span class="n">cv_param</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># final leave out test set</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_dist</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># km</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_simulations</span> <span class="o">=</span> <span class="n">n_simulations</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_scores</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">concurrent_data</span> <span class="o">=</span> <span class="n">concurrent_data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">test_dir</span> <span class="o">=</span> <span class="n">test_dir</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">root_mean_squared_error</span><span class="p">,</span>
+    <span class="n">mean_absolute_error</span><span class="p">,</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">accuracy_score</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">num_boost_rounds</span><span class="p">):</span>
+    <span class="c1"># randomly select 5% of the stations to leave out for a hold-out test set</span>
+    <span class="c1"># to ensure none of the data are seen in training</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
+    
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_optimization_rounds</span><span class="p">):</span>
         
-
-    <span class="k">def</span> <span class="nf">create_feature_diff_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">]))</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">features</span> <span class="k">if</span> <span class="n">f</span> <span class="o">!=</span> <span class="s2">&quot;distance&quot;</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;proxy_</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;target_</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">pairwise_leave_out_at_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Leave out K stations at random from the training data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">excluded_station_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="n">test_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">excluded_station_ids</span>
-            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">excluded_station_ids</span><span class="p">,</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">train_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_station_ids</span>
-            <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_station_ids</span><span class="p">,</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># split the data into training and test sets</span>
-        <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="n">train_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">test_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="n">test_mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">train_stations_unique</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">set</span><span class="p">(</span><span class="n">train_df</span><span class="p">[[</span><span class="s2">&quot;proxy&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-        <span class="p">)</span>
-        <span class="n">test_stations_unique</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">test_df</span><span class="p">[[</span><span class="s2">&quot;proxy&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-        <span class="c1"># assert that the training and test sets are mutually exclusive</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_stations_unique</span><span class="p">,</span> <span class="n">test_stations_unique</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_stations_unique</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique stations in training set, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_stations_unique</span><span class="p">)</span><span class="si">}</span><span class="s2"> in test set.&quot;</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span>
-
-    <span class="k">def</span> <span class="nf">filter_training_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;centroid_distance&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_dist</span>
-        <span class="p">]</span>
-        <span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pairwise_leave_out_at_random</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span>
-
-    <span class="k">def</span> <span class="nf">prepare_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        First, create a hold-out test set by leaving out K stations at random.</span>
-<span class="sd">        Then format the train and test data for the model inputs.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Split the data into features and target</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">X_train_filtered</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test_filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_training_data</span><span class="p">()</span>
-
-        <span class="n">X_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train_filtered</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">X_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test_filtered</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="n">Y_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train_filtered</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">Y_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test_filtered</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span>
-
-    <span class="k">def</span> <span class="nf">save_feature_importance_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="c1"># Sort the feature importances</span>
-        <span class="n">feature_importances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_booster</span><span class="p">()</span><span class="o">.</span><span class="n">get_score</span><span class="p">(</span>
-            <span class="n">importance_type</span><span class="o">=</span><span class="s2">&quot;weight&quot;</span>
-        <span class="p">)</span>
-
-        <span class="n">sorted_importances</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">feature_importances</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Unpack the labels and values</span>
-        <span class="n">labels</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sorted_importances</span><span class="p">)</span>
-
-        <span class="c1"># get the corresponding feature names</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;f&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feaure_score_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_labels</span><span class="p">,</span> <span class="n">values</span><span class="p">)}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feaure_score_dict</span><span class="p">)</span>
-        <span class="n">fs_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_scores</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="c1"># return fs_df</span>
-        <span class="c1"># Create the plot</span>
-        <span class="c1"># fig, ax = plt.subplots()</span>
-        <span class="c1"># ax.barh(self.feature_labels, values)</span>
-        <span class="c1"># ax.set_xlabel(&#39;Importance&#39;)</span>
-        <span class="c1"># ax.set_title(&#39;Feature Importance&#39;)</span>
-
-        <span class="c1"># Save the plot as a PNG file</span>
-        <span class="c1"># fig_dir = os.path.join(BASE_DIR, &#39;processed_data&#39;, &#39;feature_importance_figs&#39;)</span>
-        <span class="c1"># plt.gcf().set_size_inches(8, 12)</span>
-        <span class="c1"># plt.savefig(os.path.join(fig_dir,</span>
-        <span class="c1">#             f&#39;{self.model_id}.png&#39;),</span>
-        <span class="c1"># bbox_inches=&#39;tight&#39;)</span>
-
-        <span class="c1"># Close the plot to avoid displaying it</span>
-        <span class="c1"># plt.close()</span>
-        <span class="k">return</span> <span class="n">fs_df</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
-
-        <span class="c1"># Define hyperparameter space</span>
-        <span class="c1"># max_depth = trial.suggest_int(&quot;max_depth&quot;, 2, 6)</span>
-        <span class="n">learning_rate</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
-        <span class="c1"># reg_alpha = trial.suggest_float(&quot;reg_alpha&quot;, 1.0, 1.2)  # L1 reg</span>
-        <span class="c1"># reg_lambda = trial.suggest_float(&quot;reg_lambda&quot;, 0.9, 1.0, log=True)  # L2 reg</span>
-        <span class="n">subsample</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;subsamples&quot;</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">)</span>
-        <span class="n">colsample</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;colsample_bytree&quot;</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">)</span>
+        <span class="n">lr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">cs</span> <span class="o">=</span> <span class="n">learning_rates</span><span class="p">[</span><span class="n">trial</span><span class="p">],</span> <span class="n">subsamples</span><span class="p">[</span><span class="n">trial</span><span class="p">],</span> <span class="n">colsamples</span><span class="p">[</span><span class="n">trial</span><span class="p">]</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;binary:logistic&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;eval_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;auc&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">learning_rate</span><span class="p">,</span>
+            <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;reg:squarederror&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;eval_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">lr</span><span class="p">,</span>
             <span class="s2">&quot;max_depth&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
             <span class="s2">&quot;min_child_weight&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;subsample&quot;</span><span class="p">:</span> <span class="n">subsample</span><span class="p">,</span>
-            <span class="s2">&quot;colsample_bytree&quot;</span><span class="p">:</span> <span class="n">colsample</span><span class="p">,</span>
+            <span class="s2">&quot;subsample&quot;</span><span class="p">:</span> <span class="n">ss</span><span class="p">,</span>
+            <span class="s2">&quot;colsample_bytree&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="p">,</span>
             <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
             <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sampling_method&quot;</span><span class="p">:</span> <span class="s1">&#39;gradient_based&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;tree_method&quot;</span><span class="p">:</span> <span class="s1">&#39;hist&#39;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">common_params</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="n">prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy_results&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_folder</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">results_folder</span><span class="p">)</span>
 
-        <span class="c1"># formulate a unique model id using the model parameters</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;xgb_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bitrate</span><span class="si">}</span><span class="s2">_b_</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s2">_p_</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span><span class="si">}</span><span class="s2">_features_</span><span class="si">{</span><span class="n">concurrent_data</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;max_features&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;tree_method&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;random_state&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;eval_metric&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;device&quot;</span><span class="p">,</span>
-            <span class="p">]:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;binary:logistic&quot;</span><span class="p">:</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;logistic&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">loss_code</span> <span class="o">=</span> <span class="s2">&quot;auc&quot;</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">1.3e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">model_id</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1">_H_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">_bits_</span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">_lr_</span><span class="si">{</span><span class="n">ss</span><span class="si">}</span><span class="s1">_sub_</span><span class="si">{</span><span class="n">cs</span><span class="si">}</span><span class="s1">_col.csv&#39;</span>
+        <span class="n">results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_folder</span><span class="p">,</span> <span class="n">results_fname</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="n">mean_error</span><span class="p">,</span> <span class="n">stdev_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">mean_error</span>
-
-    <span class="k">def</span> <span class="nf">run_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        1. Train-test split: Randomly select 5% of stations to create final hold-out test set.</span>
-<span class="sd">        2. Model Fit: Fit the model on pairs from the remaining training set.</span>
-<span class="sd">        3. Cross Validation: Evaluate the model with 5-fold cross validation.</span>
-<span class="sd">        4. Stability test: Repeat steps 1-3 ten times holding xgboost hyperparameters constant.</span>
-<span class="sd">        5. Hyperparameter search: Repeat steps 1-4 five times with different hyperparameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_save_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">project_dir</span><span class="p">,</span> <span class="s2">&quot;xgb_models&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">concurrent_data</span>
+        <span class="n">model_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">dtrain</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">Y_train</span><span class="p">),</span>
+            <span class="n">num_boost_round</span><span class="o">=</span><span class="n">num_boost_rounds</span><span class="p">,</span>
+            <span class="n">nfold</span><span class="o">=</span><span class="n">nfolds</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">],</span>
+            <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">verbose_eval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">results_save_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">project_dir</span><span class="p">,</span> <span class="s2">&quot;xgb_results&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">concurrent_data</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="p">[</span><span class="n">results_save_folder</span><span class="p">,</span> <span class="n">model_save_folder</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="n">best_rmse_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-rmse-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+        <span class="n">best_mae_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-mae-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+                
+        <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;best_rmse_round&#39;</span><span class="p">:</span> <span class="n">best_rmse_round</span><span class="p">,</span>
+            <span class="s1">&#39;best_mae_round&#39;</span><span class="p">:</span> <span class="n">best_mae_round</span><span class="p">,</span>
+            <span class="s1">&#39;min_test_mae&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_round</span><span class="p">,</span> <span class="s1">&#39;test-mae-mean&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_test_rmse&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;test-rmse-mean&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_mae_stdev&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_round</span><span class="p">,</span> <span class="s1">&#39;test-mae-std&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_rmse_stdev&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;test-rmse-std&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">results_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">results_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        
+        <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results_dict</span><span class="p">)</span>
+        
+    <span class="c1"># save the trial results</span>
+    <span class="n">trial_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">trial_results</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;min_test_rmse&#39;</span><span class="p">))</span>
+    <span class="n">trial_results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">results_fpath</span><span class="p">)</span>
+    
+    <span class="n">param_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-        <span class="n">simulation_test_metrics</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_simulations</span><span class="p">):</span>
-            <span class="n">model_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">concurrent_data</span><span class="si">}</span><span class="s2">.json&quot;</span>
-            <span class="n">results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">results_save_folder</span><span class="p">,</span> <span class="n">model_fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">model_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_save_folder</span><span class="p">,</span> <span class="n">model_fname</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_fpath</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Model </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> already exists, skipping.&quot;</span><span class="p">)</span>
-                <span class="k">continue</span>
-            <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-            <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_input_data</span><span class="p">()</span>
-
-            <span class="n">dtrain</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">Y_train</span><span class="p">)</span>
-
-            <span class="c1"># train the model and do cross validation</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span>
-                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">,</span>
-                <span class="n">dtrain</span><span class="o">=</span><span class="n">dtrain</span><span class="p">,</span>
-                <span class="n">num_boost_round</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-                <span class="n">nfold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cv_param</span><span class="p">,</span>
-                <span class="n">stratified</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;auc&quot;</span><span class="p">,</span>
-                <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-                <span class="n">verbose_eval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Get the optimal number of boosting rounds</span>
-            <span class="n">optimal_num_boost_round</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;test-auc-mean&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Optimal number of boosting rounds: </span><span class="si">{</span><span class="n">optimal_num_boost_round</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="c1"># train a final model with the optimal number of boosting</span>
-            <span class="c1"># rounds and identical parameters</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span>
-                <span class="n">n_estimators</span><span class="o">=</span><span class="n">optimal_num_boost_round</span><span class="p">,</span>
-                <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">],</span>
-                <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;max_depth&quot;</span><span class="p">],</span>
-                <span class="n">min_child_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;min_child_weight&quot;</span><span class="p">],</span>
-                <span class="n">subsample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;subsample&quot;</span><span class="p">],</span>
-                <span class="n">colsample_bytree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;colsample_bytree&quot;</span><span class="p">],</span>
-                <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">common_params</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">],</span>
-                <span class="n">use_label_encoder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Set to False to comply with scikit-learn standards</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
-
-            <span class="c1"># Predict probabilities on the held-out test set</span>
-            <span class="n">y_test_pred_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-            <span class="c1"># Calculate the AUC on the test set</span>
-            <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_test_pred_prob</span><span class="p">)</span>
-            <span class="n">ascore</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_test_pred_prob</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC on the test set: </span><span class="si">{</span><span class="n">auc</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, accuracy score = </span><span class="si">{</span><span class="n">ascore</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">model_fpath</span><span class="p">)</span>
-
-            <span class="c1"># evaluate the model on held out test data</span>
-            <span class="c1"># try using the pred_contribs=True to get the feature importance</span>
-            <span class="n">res_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">Y_test</span><span class="p">,</span>
-                    <span class="s2">&quot;predicted_prob&quot;</span><span class="p">:</span> <span class="n">y_test_pred_prob</span><span class="p">,</span>
-                    <span class="s2">&quot;proxy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test_filtered</span><span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                    <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test_filtered</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-
-            <span class="n">res_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_save_folder</span><span class="p">,</span> <span class="n">results_fpath</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">simulation_test_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">auc</span><span class="p">)</span>
-
-        <span class="n">t5</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-        <span class="n">mean_metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">simulation_test_metrics</span><span class="p">)</span>
-        <span class="n">stdev_metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">simulation_test_metrics</span><span class="p">)</span>
-
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;    Completed </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_simulations</span><span class="si">}</span><span class="s2"> simulations in </span><span class="si">{</span><span class="n">t5</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span>
-        <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;        -mean auc: </span><span class="si">{</span><span class="n">mean_metric</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">stdev_metric</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">mean_metric</span><span class="p">,</span> <span class="n">stdev_metric</span>
+    <span class="c1"># get the optimal hyperparameters</span>
+    <span class="n">optimal_rmse_idx</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_test_rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    <span class="n">optimal_mae_idx</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_test_mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">optimal_rmse_idx</span> <span class="o">!=</span> <span class="n">optimal_mae_idx</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;best rmse and mae are from different trials, &#39;</span><span class="p">,</span> <span class="n">optimal_rmse_idx</span><span class="p">,</span> <span class="n">optimal_mae_idx</span><span class="p">)</span>
+        
+    <span class="n">final_rmse_params</span> <span class="o">=</span> <span class="n">trial_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">optimal_rmse_idx</span><span class="p">,</span> <span class="n">param_cols</span><span class="p">]</span>
+    <span class="n">final_mae_params</span> <span class="o">=</span> <span class="n">trial_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">optimal_mae_idx</span><span class="p">,</span> <span class="n">param_cols</span><span class="p">]</span>
+    
+    <span class="n">final_model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="n">num_boost_rounds</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">final_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+    <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">final_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    
+    <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;predicted&#39;</span><span class="p">:</span> <span class="n">predicted_y</span><span class="p">,</span>
+            <span class="s1">&#39;actual&#39;</span><span class="p">:</span> <span class="n">Y_test</span><span class="p">,</span>
+        <span class="p">})</span>
+    
+    <span class="k">return</span> <span class="n">trial_results</span><span class="p">,</span> <span class="n">test_results</span>
+    
+        
 </pre></div>
 </div>
 </div>
@@ -745,50 +573,473 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
-<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
+<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">10000</span>
 
-<span class="k">for</span> <span class="n">bitrate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]:</span>
-    <span class="c1"># set the target column</span>
-    <span class="n">target_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;H_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">_bits&#39;</span>
-    <span class="n">test_attributes</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># add attribute groups successively</span>
-    <span class="k">for</span> <span class="n">attribute_set</span> <span class="ow">in</span> <span class="p">[</span><span class="n">climate</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">land_cover</span><span class="p">,</span> <span class="n">soil</span><span class="p">]:</span>
-        <span class="n">test_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
-        
-        <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">test_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        
-        <span class="c1"># reset the index to ensure the random selection is done properly</span>
-        <span class="n">input_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="c1"># randomly select 5% of the stations to leave out for a hold-out test set</span>
-        <span class="c1"># to ensure none of the data are seen in training</span>
-        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;binary:logistic&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;eval_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;auc&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">learning_rate</span><span class="p">,</span>
-            <span class="s2">&quot;max_depth&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-            <span class="s2">&quot;min_child_weight&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;subsample&quot;</span><span class="p">:</span> <span class="n">subsample</span><span class="p">,</span>
-            <span class="s2">&quot;colsample_bytree&quot;</span><span class="p">:</span> <span class="n">colsample</span><span class="p">,</span>
-            <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
-            <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="n">xgb_model</span> <span class="o">=</span> 
-        
-        
-        
+<span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">attribute_set_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">]</span>
+
+<span class="n">execute_models</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="n">execute_models</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">bitrate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]:</span>
+        <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bitrate = </span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># set the target column</span>
+        <span class="n">target_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;H_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">_bits&#39;</span>
+        <span class="n">test_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># add attribute groups successively</span>
+        <span class="k">for</span> <span class="n">attribute_set</span><span class="p">,</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">climate</span><span class="p">,</span> <span class="n">land_cover</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">soil</span><span class="p">],</span> <span class="n">attribute_set_names</span><span class="p">):</span>
+
+            <span class="n">test_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">test_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># reset the index to ensure the random selection is done properly</span>
+            <span class="n">input_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">50</span>
+            <span class="n">sample_choices</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+            <span class="n">lr_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span> 
+            <span class="n">learning_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">lr_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span>
+            <span class="n">subsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span>
+            <span class="n">colsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span>
+
+            <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
+
+            <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">])</span>
+            <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">])</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;        rmse: </span><span class="si">{</span><span class="n">test_rmse</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">, mae: </span><span class="si">{</span><span class="n">test_mae</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="c1"># store the test set predictions and actuals</span>
+            <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">][</span><span class="n">set_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;trials&#39;</span><span class="p">:</span> <span class="n">trial_df</span><span class="p">,</span> <span class="s1">&#39;test_df&#39;</span><span class="p">:</span> <span class="n">test_df</span><span class="p">,</span>
+                <span class="s1">&#39;test_mae&#39;</span><span class="p">:</span> <span class="n">test_mae</span><span class="p">,</span> <span class="s1">&#39;test_rmse&#39;</span><span class="p">:</span> <span class="n">test_rmse</span><span class="p">}</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.layouts</span> <span class="kn">import</span> <span class="n">gridplot</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Sunset10</span><span class="p">,</span> <span class="n">Vibrant7</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+<span class="n">output_notebook</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">31</span>
-    <span class="n">xgb_model</span> <span class="o">=</span>
-                <span class="o">^</span>
-<span class="ne">SyntaxError</span>: invalid syntax
+<div class="output text_html">    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="a18d94ad-194b-4b79-9e94-995988539c8d">Loading BokehJS ...</span>
+    </div>
+</div><script type="application/javascript">'use strict';
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded(error = null) {
+    const el = document.getElementById("a18d94ad-194b-4b79-9e94-995988539c8d");
+    if (el != null) {
+      const html = (() => {
+        if (typeof root.Bokeh === "undefined") {
+          if (error == null) {
+            return "BokehJS is loading ...";
+          } else {
+            return "BokehJS failed to load.";
+          }
+        } else {
+          const prefix = `BokehJS ${root.Bokeh.version}`;
+          if (error == null) {
+            return `${prefix} successfully loaded.`;
+          } else {
+            return `${prefix} <b>encountered errors</b> while loading and may not function as expected.`;
+          }
+        }
+      })();
+      el.innerHTML = html;
+
+      if (error != null) {
+        const wrapper = document.createElement("div");
+        wrapper.style.overflow = "auto";
+        wrapper.style.height = "5em";
+        wrapper.style.resize = "vertical";
+        const content = document.createElement("div");
+        content.style.fontFamily = "monospace";
+        content.style.whiteSpace = "pre-wrap";
+        content.style.backgroundColor = "rgb(255, 221, 221)";
+        content.textContent = error.stack ?? error.toString();
+        wrapper.append(content);
+        el.append(wrapper);
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(() => display_loaded(error), 100);
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.5.0.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+      try {
+            for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+
+      } catch (error) {display_loaded(error);throw error;
+      }if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("a18d94ad-194b-4b79-9e94-995988539c8d")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plots</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">set_dict</span> <span class="ow">in</span> <span class="n">all_test_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">test_rmse</span><span class="p">,</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">attribute_sets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">set_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">y1</span> <span class="o">=</span> <span class="p">[</span><span class="n">set_dict</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;test_rmse&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">attribute_sets</span><span class="p">]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="n">set_dict</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;test_mae&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">attribute_sets</span><span class="p">]</span>
+    
+    <span class="n">source</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">attribute_sets</span><span class="p">,</span> <span class="s1">&#39;y1&#39;</span><span class="p">:</span> <span class="n">y1</span><span class="p">,</span> <span class="s1">&#39;y2&#39;</span><span class="p">:</span> <span class="n">y2</span><span class="p">})</span>
+    
+    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> bits&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">x_range</span><span class="o">=</span><span class="n">attribute_sets</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">x_range</span><span class="o">=</span><span class="n">attribute_sets</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="n">plots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y1&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y2&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="s1">&#39;mae&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">background_fill_alpha</span> <span class="o">=</span> <span class="mf">0.6</span>
+    
+    <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;set&#39;</span><span class="p">:</span> <span class="n">attribute_sets</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="n">y1</span><span class="p">,</span> <span class="s1">&#39;mae&#39;</span><span class="p">:</span> <span class="n">y2</span><span class="p">})</span>
+    <span class="n">best_rmse_idx</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    <span class="n">best_mae_idx</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    <span class="n">best_rmse_set</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_idx</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]</span>
+    <span class="n">best_mae_set</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_idx</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]</span>
+    <span class="c1"># best_set = set_dict[&#39;</span>
+    <span class="n">best_result</span> <span class="o">=</span> <span class="n">set_dict</span><span class="p">[</span><span class="n">best_rmse_set</span><span class="p">][</span><span class="s1">&#39;test_df&#39;</span><span class="p">]</span>
+    
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">best_result</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">best_result</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">]</span>
+    <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">se</span> <span class="o">=</span> <span class="n">linregress</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">)</span>
+    
+    <span class="n">sfig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> bits best model </span><span class="si">{</span><span class="n">best_mae_set</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sfig</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">xpred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">ybf</span> <span class="o">=</span> <span class="p">[</span><span class="n">slope</span> <span class="o">*</span> <span class="n">e</span> <span class="o">+</span> <span class="n">intercept</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">xpred</span><span class="p">]</span>
+    <span class="n">sfig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">xpred</span><span class="p">,</span> <span class="n">ybf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_dash</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;R² =</span><span class="si">{</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
+    <span class="n">sfig</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="s1">&#39;Actual H&#39;</span>
+    <span class="n">sfig</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="s1">&#39;Predicted H&#39;</span>
+    <span class="n">sfig</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;top_left&#39;</span>
+    <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sfig</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+  <div id="e541fb8f-b97b-495b-a108-9329951d8f5f" data-root-id="p1002" style="display: contents;"></div>
+</div><script type="application/javascript">(function(root) {
+  function embed_document(root) {
+  const docs_json = {"b584182b-dcaa-4ee8-91b9-cea06b2f416c":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1002","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1001"}}}]}};
+  const render_items = [{"docid":"b584182b-dcaa-4ee8-91b9-cea06b2f416c","roots":{"p1002":"e541fb8f-b97b-495b-a108-9329951d8f5f"},"root_ids":["p1002"]}];
+  void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  }
+  if (root.Bokeh !== undefined) {
+    embed_document(root);
+  } else {
+    let attempts = 0;
+    const timer = setInterval(function(root) {
+      if (root.Bokeh !== undefined) {
+        clearInterval(timer);
+        embed_document(root);
+      } else {
+        attempts++;
+        if (attempts > 100) {
+          clearInterval(timer);
+          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+        }
+      }
+    }, 10, root)
+  }
+})(window);</script></div>
 </div>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
