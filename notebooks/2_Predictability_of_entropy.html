@@ -400,7 +400,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-shannon-entropy">
 <h1>Predictability of (Shannon) Entropy<a class="headerlink" href="#predictability-of-shannon-entropy" title="Link to this heading">#</a></h1>
-<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.  The dictionary size (number of quantization levels) is varied to test if the additional information in the distribution can be exploited by the model.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="markdown.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> to see if the entropy (or uncertainty) of a distribution can be predicted from catchment attributes.  The dictionary size (number of quantization levels) is varied to test if the additional information in the distribution can be exploited by the model.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -437,7 +437,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="cd8cdf8c-950a-4af0-9bd8-0fb28a4fc08d">Loading BokehJS ...</span>
+        <span id="bf9f1244-ee57-41e2-b530-b2e7ad7cc4c1">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -602,7 +602,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("cd8cdf8c-950a-4af0-9bd8-0fb28a4fc08d");
+    const el = document.getElementById("bf9f1244-ee57-41e2-b530-b2e7ad7cc4c1");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -736,7 +736,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("cd8cdf8c-950a-4af0-9bd8-0fb28a4fc08d")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("bf9f1244-ee57-41e2-b530-b2e7ad7cc4c1")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -1027,11 +1027,11 @@ function(Bokeh) {
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html">
-  <div id="f7b307ca-c955-4024-94af-694130d08abd" data-root-id="p1002" style="display: contents;"></div>
+  <div id="ea5146e7-0fe7-40a3-8a0d-36955ef130bf" data-root-id="p1002" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"ded097a0-bffe-4bda-b608-319b9991b43b":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1002","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1001"}}}]}};
-  const render_items = [{"docid":"ded097a0-bffe-4bda-b608-319b9991b43b","roots":{"p1002":"f7b307ca-c955-4024-94af-694130d08abd"},"root_ids":["p1002"]}];
+  const docs_json = {"059cfa68-a6ea-463a-9dff-e07a9d7caefe":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1002","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1001"}}}]}};
+  const render_items = [{"docid":"059cfa68-a6ea-463a-9dff-e07a9d7caefe","roots":{"p1002":"ea5146e7-0fe7-40a3-8a0d-36955ef130bf"},"root_ids":["p1002"]}];
   void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {
@@ -1055,7 +1055,15 @@ function(Bokeh) {
 </div>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
-<span class="target" id="id2"></span></section>
+<div class="docutils container" id="id2">
+<div role="list" class="citation-list">
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">CG16</a><span class="fn-bracket">]</span></span>
+<p>Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In <em>Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining</em>, 785–794. 2016.</p>
+</div>
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
