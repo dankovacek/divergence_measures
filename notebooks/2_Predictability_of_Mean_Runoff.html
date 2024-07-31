@@ -1,0 +1,1399 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Predictability of Mean Runoff &#8212; On the predictability of f-divergence measures from catchment attributes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/2_Predictability_of_Mean_Runoff';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Predictability of (Shannon) Entropy" href="3_Predictability_of_entropy.html" />
+    <link rel="prev" title="Methods" href="1a_Methods.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="On the predictability of f-divergence measures from catchment attributes - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="On the predictability of f-divergence measures from catchment attributes - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_data.html">Data</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="1a_Methods.html">Methods</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Predictability of Mean Runoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_Predictability_of_KL_divergence.html">Predictability of Kullback-Leibler (KL) Divergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Wasserstein Distance (WD)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown.html">Markdown Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Content with notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="markdown-notebooks.html">Notebooks with MyST Markdown</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/dankovacek/divergence_measures" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/dankovacek/divergence_measures/issues/new?title=Issue%20on%20page%20%2Fnotebooks/2_Predictability_of_Mean_Runoff.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/2_Predictability_of_Mean_Runoff.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Predictability of Mean Runoff</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-mean-runoff">
+<h1>Predictability of Mean Runoff<a class="headerlink" href="#predictability-of-mean-runoff" title="Link to this heading">#</a></h1>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called gradient boosting using the XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="3_Predictability_of_entropy.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> library to see if runoff can be predicted from catchment attributes as was shown in <span id="id2">[<a class="reference internal" href="#id9" title="Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. Water Resources Research, 54(11):8792–8812, 2018.">Addor <em>et al.</em>, 2018</a>]</span>.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.layouts</span> <span class="kn">import</span> <span class="n">gridplot</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Sunset10</span><span class="p">,</span> <span class="n">Vibrant7</span>
+
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">root_mean_squared_error</span><span class="p">,</span>
+    <span class="n">mean_absolute_error</span><span class="p">,</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">accuracy_score</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">data_processing_functions</span> <span class="k">as</span> <span class="nn">dpf</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+<span class="n">output_notebook</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="c7e862d7-608b-4da6-8a94-4a08326e9558">Loading BokehJS ...</span>
+    </div>
+</div><script type="application/javascript">'use strict';
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded(error = null) {
+    const el = document.getElementById("c7e862d7-608b-4da6-8a94-4a08326e9558");
+    if (el != null) {
+      const html = (() => {
+        if (typeof root.Bokeh === "undefined") {
+          if (error == null) {
+            return "BokehJS is loading ...";
+          } else {
+            return "BokehJS failed to load.";
+          }
+        } else {
+          const prefix = `BokehJS ${root.Bokeh.version}`;
+          if (error == null) {
+            return `${prefix} successfully loaded.`;
+          } else {
+            return `${prefix} <b>encountered errors</b> while loading and may not function as expected.`;
+          }
+        }
+      })();
+      el.innerHTML = html;
+
+      if (error != null) {
+        const wrapper = document.createElement("div");
+        wrapper.style.overflow = "auto";
+        wrapper.style.height = "5em";
+        wrapper.style.resize = "vertical";
+        const content = document.createElement("div");
+        content.style.fontFamily = "monospace";
+        content.style.whiteSpace = "pre-wrap";
+        content.style.backgroundColor = "rgb(255, 221, 221)";
+        content.textContent = error.stack ?? error.toString();
+        wrapper.append(content);
+        el.append(wrapper);
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(() => display_loaded(error), 100);
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.5.0.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+      try {
+            for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+
+      } catch (error) {display_loaded(error);throw error;
+      }if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("c7e862d7-608b-4da6-8a94-4a08326e9558")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;BCUB_HYSETS_properties_with_climate_with_entropy.csv&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Compute the mean runoff for each streamflow timeseries.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">mean_runoff</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">compute_mean_runoff</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;mean_runoff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_runoff</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+<span class="ne">----&gt; </span><span class="mi">2</span>     <span class="n">mean_runoff</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">compute_mean_runoff</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;mean_runoff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_runoff</span>
+
+<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:441,</span> in <span class="ni">compute_mean_runoff</span><span class="nt">(row)</span>
+<span class="g g-Whitespace">    </span><span class="mi">438</span> <span class="n">months</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">439</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">441</span> <span class="n">count_pivot_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">stn_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">443</span> <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">444</span>     <span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Period</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">days_in_month</span> <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">months</span><span class="p">]</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">],</span>
+<span class="g g-Whitespace">    </span><span class="mi">445</span>     <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">446</span>     <span class="n">columns</span><span class="o">=</span><span class="n">months</span>
+<span class="g g-Whitespace">    </span><span class="mi">447</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">448</span> <span class="n">days_90_percent</span> <span class="o">=</span> <span class="n">days_in_month</span> <span class="o">*</span> <span class="mf">0.9</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:9509,</span> in <span class="ni">DataFrame.pivot_table</span><span class="nt">(self, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">   </span><span class="mi">9492</span> <span class="nd">@Substitution</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">9493</span> <span class="nd">@Appender</span><span class="p">(</span><span class="n">_shared_docs</span><span class="p">[</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">])</span>
+<span class="g g-Whitespace">   </span><span class="mi">9494</span> <span class="k">def</span> <span class="nf">pivot_table</span><span class="p">(</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">9505</span>     <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9506</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">9507</span>     <span class="kn">from</span> <span class="nn">pandas.core.reshape.pivot</span> <span class="kn">import</span> <span class="n">pivot_table</span>
+<span class="ne">-&gt; </span><span class="mi">9509</span>     <span class="k">return</span> <span class="n">pivot_table</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">9510</span>         <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9511</span>         <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9512</span>         <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9513</span>         <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9514</span>         <span class="n">aggfunc</span><span class="o">=</span><span class="n">aggfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9515</span>         <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9516</span>         <span class="n">margins</span><span class="o">=</span><span class="n">margins</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9517</span>         <span class="n">dropna</span><span class="o">=</span><span class="n">dropna</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9518</span>         <span class="n">margins_name</span><span class="o">=</span><span class="n">margins_name</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9519</span>         <span class="n">observed</span><span class="o">=</span><span class="n">observed</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9520</span>         <span class="n">sort</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">9521</span>     <span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/reshape/pivot.py:102,</span> in <span class="ni">pivot_table</span><span class="nt">(data, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">     </span><span class="mi">99</span>     <span class="n">table</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">100</span>     <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">102</span> <span class="n">table</span> <span class="o">=</span> <span class="n">__internal_pivot_table</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">103</span>     <span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">104</span>     <span class="n">values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">105</span>     <span class="n">index</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">106</span>     <span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">107</span>     <span class="n">aggfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">108</span>     <span class="n">fill_value</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">109</span>     <span class="n">margins</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">110</span>     <span class="n">dropna</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">111</span>     <span class="n">margins_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">112</span>     <span class="n">observed</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">113</span>     <span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">114</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/reshape/pivot.py:251,</span> in <span class="ni">__internal_pivot_table</span><span class="nt">(data, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">    </span><span class="mi">249</span> <span class="c1"># GH 15193 Make sure empty columns are removed if dropna=True</span>
+<span class="g g-Whitespace">    </span><span class="mi">250</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">ABCDataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dropna</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">251</span>     <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">253</span> <span class="k">return</span> <span class="n">table</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:6681,</span> in <span class="ni">DataFrame.dropna</span><span class="nt">(self, axis, how, thresh, subset, inplace, ignore_index)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6678</span>     <span class="n">mask</span> <span class="o">=</span> <span class="n">notna</span><span class="p">(</span><span class="n">agg_obj</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">agg_axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6679</span> <span class="k">elif</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">6680</span>     <span class="c1"># faster equivalent to &#39;agg_obj.count(agg_axis) &gt; 0&#39;</span>
+<span class="ne">-&gt; </span><span class="mi">6681</span>     <span class="n">mask</span> <span class="o">=</span> <span class="n">notna</span><span class="p">(</span><span class="n">agg_obj</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">agg_axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6682</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">6683</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid how option: </span><span class="si">{</span><span class="n">how</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:11613,</span> in <span class="ni">DataFrame.any</span><span class="nt">(self, axis, bool_only, skipna, **kwargs)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11603</span> <span class="nd">@doc</span><span class="p">(</span><span class="n">make_doc</span><span class="p">(</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="g g-Whitespace">  </span><span class="mi">11604</span> <span class="c1"># error: Signature of &quot;any&quot; incompatible with supertype &quot;NDFrame&quot;</span>
+<span class="g g-Whitespace">  </span><span class="mi">11605</span> <span class="k">def</span> <span class="nf">any</span><span class="p">(</span>  <span class="c1"># type: ignore[override]</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11611</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11612</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Series</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="ne">&gt; </span><span class="mi">11613</span>     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logical_func</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11614</span>         <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">nanops</span><span class="o">.</span><span class="n">nanany</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="p">,</span> <span class="n">skipna</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="g g-Whitespace">  </span><span class="mi">11615</span>     <span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11616</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Series</span><span class="p">):</span>
+<span class="g g-Whitespace">  </span><span class="mi">11617</span>         <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:12208,</span> in <span class="ni">NDFrame._logical_func</span><span class="nt">(self, name, func, axis, bool_only, skipna, **kwargs)</span>
+<span class="g g-Whitespace">  </span><span class="mi">12205</span>         <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bool_data</span><span class="p">()</span>
+<span class="g g-Whitespace">  </span><span class="mi">12206</span>     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">_reduce_axis1</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="n">skipna</span><span class="p">)</span>
+<span class="ne">&gt; </span><span class="mi">12208</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">12209</span>     <span class="n">func</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12210</span>     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12211</span>     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12212</span>     <span class="n">skipna</span><span class="o">=</span><span class="n">skipna</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12213</span>     <span class="n">numeric_only</span><span class="o">=</span><span class="n">bool_only</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12214</span>     <span class="n">filter_type</span><span class="o">=</span><span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">12215</span> <span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:11563,</span> in <span class="ni">DataFrame._reduce</span><span class="nt">(self, op, name, axis, skipna, numeric_only, filter_type, **kwds)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11560</span> <span class="c1"># After possibly _get_data and transposing, we are now in the</span>
+<span class="g g-Whitespace">  </span><span class="mi">11561</span> <span class="c1">#  simple case where we can use BlockManager.reduce</span>
+<span class="g g-Whitespace">  </span><span class="mi">11562</span> <span class="n">res</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">blk_func</span><span class="p">)</span>
+<span class="ne">&gt; </span><span class="mi">11563</span> <span class="n">out</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">_constructor_from_mgr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="g g-Whitespace">  </span><span class="mi">11564</span> <span class="k">if</span> <span class="n">out_dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">out</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="s2">&quot;boolean&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">  </span><span class="mi">11565</span>     <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">out_dtype</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/indexing.py:1191,</span> in <span class="ni">_LocationIndexer.__getitem__</span><span class="nt">(self, key)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1189</span> <span class="n">maybe_callable</span> <span class="o">=</span> <span class="n">com</span><span class="o">.</span><span class="n">apply_if_callable</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1190</span> <span class="n">maybe_callable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_deprecated_callable_usage</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">maybe_callable</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1191</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem_axis</span><span class="p">(</span><span class="n">maybe_callable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/indexing.py:1754,</span> in <span class="ni">_iLocIndexer._getitem_axis</span><span class="nt">(self, key, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1751</span> <span class="c1"># validate the location</span>
+<span class="g g-Whitespace">   </span><span class="mi">1752</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_integer</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1754</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">_ixs</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:4002,</span> in <span class="ni">DataFrame._ixs</span><span class="nt">(self, i, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4000</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constructor_sliced_from_mgr</span><span class="p">(</span><span class="n">new_mgr</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">new_mgr</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4001</span> <span class="n">result</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="ne">-&gt; </span><span class="mi">4002</span> <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4003</span> <span class="n">result</span><span class="o">.</span><span class="n">_set_is_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">4004</span> <span class="k">return</span> <span class="n">result</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:6255,</span> in <span class="ni">NDFrame.__finalize__</span><span class="nt">(self, other, method, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6238</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">6239</span><span class="sd"> Propagate metadata from other to self.</span>
+<span class="g g-Whitespace">   </span><span class="mi">6240</span><span class="sd"> </span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6252</span><span class="sd">        stable across pandas releases.</span>
+<span class="g g-Whitespace">   </span><span class="mi">6253</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">6254</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">NDFrame</span><span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">6255</span>     <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">6256</span>         <span class="c1"># We want attrs propagation to have minimal performance</span>
+<span class="g g-Whitespace">   </span><span class="mi">6257</span>         <span class="c1"># impact if attrs are not used; i.e. attrs is an empty dict.</span>
+<span class="g g-Whitespace">   </span><span class="mi">6258</span>         <span class="c1"># One could make the deepcopy unconditionally, but a deepcopy</span>
+<span class="g g-Whitespace">   </span><span class="mi">6259</span>         <span class="c1"># of an empty dict is 50x more expensive than the empty check.</span>
+<span class="g g-Whitespace">   </span><span class="mi">6260</span>         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6262</span>     <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">allows_duplicate_labels</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">allows_duplicate_labels</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Subdivide the attributes into related classes: terrain, land cover, soil, climate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;official_id&#39;, &#39;watershed_id&#39;, &#39;name&#39;, &#39;centroid_lat_deg_n&#39;, &#39;centroid_lon_deg_e&#39;, &#39;drainage_area_km2&#39;, &#39;drainage_area_gsim_km2&#39;, &#39;flag_gsim_boundaries&#39;, &#39;flag_artificial_boundaries&#39;, &#39;elevation_m&#39;, &#39;slope_deg&#39;, &#39;gravelius&#39;, &#39;perimeter&#39;, &#39;flag_shape_extraction&#39;, &#39;aspect_deg&#39;, &#39;flag_terrain_extraction&#39;, &#39;land_use_forest_frac_2010&#39;, &#39;land_use_grass_frac_2010&#39;, &#39;land_use_wetland_frac_2010&#39;, &#39;land_use_water_frac_2010&#39;, &#39;land_use_urban_frac_2010&#39;, &#39;land_use_shrubs_frac_2010&#39;, &#39;land_use_crops_frac_2010&#39;, &#39;land_use_snow_ice_frac_2010&#39;, &#39;flag_land_use_extraction&#39;, &#39;logk_ice_x100&#39;, &#39;porosity_x100&#39;, &#39;flag_subsoil_extraction&#39;, &#39;year_from&#39;, &#39;year_to&#39;, &#39;record_length&#39;, &#39;agency&#39;, &#39;status&#39;, &#39;updated_official_basin&#39;, &#39;in_bcub&#39;, &#39;prcp&#39;, &#39;srad&#39;, &#39;swe&#39;, &#39;tmax&#39;, &#39;tmin&#39;, &#39;vp&#39;, &#39;high_prcp_freq&#39;, &#39;high_prcp_duration&#39;, &#39;low_prcp_freq&#39;, &#39;low_prcp_duration&#39;, &#39;H_4_bits&#39;, &#39;H_6_bits&#39;, &#39;H_8_bits&#39;, &#39;H_9_bits&#39;, &#39;H_10_bits&#39;, &#39;H_11_bits&#39;, &#39;H_12_bits&#39;, &#39;mean_runoff&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
+<span class="n">land_cover</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;land_use_forest_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_grass_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_wetland_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_water_frac_2010&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;land_use_urban_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_shrubs_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_crops_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_snow_ice_frac_2010&#39;</span><span class="p">]</span>
+<span class="n">soil</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logk_ice_x100&#39;</span><span class="p">,</span> <span class="s1">&#39;porosity_x100&#39;</span><span class="p">]</span>
+<span class="n">climate</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prcp&#39;</span><span class="p">,</span> <span class="s1">&#39;srad&#39;</span><span class="p">,</span> <span class="s1">&#39;swe&#39;</span><span class="p">,</span> <span class="s1">&#39;tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;tmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_duration&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_duration&#39;</span><span class="p">]</span>
+<span class="n">all_attributes</span> <span class="o">=</span> <span class="n">terrain</span> <span class="o">+</span> <span class="n">land_cover</span> <span class="o">+</span> <span class="n">soil</span> <span class="o">+</span> <span class="n">climate</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">all_attributes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>26
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split the input data into training and test sets.  </span>
+<span class="sd">    The proportion of test data is holdout_pct.</span>
+<span class="sd">    Return the data as arrays.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_holdout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">holdout_pct</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+    <span class="n">test_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">n_holdout</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">train_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test_idxs</span><span class="p">]</span>
+    
+    <span class="n">common_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">,</span> <span class="n">test_idxs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    
+    <span class="k">return</span> <span class="n">train_idxs</span><span class="p">,</span> <span class="n">test_idxs</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">num_boost_rounds</span><span class="p">):</span>
+    
+    <span class="c1"># randomly select 5% of the stations to leave out for a hold-out test set</span>
+    <span class="c1"># to ensure none of the data are seen in training    </span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train_indices</span><span class="p">,</span> <span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train_indices</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_indices</span><span class="p">,</span> <span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_indices</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+       
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_optimization_rounds</span><span class="p">):</span>
+        
+        <span class="n">lr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">cs</span> <span class="o">=</span> <span class="n">learning_rates</span><span class="p">[</span><span class="n">trial</span><span class="p">],</span> <span class="n">subsamples</span><span class="p">[</span><span class="n">trial</span><span class="p">],</span> <span class="n">colsamples</span><span class="p">[</span><span class="n">trial</span><span class="p">]</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="c1"># &quot;objective&quot;: &quot;reg:absoluteerror&quot;,</span>
+            <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;reg:squarederror&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;eval_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">lr</span><span class="p">,</span>
+            <span class="c1"># &quot;max_depth&quot;: 6,  # use default max_depth</span>
+            <span class="c1"># &quot;min_child_weight&quot;: 1, # use colsample and subsample instead of min_child_weight</span>
+            <span class="s2">&quot;subsample&quot;</span><span class="p">:</span> <span class="n">ss</span><span class="p">,</span>
+            <span class="s2">&quot;colsample_bytree&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="p">,</span>
+            <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+            <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>  <span class="c1"># note, change this to &#39;cpu&#39; if your system doesn&#39;t have a CUDA GPU</span>
+            <span class="s2">&quot;sampling_method&quot;</span><span class="p">:</span> <span class="s1">&#39;gradient_based&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;tree_method&quot;</span><span class="p">:</span> <span class="s1">&#39;hist&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;runoff_prediction_results&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_folder</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">results_folder</span><span class="p">)</span>
+
+        <span class="n">results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_lr_</span><span class="si">{</span><span class="n">ss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_sub_</span><span class="si">{</span><span class="n">cs</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_col.csv&#39;</span>
+        <span class="n">results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_folder</span><span class="p">,</span> <span class="n">results_fname</span><span class="p">)</span>
+
+        <span class="n">model_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">dtrain</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">Y_train</span><span class="p">),</span>
+            <span class="n">num_boost_round</span><span class="o">=</span><span class="n">num_boost_rounds</span><span class="p">,</span>
+            <span class="n">nfold</span><span class="o">=</span><span class="n">nfolds</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">],</span>
+            <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">verbose_eval</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">best_rmse_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-rmse-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+        <span class="n">best_mae_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-mae-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+        <span class="c1"># print(lr, best_rmse_round, best_mae_round)</span>
+                
+        <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;best_rmse_round&#39;</span><span class="p">:</span> <span class="n">best_rmse_round</span><span class="p">,</span>
+            <span class="s1">&#39;best_mae_round&#39;</span><span class="p">:</span> <span class="n">best_mae_round</span><span class="p">,</span>
+            <span class="s1">&#39;min_test_mae&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_round</span><span class="p">,</span> <span class="s1">&#39;test-mae-mean&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_test_rmse&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;test-rmse-mean&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_mae_stdev&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_round</span><span class="p">,</span> <span class="s1">&#39;test-mae-std&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_rmse_stdev&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;test-rmse-std&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_train_mae&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_round</span><span class="p">,</span> <span class="s1">&#39;train-mae-mean&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;min_train_rmse&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;train-rmse-mean&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">results_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">results_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        
+        <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">trial</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">trial</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   completed </span><span class="si">{</span><span class="n">trial</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">n_optimization_rounds</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+    <span class="c1"># save the trial results</span>
+    <span class="n">trial_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+    <span class="n">trial_results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">results_fpath</span><span class="p">)</span>
+    <span class="n">trial_mean</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_test_mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">trial_stdev</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_mae_stdev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    
+    <span class="c1"># print(trial_results.sort_values(&#39;min_test_mae&#39;))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">trial_mean</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> ± </span><span class="si">{</span><span class="n">trial_stdev</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> RMSE mean on the test set (N=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trial_results</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    
+    <span class="n">param_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># get the optimal hyperparameters</span>
+    <span class="n">optimal_rmse_idx</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_test_rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    <span class="n">optimal_mae_idx</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;min_test_mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    
+    <span class="c1"># print(optimal_rmse_idx)</span>
+    <span class="c1"># print(trial_results.sort_values(&#39;min_test_rmse&#39;))</span>
+    
+    <span class="c1"># print(trial_results.loc[[optimal_rmse_idx]])</span>
+    <span class="c1"># print(trial_results.sort_values(&#39;min_test_rmse&#39;))</span>
+    
+    <span class="c1"># if optimal_rmse_idx != optimal_mae_idx:</span>
+    <span class="c1">#     print(&#39;best rmse and mae are from different trials, &#39;, optimal_rmse_idx, optimal_mae_idx)</span>
+        
+    <span class="n">best_rmse_params</span> <span class="o">=</span> <span class="n">trial_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">optimal_rmse_idx</span><span class="p">,</span> <span class="n">param_cols</span><span class="p">]</span>
+    <span class="n">best_mae_params</span> <span class="o">=</span> <span class="n">trial_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">optimal_mae_idx</span><span class="p">,</span> <span class="n">param_cols</span><span class="p">]</span>
+    
+    <span class="n">final_model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">num_boost_rounds</span><span class="p">,</span> 
+                                   <span class="o">**</span><span class="n">best_rmse_params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+    <span class="n">final_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+    <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">final_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    
+    <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;predicted&#39;</span><span class="p">:</span> <span class="n">predicted_y</span><span class="p">,</span>
+            <span class="s1">&#39;actual&#39;</span><span class="p">:</span> <span class="n">Y_test</span><span class="p">,</span>
+        <span class="p">})</span>
+    
+    <span class="k">return</span> <span class="n">trial_results</span><span class="p">,</span> <span class="n">test_results</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
+<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
+<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">attribute_set_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">execute_models</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">if</span> <span class="n">execute_models</span><span class="p">:</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
+        
+    <span class="c1"># set the target column</span>
+    <span class="n">target_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mean_runoff&#39;</span>
+    <span class="n">test_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># add attribute groups successively</span>
+    <span class="k">for</span> <span class="n">attribute_set</span><span class="p">,</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">climate</span><span class="p">,</span> <span class="n">land_cover</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">soil</span><span class="p">],</span> <span class="n">attribute_set_names</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; Processing </span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1"> attribute set&#39;</span><span class="p">)</span>
+        <span class="n">test_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">test_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># reset the index to ensure the random selection is done properly</span>
+        <span class="n">sample_choices</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span> 
+        <span class="n">lr_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">)</span> 
+        <span class="n">learning_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">lr_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
+        <span class="n">subsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
+        <span class="n">colsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
+
+        <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">test_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
+
+        <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+        <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   held-out test rmse: </span><span class="si">{</span><span class="n">test_rmse</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">, mae: </span><span class="si">{</span><span class="n">test_mae</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1"># store the test set predictions and actuals</span>
+        <span class="n">all_test_results</span><span class="p">[</span><span class="n">set_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;trials&#39;</span><span class="p">:</span> <span class="n">trial_df</span><span class="p">,</span> <span class="s1">&#39;test_df&#39;</span><span class="p">:</span> <span class="n">test_df</span><span class="p">,</span>
+            <span class="s1">&#39;test_mae&#39;</span><span class="p">:</span> <span class="n">test_mae</span><span class="p">,</span> <span class="s1">&#39;test_rmse&#39;</span><span class="p">:</span> <span class="n">test_rmse</span>
+        <span class="p">}</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Processing climate attribute set
+    47.22 ± 3.387 RMSE mean on the test set (N=20)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [11:39:35] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+Potential solutions:
+- Use a data structure that matches the device ordinal in the booster.
+- Set the device for booster before call to inplace_predict.
+
+This warning will only be shown once.
+
+  warnings.warn(smsg, UserWarning)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  climate
+   held-out test rmse: 140.24, mae: 48.45
+
+ Processing +land_cover attribute set
+    31.07 ± 1.320 RMSE mean on the test set (N=20)
+  +land_cover
+   held-out test rmse: 81.38, mae: 28.22
+
+ Processing +terrain attribute set
+    14.75 ± 2.843 RMSE mean on the test set (N=20)
+  +terrain
+   held-out test rmse: 27.81, mae: 9.83
+
+ Processing +soil attribute set
+    15.01 ± 2.976 RMSE mean on the test set (N=20)
+  +soil
+   held-out test rmse: 30.67, mae: 10.48
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plots</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">attribute_sets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_test_results</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">test_rmse</span><span class="p">,</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+<span class="n">y1</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_test_results</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;test_rmse&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">attribute_sets</span><span class="p">]</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_test_results</span><span class="p">[</span><span class="n">e</span><span class="p">][</span><span class="s1">&#39;test_mae&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">attribute_sets</span><span class="p">]</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">attribute_sets</span><span class="p">,</span> <span class="s1">&#39;y1&#39;</span><span class="p">:</span> <span class="n">y1</span><span class="p">,</span> <span class="s1">&#39;y2&#39;</span><span class="p">:</span> <span class="n">y2</span><span class="p">})</span>
+
+<span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Runoff Predictability&#39;</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">x_range</span><span class="o">=</span><span class="n">attribute_sets</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">x_range</span><span class="o">=</span><span class="n">attribute_sets</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="n">plots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y1&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y2&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="s1">&#39;mae&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">background_fill_alpha</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="s1">&#39;RMSE&#39;</span>
+
+<span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;set&#39;</span><span class="p">:</span> <span class="n">attribute_sets</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="n">y1</span><span class="p">,</span> <span class="s1">&#39;mae&#39;</span><span class="p">:</span> <span class="n">y2</span><span class="p">})</span>
+<span class="n">best_rmse_idx</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+<span class="n">best_mae_idx</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+<span class="n">best_rmse_set</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_idx</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]</span>
+<span class="n">best_mae_set</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_mae_idx</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]</span>
+<span class="n">best_result</span> <span class="o">=</span> <span class="n">all_test_results</span><span class="p">[</span><span class="n">best_rmse_set</span><span class="p">][</span><span class="s1">&#39;test_df&#39;</span><span class="p">]</span>
+
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">best_result</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">best_result</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">]</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">se</span> <span class="o">=</span> <span class="n">linregress</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">)</span>
+
+<span class="n">sfig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Test: best model </span><span class="si">{</span><span class="n">best_rmse_set</span><span class="si">}</span><span class="s1"> (N=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">best_result</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+             <span class="p">)</span>
+<span class="n">sfig</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">x_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">ybf</span> <span class="o">=</span> <span class="p">[</span><span class="n">slope</span> <span class="o">*</span> <span class="n">e</span> <span class="o">+</span> <span class="n">intercept</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x_obs</span><span class="p">]</span>
+<span class="n">sfig</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x_obs</span><span class="p">,</span> <span class="n">ybf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_dash</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">legend_label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;R²=</span><span class="si">{</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
+<span class="n">sfig</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$$\text{Observed Mean} \left[ m^3 / s \right]$$&#39;</span>
+<span class="n">sfig</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$$\text{Predicted Mean} \left[ m^3 / s \right]$$&#39;</span>
+<span class="n">sfig</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;top_left&#39;</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sfig</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+  <div id="ea60a697-13b4-4c49-bd93-341c333465d6" data-root-id="p1123" style="display: contents;"></div>
+</div><script type="application/javascript">(function(root) {
+  function embed_document(root) {
+  const docs_json = {"87b26957-24e9-40f8-98d5-d76746d6b356":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1123","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1122","attributes":{"tools":[{"type":"object","name":"ToolProxy","id":"p1116","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1027"},{"type":"object","name":"PanTool","id":"p1083"}]}},{"type":"object","name":"ToolProxy","id":"p1117","attributes":{"tools":[{"type":"object","name":"WheelZoomTool","id":"p1028","attributes":{"renderers":"auto"}},{"type":"object","name":"WheelZoomTool","id":"p1084","attributes":{"renderers":"auto"}}]}},{"type":"object","name":"ToolProxy","id":"p1118","attributes":{"tools":[{"type":"object","name":"BoxZoomTool","id":"p1029","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1030","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p1036","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p1035","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}},{"type":"object","name":"BoxZoomTool","id":"p1085","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1086","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p1092","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p1091","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}}]}},{"type":"object","name":"SaveTool","id":"p1119"},{"type":"object","name":"ToolProxy","id":"p1120","attributes":{"tools":[{"type":"object","name":"ResetTool","id":"p1038"},{"type":"object","name":"ResetTool","id":"p1094"}]}},{"type":"object","name":"ToolProxy","id":"p1121","attributes":{"tools":[{"type":"object","name":"HelpTool","id":"p1039"},{"type":"object","name":"HelpTool","id":"p1095"}]}}]}},"children":[[{"type":"object","name":"Figure","id":"p1004","attributes":{"width":350,"height":300,"x_range":{"type":"object","name":"FactorRange","id":"p1014","attributes":{"factors":["climate","+land_cover","+terrain","+soil"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p1006"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p1015"},"y_scale":{"type":"object","name":"LinearScale","id":"p1016"},"title":{"type":"object","name":"Title","id":"p1007","attributes":{"text":"Runoff Predictability"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1046","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1001","attributes":{"selected":{"type":"object","name":"Selection","id":"p1002","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1003"},"data":{"type":"map","entries":[["x",["climate","+land_cover","+terrain","+soil"]],["y1",[140.23760737058626,81.37855291686003,27.81285317563004,30.674044576483237]],["y2",[48.446069029995904,28.224242937315676,9.825333324292625,10.475534856117523]]]}}},"view":{"type":"object","name":"CDSView","id":"p1047","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1048"}}},"glyph":{"type":"object","name":"Line","id":"p1043","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1044","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1045","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1057","attributes":{"data_source":{"id":"p1001"},"view":{"type":"object","name":"CDSView","id":"p1058","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1059"}}},"glyph":{"type":"object","name":"Line","id":"p1054","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1055","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1056","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_alpha":0.2,"line_width":3}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1013","attributes":{"tools":[{"id":"p1027"},{"id":"p1028"},{"id":"p1029"},{"type":"object","name":"SaveTool","id":"p1037"},{"id":"p1038"},{"id":"p1039"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p1022","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1023","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1024"},"axis_label":"RMSE","major_label_policy":{"type":"object","name":"AllLabels","id":"p1025"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p1017","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p1018"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p1019"},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1020"}}}],"center":[{"type":"object","name":"Grid","id":"p1021","attributes":{"axis":{"id":"p1017"}}},{"type":"object","name":"Grid","id":"p1026","attributes":{"dimension":1,"axis":{"id":"p1022"}}},{"type":"object","name":"Legend","id":"p1049","attributes":{"background_fill_alpha":0.6,"items":[{"type":"object","name":"LegendItem","id":"p1050","attributes":{"label":{"type":"value","value":"rmse"},"renderers":[{"id":"p1046"}]}},{"type":"object","name":"LegendItem","id":"p1060","attributes":{"label":{"type":"value","value":"mae"},"renderers":[{"id":"p1057"}]}}]}}]}},0,0],[{"type":"object","name":"Figure","id":"p1061","attributes":{"width":350,"height":300,"x_range":{"type":"object","name":"DataRange1d","id":"p1062"},"y_range":{"type":"object","name":"DataRange1d","id":"p1063"},"x_scale":{"type":"object","name":"LinearScale","id":"p1071"},"y_scale":{"type":"object","name":"LinearScale","id":"p1072"},"title":{"type":"object","name":"Title","id":"p1064","attributes":{"text":"Test: best model +terrain (N=161)"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1102","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1096","attributes":{"selected":{"type":"object","name":"Selection","id":"p1097","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1098"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"c/Tnh5L5IUBELZOCCqgHQOLrdiKqhtA/BT9G5cVtRkBHBQCRrwYjQBAxVcvuSk9AlQ3EuHCyI0ABUeo79uI3QCcMSTD/rW8/t44eJHFsMEBF2vGPZuAWQE6wX51AEdE/U4bXiV2YSkD52rm1XCUlQPcp0i/SxC1ACTCzwvSpVUD7ZflFWS/yP+mH5SOIKzlAGZWiEpwoRUCNCWrP19XtP5ntufDkG98/S2VlibaLMUDjFspqjVbfPzg7M/V+Erw/PMZv7LWi9j//c9XVCHQtQLecVvarkEFASoteFZIedEB5VbkT6zkHQHyFVLNDS7g/2QXtfyeuX0Cbp3lTks4rQEq54CNnFPQ/caQE+WmdREBbPZ65HcrnP9S/4I9kkhBAGLr0TteaU0CY0nN7MZF9QCQ+gn9qjxJA/S7LP6jazz8cHZdDvkQ8QLN6NIhflQtAqeknrb3xIkBcAqEnoloqQPtGYhl+qfo/b9955Mja/z+0d/1L1W+yP1TR2J72xsU/iX93zNTMAEAJX8os1CsDQMq6IUGYatg/QA2pfjv+SkBHFvB8rrGMQDKMNBVhjEJAJhezFWe1sD/0URdYzi3VPzyzJmqqMuc/GSahlXxIpj/ch+5MJZ65P2oh64IucARAQyiHinKKLEAU1BXUWL8sQL+IERynoNo/sxtUV+seyz9tmc7/ORDZPyTnbvSjVdE/jQDKSU1bAkC4W5tipKhJQAGjdCNRGsM/sIby+nZvH0BjxiYzJfvTP5ufEm94nPg/9BEPLF6b/D9JRGE1o7wzQFgBd7/9gGBAsFvCMzJg+D/L73wCcEJEQDWiLdnAJdk/B0FmWuXGMUDMnv0ww5cBQAmkgNDCyCJANBXuUCOV1T9v6QIsLu0QQLfNnqkDVAJAsRjfYF27VkB5d4RmNle1P20mV2blUKE/NsqTYKnuxj/NwlP1ae41QGewk0L5qQxAsdCX90R47z+w6oD4MsTWP8qBMhznEPA/Tb7o/iAxyz+DQOIbhVPoP3FJO3Bhn2VAqS0pozCBOEDnro1NzA7zP0uK7GAlogpAsY1PywQPK0CfEG+vlblUQAysI8QLc/U/mC98juAN/T/z62zRdUjGP2M8SmPAiO0/mhtEUeDG4z+mkRYRPlNFQEAFh5yYZB5A1/+86VQDRUCmtaKVO2oEQP1ZeWNYp+s/QOVe6zGs6D8gYHnANSLTPxr5H9Tp27I/PVJeXo3JIkBrkOmU7ntiQHkKtuLXWCJAStcMXLMGEEDcr2NuePDzPwNGZAs3uz1APSmpcrNze0B9Cj6FRoAaQC1Lk665AApAEYWBctOfCUCBSr+tT4yoPxl4CEDkRCNAlw5qjwHy6z8t3CaIn1coQAyt1f0mI+0/WHmvxgrfWUD8yQfj3PwfQAS2KoZ2RDRAZ0VgdA5wVkCtkKY/gW3UP0/9cj/sr/A/+c7a1WAlJ0CoW392rySIQC4DUSSEZhBAdqs6AUZR0j9fLwKpJ5cLQCedO7bMYdA/ZRhjQJPYXkBzmkEow8haQCBvTU5hm/Q/B4ZzC7mGyj+BEh54N6q2P7I87lKzz7E/zdYmhFMmMEA43S/gsfFWQBencaEsK80/1q+eeAhy8z+y2u13qovVP7rXxq3ShAFA/2fHL4H8EUBOvjLL/ZkFQL6851eLWuM/UrOaVn8k5D+tS2wOlggLQOGO0R2v2ZQ/2z2bQlz1LUAHc7S0haqsPw=="},"shape":[161],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"mlsnQYALE0AAJp8/K/1ZQgKeMUEWDBVDWm85QSSZ4kGA/oG+ENdNQSAOHEEAO0k/nk2ZQtJRS0GET4RB5s2DQhAF3UB3CoxBocwJQiC5yD8ADGY9BEp+QSDY+z8AgFE9AEB/O3JsSUHcnTVCSC2+Q+BVkkAArgo+jj2QQiZ2PkHAfGVAQaoFQkbxG0G4z8VAUzuPQgIBqEMgzDlAcOBBwLkweUJAt1VAxELvQIgCyUAgXKg/4N3qPwDIQ77ElMdB8OwiQCQl4kCAjrc/RXUhQnriKERlLxpCgIKEvvC0BUAA6xI/AABjPcByIEBwpqRAViJ7QXb9eEGoc4bA4CPJP8Br7z8AdnW+YC7qPxrMCkKA+56+Ug3fQSAgxL8gk8s/TJADQWi7XUFxPT9DsAAXQHnzAkKA+RA/7OPvQCDUUUBoBtNAUL8/QHCefUDgw5k/sKxZQoAP2j4A6IW9AABQuSH5j0EwhVJAgBgFQACPqz84OKpASH63QIA/wUCPpk9DWrGjQQzF3UD80RRBzsoGQciUWUFgmrs/kBs6QAAwPb5AyRhAQMeXPyAkEUJeS1RBum+EQlCaMkAA8AY9cDYXQQDqPj5g07o/ZoAVQU4j3ELosMxAELI0QECkOT8Pr4NBzPGxQ3SgfEFw6j9A4MaCPyi0okCwJ7dAkKaGQGSIRkEwGAVAquvEQjgP2kCH0OdB8t7BQqB28D8Q4BBAQAVrQXgWLUTpjbJBwIucP5DXYEBAajC/iJjLQuyovkK4m8dAAO9FvkBiEL8A2HC9FtviQcSCrkKA96c+4FbaP4CIBz9Qbx5AsEReQPCxH0EAGaC+SLr/QKi8g0AAyD49AkhhQUCIuD8="},"shape":[161],"dtype":"float32","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1103","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1104"}}},"glyph":{"type":"object","name":"Scatter","id":"p1099","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.8},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"Scatter","id":"p1100","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.1},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"Scatter","id":"p1101","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.2},"hatch_alpha":{"type":"value","value":0.2}}}}},{"type":"object","name":"GlyphRenderer","id":"p1111","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1105","attributes":{"selected":{"type":"object","name":"Selection","id":"p1106","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1107"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"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"},"shape":[1000],"dtype":"float64","order":"little"}],["y",[3.975347166498064,4.7255711823992215,5.475795198300379,6.226019214201537,6.976243230102694,7.726467246003853,8.47669126190501,9.226915277806167,9.977139293707324,10.727363309608482,11.477587325509642,12.2278113414108,12.978035357311956,13.728259373213113,14.478483389114272,15.228707405015427,15.978931420916586,16.729155436817745,17.479379452718902,18.229603468620056,18.979827484521216,19.730051500422373,20.48027551632353,21.230499532224687,21.980723548125845,22.730947564027,23.481171579928162,24.23139559582932,24.981619611730476,25.731843627631633,26.48206764353279,27.232291659433947,27.982515675335108,28.732739691236265,29.482963707137422,30.23318772303858,30.983411738939736,31.733635754840893,32.48385977074205,33.23408378664321,33.984307802544365,34.734531818445525,35.484755834346686,36.23497985024784,36.985203866149,37.73542788205015,38.485651897951314,39.23587591385247,39.98609992975363,40.73632394565478,41.48654796155594,42.2367719774571,42.986995993358256,43.73722000925942,44.48744402516058,45.23766804106173,45.98789205696289,46.73811607286405,47.4883400887652,48.23856410466636,48.98878812056752,49.73901213646867,50.489236152369834,51.239460168270995,51.98968418417215,52.73990820007331,53.49013221597447,54.24035623187562,54.99058024777678,55.74080426367794,56.49102827957909,57.24125229548025,57.99147631138141,58.741700327282565,59.491924343183726,60.24214835908488,60.99237237498604,61.7425963908872,62.492820406788354,63.243044422689515,63.993268438590675,64.74349245449183,65.493716470393,66.24394048629415,66.9941645021953,67.74438851809646,68.49461253399762,69.24483654989878,69.99506056579993,70.7452845817011,71.49550859760224,72.2457326135034,72.99595662940456,73.74618064530571,74.49640466120688,75.24662867710803,75.99685269300919,76.74707670891034,77.49730072481151,78.24752474071266,78.99774875661382,79.74797277251498,80.49819678841614,81.24842080431729,81.99864482021846,82.74886883611961,83.49909285202077,84.24931686792193,84.99954088382309,85.74976489972424,86.49998891562541,87.25021293152656,88.00043694742772,88.75066096332888,89.50088497923004,90.25110899513119,91.00133301103234,91.7515570269335,92.50178104283465,93.25200505873582,94.00222907463697,94.75245309053813,95.5026771064393,96.25290112234045,97.0031251382416,97.75334915414277,98.50357317004392,99.25379718594507,100.00402120184624,100.7542452177474,101.50446923364855,102.25469324954972,103.00491726545087,103.75514128135202,104.50536529725319,105.25558931315435,106.0058133290555,106.75603734495665,107.50626136085782,108.25648537675897,109.00670939266013,109.7569334085613,110.50715742446243,111.2573814403636,112.00760545626476,112.75782947216592,113.50805348806708,114.25827750396824,115.00850151986938,115.75872553577055,116.5089495516717,117.25917356757287,118.00939758347401,118.7596215993752,119.50984561527633,120.26006963117749,121.01029364707865,121.7605176629798,122.51074167888096,123.26096569478212,124.01118971068328,124.76141372658444,125.5116377424856,126.26186175838674,127.01208577428791,127.76230979018906,128.51253380609023,129.26275782199139,130.01298183789254,130.7632058537937,131.51342986969485,132.263653885596,133.01387790149715,133.7641019173983,134.51432593329952,135.26454994920067,136.01477396510182,136.76499798100298,137.51522199690413,138.26544601280528,139.01567002870644,139.7658940446076,140.51611806050875,141.2663420764099,142.01656609231105,142.7667901082122,143.51701412411336,144.2672381400145,145.01746215591567,145.76768617181688,146.51791018771803,147.26813420361918,148.01835821952034,148.7685822354215,149.51880625132264,150.2690302672238,151.01925428312495,151.7694782990261,152.51970231492726,153.2699263308284,154.02015034672957,154.77037436263078,155.52059837853187,156.27082239443308,157.02104641033424,157.7712704262354,158.52149444213654,159.2717184580377,160.02194247393885,160.77216648984,161.52239050574116,162.2726145216423,163.02283853754346,163.77306255344462,164.52328656934577,165.27351058524692,166.02373460114813,166.77395861704923,167.52418263295044,168.2744066488516,169.02463066475275,169.7748546806539,170.52507869655506,171.2753027124562,172.02552672835736,172.77575074425852,173.52597476015967,174.27619877606082,175.02642279196203,175.77664680786313,176.52687082376434,177.2770948396655,178.0273188555666,178.7775428714678,179.52776688736895,180.2779909032701,181.02821491917126,181.77843893507242,182.52866295097357,183.27888696687472,184.02911098277588,184.77933499867703,185.52955901457818,186.2797830304794,187.0300070463805,187.7802310622817,188.53045507818285,189.280679094084,190.03090310998516,190.78112712588631,191.53135114178747,192.28157515768862,193.03179917358977,193.78202318949093,194.53224720539208,195.2824712212933,196.0326952371944,196.78291925309554,197.53314326899675,198.28336728489785,199.03359130079906,199.7838153167002,200.53403933260137,201.28426334850252,202.03448736440367,202.78471138030483,203.53493539620598,204.28515941210713,205.0353834280083,205.78560744390944,206.53583145981065,207.28605547571175,208.03627949161296,208.7865035075141,209.53672752341527,210.28695153931642,211.03717555521757,211.78739957111873,212.53762358701988,213.2878476029211,214.0380716188222,214.7882956347234,215.53851965062455,216.28874366652565,217.03896768242686,217.789191698328,218.53941571422916,219.28963973013032,220.03986374603147,220.79008776193263,221.54031177783384,222.29053579373493,223.04075980963609,223.7909838255373,224.54120784143845,225.29143185733955,226.04165587324076,226.7918798891419,227.54210390504306,228.29232792094422,229.04255193684537,229.79277595274652,230.54299996864768,231.29322398454883,232.04344800044998,232.7936720163512,233.54389603225235,234.29412004815345,235.04434406405466,235.7945680799558,236.5447920958569,237.29501611175812,238.04524012765927,238.79546414356042,239.54568815946158,240.29591217536273,241.04613619126388,241.79636020716504,242.5465842230662,243.29680823896734,244.04703225486855,244.7972562707697,245.5474802866708,246.29770430257201,247.04792831847317,247.79815233437432,248.54837635027548,249.29860036617663,250.04882438207778,250.79904839797894,251.5492724138801,252.29949642978124,253.0497204456824,253.79994446158355,254.5501684774847,255.3003924933859,256.05061650928707,256.80084052518816,257.5510645410894,258.3012885569905,259.0515125728917,259.80173658879283,260.551960604694,261.30218462059514,262.0524086364963,262.80263265239745,263.5528566682986,264.30308068419976,265.05330470010097,265.80352871600206,266.5537527319032,267.3039767478044,268.0542007637056,268.8044247796067,269.5546487955079,270.30487281140904,271.0550968273102,271.80532084321135,272.5555448591125,273.30576887501365,274.0559928909148,274.80621690681596,275.5564409227171,276.3066649386183,277.0568889545194,277.8071129704206,278.5573369863218,279.30756100222294,280.05778501812404,280.80800903402525,281.5582330499264,282.30845706582755,283.0586810817287,283.80890509762986,284.559129113531,285.30935312943217,286.0595771453333,286.8098011612345,287.5600251771357,288.31024919303684,289.06047320893794,289.81069722483915,290.5609212407403,291.31114525664145,292.0613692725426,292.81159328844376,293.5618173043449,294.31204132024607,295.0622653361472,295.8124893520484,296.5627133679495,297.3129373838507,298.06316139975183,298.81338541565304,299.5636094315542,300.3138334474553,301.0640574633565,301.81428147925766,302.5645054951588,303.31472951105997,304.0649535269611,304.8151775428623,305.5654015587634,306.3156255746646,307.06584959056573,307.8160736064669,308.5662976223681,309.3165216382692,310.06674565417035,310.81696967007156,311.56719368597265,312.31741770187386,313.067641717775,313.8178657336762,314.5680897495773,315.3183137654785,316.06853778137963,316.8187617972808,317.56898581318194,318.3192098290831,319.06943384498425,319.81965786088546,320.56988187678655,321.3201058926877,322.0703299085889,322.82055392449007,323.5707779403912,324.3210019562924,325.07122597219353,325.8214499880947,326.57167400399584,327.321898019897,328.07212203579815,328.82234605169936,329.57257006760045,330.3227940835016,331.0730180994028,331.8232421153039,332.57346613120507,333.3236901471063,334.07391416300743,334.8241381789086,335.57436219480974,336.3245862107109,337.07481022661204,337.8250342425132,338.57525825841435,339.3254822743155,340.0757062902167,340.8259303061178,341.57615432201897,342.3263783379202,343.07660235382133,343.8268263697224,344.57705038562364,345.3272744015248,346.07749841742594,346.8277224333271,347.57794644922825,348.3281704651294,349.0783944810306,349.8286184969317,350.57884251283286,351.3290665287341,352.07929054463517,352.8295145605363,353.57973857643753,354.3299625923387,355.0801866082398,355.830410624141,356.58063464004215,357.3308586559433,358.08108267184446,358.8313066877456,359.58153070364676,360.331754719548,361.08197873544907,361.8322027513502,362.58242676725143,363.3326507831526,364.0828747990537,364.8330988149549,365.58332283085605,366.3335468467572,367.08377086265835,367.8339948785595,368.58421889446066,369.3344429103618,370.08466692626297,370.8348909421641,371.58511495806533,372.33533897396643,373.0855629898676,373.8357870057688,374.58601102166995,375.33623503757104,376.08645905347225,376.8366830693734,377.58690708527456,378.3371311011757,379.08735511707687,379.837579132978,380.58780314887923,381.3380271647803,382.0882511806815,382.8384751965827,383.58869921248385,384.33892322838494,385.08914724428615,385.8393712601873,386.58959527608846,387.3398192919896,388.09004330789077,388.8402673237919,389.5904913396931,390.3407153555942,391.0909393714954,391.8411633873966,392.5913874032977,393.34161141919884,394.09183543510005,394.8420594510012,395.5922834669023,396.3425074828035,397.09273149870467,397.8429555146058,398.593179530507,399.3434035464081,400.0936275623093,400.8438515782105,401.5940755941116,402.34429961001274,403.09452362591395,403.8447476418151,404.5949716577162,405.3451956736174,406.09541968951856,406.8456437054197,407.5958677213209,408.346091737222,409.0963157531232,409.84653976902433,410.5967637849255,411.34698780082664,412.09721181672785,412.84743583262895,413.5976598485301,414.3478838644313,415.09810788033246,415.84833189623356,416.59855591213477,417.3487799280359,418.0990039439371,418.84922795983823,419.5994519757394,420.34967599164054,421.09990000754175,421.85012402344285,422.600348039344,423.3505720552451,424.10079607114625,424.85102008704746,425.6012441029486,426.35146811884977,427.1016921347509,427.85191615065213,428.60214016655317,429.3523641824544,430.10258819835553,430.8528122142567,431.60303623015784,432.35326024605905,433.1034842619602,433.85370827786136,434.60393229376245,435.3541563096636,436.1043803255648,436.854604341466,437.6048283573671,438.3550523732683,439.1052763891695,439.85550040507064,440.60572442097174,441.3559484368729,442.10617245277405,442.8563964686752,443.6066204845764,444.35684450047756,445.1070685163787,445.8572925322798,446.60751654818097,447.3577405640822,448.10796457998333,448.8581885958845,449.60841261178564,450.35863662768685,451.108860643588,451.8590846594891,452.60930867539025,453.3595326912914,454.10975670719256,454.85998072309377,455.6102047389949,456.3604287548961,457.1106527707973,457.8608767866983,458.61110080259954,459.3613248185007,460.11154883440184,460.861772850303,461.6119968662042,462.36222088210536,463.1124448980065,463.8626689139076,464.61289292980877,465.3631169457099,466.11334096161113,466.8635649775123,467.61378899341344,468.36401300931465,469.1142370252157,469.8644610411169,470.61468505701805,471.3649090729192,472.11513308882036,472.86535710472157,473.6155811206227,474.3658051365239,475.11602915242497,475.8662531683261,476.6164771842273,477.3667012001285,478.11692521602964,478.8671492319308,479.617373247832,480.36759726373316,481.11782127963426,481.8680452955354,482.61826931143656,483.3684933273377,484.1187173432389,484.8689413591401,485.61916537504123,486.36938939094233,487.1196134068435,487.86983742274464,488.62006143864585,489.370285454547,490.12050947044816,490.87073348634937,491.6209575022505,492.3711815181516,493.12140553405277,493.8716295499539,494.6218535658551,495.3720775817563,496.12230159765744,496.8725256135586,497.62274962945975,498.37297364536084,499.123197661262,499.8734216771632,500.62364569306436,501.3738697089655,502.1240937248667,502.8743177407679,503.6245417566689,504.37476577257013,505.1249897884713,505.87521380437244,506.62543782027365,507.3756618361748,508.12588585207595,508.8761098679771,509.6263338838782,510.37655789977936,511.12678191568057,511.8770059315817,512.6272299474829,513.3774539633841,514.1276779792853,514.8779019951864,515.6281260110875,516.3783500269888,517.1285740428899,517.8787980587911,518.6290220746922,519.3792460905934,520.1294701064945,520.8796941223957,521.6299181382968,522.380142154198,523.1303661700991,523.8805901860003,524.6308142019014,525.3810382178026,526.1312622337039,526.8814862496049,527.6317102655061,528.3819342814072,529.1321582973084,529.8823823132095,530.6326063291108,531.3828303450119,532.1330543609131,532.8832783768141,533.6335023927153,534.3837264086164,535.1339504245177,535.8841744404189,536.63439845632,537.3846224722212,538.1348464881223,538.8850705040235,539.6352945199246,540.3855185358258,541.1357425517269,541.8859665676281,542.6361905835292,543.3864145994304,544.1366386153315,544.8868626312327,545.6370866471339,546.387310663035,547.1375346789362,547.8877586948373,548.6379827107386,549.3882067266397,550.1384307425408,550.8886547584419,551.6388787743431,552.3891027902442,553.1393268061455,553.8895508220467,554.6397748379478,555.389998853849,556.14022286975,556.8904468856512,557.6406709015524,558.3908949174536,559.1411189333547,559.8913429492559,560.641566965157,561.3917909810582,562.1420149969593,562.8922390128605,563.6424630287617,564.3926870446628,565.142911060564,565.8931350764651,566.6433590923664,567.3935831082674,568.1438071241686,568.8940311400697,569.6442551559709,570.394479171872,571.1447031877733,571.8949272036745,572.6451512195756,573.3953752354766,574.1455992513778,574.895823267279,575.6460472831802,576.3962712990814,577.1464953149825,577.8967193308837,578.6469433467848,579.3971673626859,580.1473913785871,580.8976153944883,581.6478394103895,582.3980634262906,583.1482874421918,583.8985114580929,584.6487354739941,585.3989594898952,586.1491835057964,586.8994075216975,587.6496315375987,588.3998555534998,589.1500795694011,589.9003035853023,590.6505276012033,591.4007516171044,592.1509756330056,592.9011996489068,593.651423664808,594.4016476807092,595.1518716966103,595.9020957125115,596.6523197284125,597.4025437443137,598.1527677602149,598.9029917761161,599.6532157920172,600.4034398079184,601.1536638238196,601.9038878397206,602.6541118556219,603.404335871523,604.1545598874242,604.9047839033253,605.6550079192265,606.4052319351276,607.1554559510288,607.9056799669299,608.6559039828311,609.4061279987322,610.1563520146334,610.9065760305346,611.6568000464358,612.407024062337,613.1572480782381,613.9074720941392,614.6576961100403,615.4079201259415,616.1581441418427,616.9083681577439,617.658592173645,618.4088161895462,619.1590402054472,619.9092642213484,620.6594882372497,621.4097122531508,622.159936269052,622.9101602849531,623.6603843008543,624.4106083167554,625.1608323326566,625.9110563485577,626.6612803644589,627.41150438036,628.1617283962612,628.9119524121623,629.6621764280635,630.4124004439648,631.1626244598658,631.912848475767,632.6630724916681,633.4132965075693,634.1635205234705,634.9137445393717,635.6639685552728,636.414192571174,637.164416587075,637.9146406029762,638.6648646188775,639.4150886347786,640.1653126506798,640.9155366665809,641.6657606824821,642.4159846983831,643.1662087142844,643.9164327301855,644.6666567460867,645.4168807619878,646.167104777889,646.9173287937901,647.6675528096913,648.4177768255925,649.1680008414936,649.9182248573948,650.6684488732959,651.4186728891971,652.1688969050982,652.9191209209995,653.6693449369006,654.4195689528017,655.1697929687028,655.920016984604,656.6702410005053,657.4204650164064,658.1706890323076,658.9209130482087,659.6711370641098,660.4213610800109,661.1715850959122,661.9218091118133,662.6720331277145,663.4222571436156,664.1724811595168,664.922705175418,665.6729291913191,666.4231532072203,667.1733772231214,667.9236012390226,668.6738252549237,669.4240492708249,670.174273286726,670.9244973026273,671.6747213185283,672.4249453344295,673.1751693503306,673.9253933662318,674.6756173821329,675.4258413980342,676.1760654139354,676.9262894298364,677.6765134457376,678.4267374616387,679.17696147754,679.9271854934411,680.6774095093423,681.4276335252434,682.1778575411446,682.9280815570456,683.6783055729469,684.428529588848,685.1787536047492,685.9289776206504,686.6792016365515,687.4294256524527,688.1796496683538,688.929873684255,689.6800977001561,690.4303217160573,691.1805457319584,691.9307697478596,692.6809937637607,693.431217779662,694.1814417955632,694.9316658114642,695.6818898273654,696.4321138432665,697.1823378591677,697.9325618750689,698.6827858909701,699.4330099068712,700.1832339227723,700.9334579386734,701.6836819545747,702.4339059704758,703.184129986377,703.9343540022782,704.6845780181793,705.4348020340805,706.1850260499816,706.9352500658828,707.6854740817839,708.4356980976851,709.1859221135862,709.9361461294874,710.6863701453885,711.4365941612898,712.1868181771908,712.937042193092,713.6872662089932,714.4374902248943,715.1877142407955,715.9379382566967,716.6881622725979,717.4383862884989,718.1886103044001,718.9388343203012,719.6890583362024,720.4392823521036,721.1895063680048,721.939730383906,722.6899543998071,723.4401784157081,724.1904024316094,724.9406264475106,725.6908504634117,726.4410744793129,727.191298495214,727.9415225111152,728.6917465270163,729.4419705429175,730.1921945588186,730.9424185747198,731.692642590621,732.4428666065221,733.1930906224233,733.9433146383245,734.6935386542256,735.4437626701267,736.1939866860279,736.944210701929,737.6944347178302,738.4446587337314,739.1948827496326,739.9451067655338,740.6953307814348,741.445554797336,742.1957788132371,742.9460028291384,743.6962268450395,744.4464508609407,745.1966748768418,745.946898892743,746.6971229086441,747.4473469245453,748.1975709404464,748.9477949563476,749.6980189722487,750.4482429881499,751.198467004051,751.9486910199523,752.6989150358534,753.4491390517545]]]}}},"view":{"type":"object","name":"CDSView","id":"p1112","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1113"}}},"glyph":{"type":"object","name":"Line","id":"p1108","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_width":3,"line_dash":[6]}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1109","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.1,"line_width":3,"line_dash":[6]}},"muted_glyph":{"type":"object","name":"Line","id":"p1110","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.2,"line_width":3,"line_dash":[6]}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1070","attributes":{"tools":[{"id":"p1083"},{"id":"p1084"},{"id":"p1085"},{"type":"object","name":"SaveTool","id":"p1093"},{"id":"p1094"},{"id":"p1095"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p1078","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1079","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1080"},"axis_label":"$$\\text{Predicted Mean} \\left[ m^3 / s \\right]$$","major_label_policy":{"type":"object","name":"AllLabels","id":"p1081"}}}],"below":[{"type":"object","name":"LinearAxis","id":"p1073","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1074","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1075"},"axis_label":"$$\\text{Observed Mean} \\left[ m^3 / s \\right]$$","major_label_policy":{"type":"object","name":"AllLabels","id":"p1076"}}}],"center":[{"type":"object","name":"Grid","id":"p1077","attributes":{"axis":{"id":"p1073"}}},{"type":"object","name":"Grid","id":"p1082","attributes":{"dimension":1,"axis":{"id":"p1078"}}},{"type":"object","name":"Legend","id":"p1114","attributes":{"location":"top_left","items":[{"type":"object","name":"LegendItem","id":"p1115","attributes":{"label":{"type":"value","value":"R\u00b2=0.96"},"renderers":[{"id":"p1111"}]}}]}}]}},0,1]]}}]}};
+  const render_items = [{"docid":"87b26957-24e9-40f8-98d5-d76746d6b356","roots":{"p1123":"ea60a697-13b4-4c49-bd93-341c333465d6"},"root_ids":["p1123"]}];
+  void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  }
+  if (root.Bokeh !== undefined) {
+    embed_document(root);
+  } else {
+    let attempts = 0;
+    const timer = setInterval(function(root) {
+      if (root.Bokeh !== undefined) {
+        clearInterval(timer);
+        embed_document(root);
+      } else {
+        attempts++;
+        if (attempts > 100) {
+          clearInterval(timer);
+          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+        }
+      }
+    }, 10, root)
+  }
+})(window);</script></div>
+</div>
+<section id="citations">
+<h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">ANP+18</a><span class="fn-bracket">]</span></span>
+<p>Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. <em>Water Resources Research</em>, 54(11):8792–8812, 2018.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">CG16</a><span class="fn-bracket">]</span></span>
+<p>Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In <em>Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining</em>, 785–794. 2016.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1a_Methods.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Methods</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="3_Predictability_of_entropy.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Predictability of (Shannon) Entropy</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dan Kovacek
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
