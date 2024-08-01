@@ -197,8 +197,7 @@ def get_timeseries_data(official_id, min_flow=1e-4):
     # assign a small flow value instead of zero
     df['discharge'] = df['discharge'].clip(lower=min_flow)
     # rename the discharge column to the station id    
-    df.rename(columns={'discharge': official_id}, inplace=True)
-    
+    df.rename(columns={'discharge': official_id}, inplace=True)   
     
     return df
 
@@ -388,15 +387,122 @@ def compute_observed_series_entropy(row, bitrate):
     # get data
     stn_id = row['official_id']
     df = get_timeseries_data(stn_id)
-    df = df.dropna(subset=[stn_id])
-    min_q, max_q = df[stn_id].min(), df[stn_id].max()
+    df.dropna(subset=[stn_id], inplace=True)
+    min_q, max_q = df[stn_id].min() - 1e-6, df[stn_id].max() + 1e-6
+    assert min_q > 0
     # use equal width bins in log10 space
     log_edges = np.linspace(np.log10(min_q), np.log10(max_q), 2**bitrate)
     linear_edges = [10**e for e in log_edges]
     df[f'{bitrate}_bits_quantized'] = np.digitize(df[stn_id], linear_edges)
-    H = entropy(df[f'{bitrate}_bits_quantized'], base=2)
-    return H
+    unique, counts = np.unique(df[f'{bitrate}_bits_quantized'], return_counts=True)
+    count_dict = {k: 1/v for k, v in zip(unique, counts)}
+    frequencies = [count_dict[e] if e in count_dict else 0 for e in range(1, 2**bitrate)]
+    normed_frequencies = frequencies / sum(frequencies)
+    return entropy(normed_frequencies, base=2)
+
+
+def format_features(input_attributes):
+    features = []
+
+    for a in input_attributes:
+        features.append(f"proxy_{a}".lower())
+        features.append(f"target_{a}".lower())
+
+    # add the distance feature
+    features.append("centroid_distance")
+    return features
+
+
+def train_test_split_by_official_id(holdout_pct, stations, nfolds):
+    n_holdout = int(len(stations) * holdout_pct)
+    holdout_test_stns = np.random.choice(stations, n_holdout, replace=False)
+    training_stations = [e for e in stations if e not in holdout_test_stns]
+    np.random.shuffle(training_stations)
+    training_cv_sets = np.array_split(np.array(training_stations), nfolds)
+    return training_cv_sets, holdout_test_stns
+
+def filter_input_data_by_official_id(df, stations):
+    return df[df["proxy"].isin(stations)
+            & df["target"].isin(stations)].copy()
+
+
+def train_test_split(df, holdout_pct):
+    """
+    Split the input data into training and test sets.  
+    The proportion of test data is holdout_pct.
+    Return the data as arrays.
+    """
+    n_holdout = int(holdout_pct * len(df))
+    test_idxs = np.random.choice(df.index.values, n_holdout, replace=False)
+    train_idxs = [i for i in df.index.values if i not in test_idxs]
     
+    common_idxs = np.intersect1d(train_idxs, test_idxs)
+    assert len(common_idxs) == 0
+    
+    return train_idxs, test_idxs
+
+
+def compute_mean_runoff(row):
+    """
+    Retrieves daily average flow time series and computes mean runoff for complete months
+    based on 90% of days in month.
+
+    Parameters
+    ----------
+    row : pd.Series
+        A pandas Series containing information about the station. It must include the key 'official_id' which specifies the station ID.
+
+    Returns
+    -------
+    float
+        The mean unit runoff.
+
+    Notes
+    -----
+    - The function retrieves the time series data for the specified station ID.
+    - It drops incomplete years such that the mean estimate is not skewed by missing seasonal trends.
+    - The mean unit area runoff is returned.
+
+    Example
+    -------
+    >>> row = pd.Series({'official_id': 'station123'})
+    >>> mean_runoff = compute_mean_runoff(row)
+    >>> print(f'Mean Runoff: {mean_runoff:.4f}')
+    """
+    # get data
+    stn_id = row['official_id']
+    df = get_timeseries_data(stn_id)
+    df.dropna(subset=[stn_id], inplace=True)
+    df['year'] = df['time'].dt.year
+    df['month'] = df['time'].dt.month
+    years = sorted(np.unique(df['year'].values))
+    months = sorted(np.unique(df['month'].values))
+    counts = df.groupby(['year', 'month']).count()
+
+    count_pivot_df = df.pivot_table(values=stn_id, index='year', columns='month', aggfunc='count')
+    
+    days_in_month = pd.DataFrame(
+        [[pd.Period(f'{year}-{month}').days_in_month for month in months] for year in years],
+        index=years,
+        columns=months
+    )
+    days_90_percent = days_in_month * 0.9
+    
+    # Generate the boolean mask
+    try:
+        boolean_mask = count_pivot_df > days_90_percent.values
+    except Exception as ex:
+        print(count_pivot_df)
+        print(days_in_month)
+    
+    pivot_mean = df.pivot_table(values=stn_id, index='year', columns='month', aggfunc='mean')
+
+    # apply the boolean mask to filter incomplete months
+    filtered_df = pivot_mean.where(boolean_mask)
+    month_means = filtered_df.mean(axis=0)
+    
+    return month_means.mean() 
+
     
 def compute_cdf(data):
     """
@@ -558,7 +664,6 @@ def check_if_nested(proxy_data, target_data):
             # raise Exception('Polygons intersect but may not be nested.')    
     
     return nested
-
 
 
 def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
@@ -762,8 +867,41 @@ def compute_error_adjusted_probabilities(df, series, bin_edges, error_factor=0.1
     return error_adjusted_frequencies
 
 
+def compute_counts(df, target, bin_edges):
+    try:
+        # note that digitize is 1-indexed
+        # print('n bin edges ', len(bin_edges))
+        df[target.obs_quantized_label] = np.digitize(df[target.obs_label], bin_edges)
+        df[target.sim_quantized_label] = np.digitize(df[target.sim_label], bin_edges)
+        # uns, scount = np.unique(df[target.sim_quantized_label], return_counts=True)
+        # uno, ocount = np.unique(df[target.obs_quantized_label], return_counts=True)
+        # print(uns)
+        # print(uno)
+    except Exception as e:
+        print(f'Error digitizing series: {e}')
+        raise Exception('Error digitizing series')
+    # count the occurrences of each quantized value
+    # the "simulated" series is the proxy/donor series
+    # and the "observed" series is the target location 
+    obs_count_df = df.groupby(target.obs_quantized_label).count()
+    sim_count_df = df.groupby(target.sim_quantized_label).count()
+    og_sim_count = sim_count_df[target.sim_label].copy().sum()
+    
+    n_obs = np.nansum(obs_count_df[target.obs_label])
+    n_sim = np.nansum(sim_count_df[target.sim_label])
+    
+    count_df = pd.DataFrame(index=range(2**bitrate))
+    count_df[target.obs_label] = 0
+    count_df[target.sim_label] = 0
 
-def compute_probabilities(df, target, bitrate, pseudo_counts, concurrent_data, bin_edges):
+    count_df[target.obs_label] += obs_count_df[target.obs_label]
+    count_df[target.sim_label] += sim_count_df[target.sim_label]
+    count_df.fillna(0, inplace=True)
+    return count_df
+
+
+
+def compute_prior_adjusted_probabilities(count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges):
     """
     Computes the observed and simulated probabilities for a given target station using quantization and pseudo counts.
 
@@ -815,55 +953,9 @@ def compute_probabilities(df, target, bitrate, pseudo_counts, concurrent_data, b
     >>> print(p_obs)
     >>> print(q_df)
     """
-    try:
-        # note that digitize is 1-indexed
-        # print('n bin edges ', len(bin_edges))
-        df[target.obs_quantized_label] = np.digitize(df[target.obs_label], bin_edges)
-        df[target.sim_quantized_label] = np.digitize(df[target.sim_label], bin_edges)
-        # uns, scount = np.unique(df[target.sim_quantized_label], return_counts=True)
-        # uno, ocount = np.unique(df[target.obs_quantized_label], return_counts=True)
-        # print(uns)
-        # print(uno)
-    except Exception as e:
-        print(f'Error digitizing series: {e}')
-        raise Exception('Error digitizing series')
-    # count the occurrences of each quantized value
-    # the "simulated" series is the proxy/donor series
-    # and the "observed" series is the target location 
-    obs_count_df = df.groupby(target.obs_quantized_label).count()
-    sim_count_df = df.groupby(target.sim_quantized_label).count()
-    og_sim_count = sim_count_df[target.sim_label].copy().sum()
-    
-    n_obs = np.nansum(obs_count_df[target.obs_label])
-    n_sim = np.nansum(sim_count_df[target.sim_label])
-    
-    count_df = pd.DataFrame(index=range(2**bitrate))
-    count_df[target.obs_label] = 0
-    count_df[target.sim_label] = 0
-
-    count_df[target.obs_label] += obs_count_df[target.obs_label]
-    count_df[target.sim_label] += sim_count_df[target.sim_label]
-    count_df.fillna(0, inplace=True)
-    
-    # obs_count = .join(obs_count_df[target.obs_label]).fillna(0)
-    # sim_count = pd.DataFrame(index=range(2**bitrate)).join(sim_count_df[target.sim_label]).fillna(0)
-
     if concurrent_data:
         assert n_obs == n_sim, 'Number of observations and simulations do not match.'
-    
-    foo = count_df.sum()
-    
-    if concurrent_data is True:
-        if foo[target.sim_label] != foo[target.obs_label]:
-            print(f'Concurrent: {concurrent_data}')
-            print(f'sim count:')
-            print(foo)
-            # print('obs count')
-            # print(obs_count)
-            print('og sim count')
-            print(og_sim_count)
-            raise Exception('Counts do not match.')
-      
+          
     p_obs = count_df[target.obs_label].values / n_obs
     p_sim = count_df[target.sim_label].values / n_sim
 
@@ -950,7 +1042,7 @@ def process_probabilities(df, proxy, target, bitrate, concurrent_data, partial_c
     >>> print(p_obs, p_sim, bin_edges)
     """    
     # compute the bin edges based on equal width in log space
-    bin_edges = uniform_log_bins(df, proxy, bitrate)    
+    bin_edges = uniform_log_bins(df, proxy, bitrate)
         
     if partial_counts == True:
         # add a uniformly distributed error to the observed data
@@ -959,12 +1051,14 @@ def process_probabilities(df, proxy, target, bitrate, concurrent_data, partial_c
         # that the measurement error falls within
         p_obs = compute_error_adjusted_probabilities(df, target.obs_label, bin_edges, error_factor=0.1)
         p_sim = compute_error_adjusted_probabilities(df, target.sim_label, bin_edges, error_factor=0.1)
+
     else:
         # computes the observed P and simulation Q distribution probabilities 
         # as dicts by bin number, probability key-value pairs
         # test a wide range of uniform priors via pseudo counts
-        p_obs, p_sim = compute_probabilities(
-            df, target, bitrate, pseudo_counts, concurrent_data, bin_edges)
+        count_df = compute_counts(df, target, bin_edges)
+        p_obs, p_sim = compute_prior_adjusted_probabilities(
+            count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges)
             
     return p_obs, p_sim, bin_edges
 
