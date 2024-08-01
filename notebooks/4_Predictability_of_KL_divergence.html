@@ -182,7 +182,7 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="1_data.html">Data</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="1a_Methods.html">Methods</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="2_Predictability_of_MAUR.html">Predictability of (Shannon) Entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_Predictability_of_Mean_Runoff.html">Predictability of Mean Runoff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Predictability of Kullback-Leibler (KL) Divergence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
@@ -401,7 +401,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-kullback-leibler-kl-divergence">
 <h1>Predictability of Kullback-Leibler (KL) Divergence<a class="headerlink" href="#predictability-of-kullback-leibler-kl-divergence" title="Link to this heading">#</a></h1>
-<p>In the first step, we looked at the predictability of an information measure computed on individual distributions.  If the measure could be predicted from attributes, then the uncertainty of unmonitored locations could be estimated.  Here we make a comparison of runoff between two locations and ask if the <strong>Kullback-Leibler Divergence</strong> (KLD) of the distribution of unit area runoff between two locations can be predicted from the attributes of both catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
+<p>In the first steps, we looked at the predictability of a common hydrological signature and an uncommon information measure, both computed on individual distributions.  If the entropy measure is reasonably predictable from attributes, then the uncertainty of unmonitored locations might be predictable enough for some applications.</p>
+<p>Here we make a comparison of runoff between <strong>many pairs of locations</strong> and ask if the <strong>Kullback-Leibler Divergence</strong> (KLD) of the distribution of unit area runoff between two locations can be predicted from the attributes of both catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <span class="target" id="id1"></span></section>

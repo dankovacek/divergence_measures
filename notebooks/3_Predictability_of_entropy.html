@@ -408,12 +408,6 @@ document.write(`
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
-<span class="kn">from</span> <span class="nn">bokeh.layouts</span> <span class="kn">import</span> <span class="n">gridplot</span>
-<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
-<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
-<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Sunset10</span><span class="p">,</span> <span class="n">Vibrant7</span>
-
 <span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">root_mean_squared_error</span><span class="p">,</span>
@@ -423,6 +417,16 @@ document.write(`
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+
+<span class="kn">import</span> <span class="nn">data_processing_functions</span> <span class="k">as</span> <span class="nn">dpf</span>
+
+<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.layouts</span> <span class="kn">import</span> <span class="n">gridplot</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Sunset10</span><span class="p">,</span> <span class="n">Vibrant7</span>
+
+
 <span class="n">output_notebook</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -438,7 +442,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="bbf3e68a-16c7-4e8c-8732-b5cc518ca3a9">Loading BokehJS ...</span>
+        <span id="cca0a910-f3bd-4baa-80d2-027574e1451f">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -603,7 +607,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("bbf3e68a-16c7-4e8c-8732-b5cc518ca3a9");
+    const el = document.getElementById("cca0a910-f3bd-4baa-80d2-027574e1451f");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -737,7 +741,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("bbf3e68a-16c7-4e8c-8732-b5cc518ca3a9")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("cca0a910-f3bd-4baa-80d2-027574e1451f")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -802,32 +806,19 @@ function(Bokeh) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Split the input data into training and test sets.  </span>
-<span class="sd">    The proportion of test data is holdout_pct.</span>
-<span class="sd">    Return the data as arrays.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_holdout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">holdout_pct</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
-    <span class="n">test_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">n_holdout</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">train_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test_idxs</span><span class="p">]</span>
-    
-    <span class="n">common_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">,</span> <span class="n">test_idxs</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-    
-    <span class="k">return</span> <span class="n">train_idxs</span><span class="p">,</span> <span class="n">test_idxs</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_trials</span><span class="p">(</span><span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">num_boost_rounds</span><span class="p">):</span>
     <span class="c1"># randomly select 5% of the stations to leave out for a hold-out test set</span>
     <span class="c1"># to ensure none of the data are seen in training</span>
     
     <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train_indices</span><span class="p">,</span> <span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train_indices</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
     <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_indices</span><span class="p">,</span> <span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_indices</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    
+    <span class="c1"># reset the index to ensure the random selection is done properly</span>
+    <span class="n">sample_choices</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span> 
+    <span class="n">lr_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">)</span> 
+    <span class="n">learning_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">lr_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
+    <span class="n">subsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
+    <span class="n">colsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
        
     <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_optimization_rounds</span><span class="p">):</span>
@@ -867,6 +858,8 @@ function(Bokeh) {
         <span class="n">best_rmse_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-rmse-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
         <span class="n">best_mae_round</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;test-mae-mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
         <span class="c1"># print(lr, best_rmse_round, best_mae_round)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model_results</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">asdf</span><span class="p">)</span>
                 
         <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;best_rmse_round&#39;</span><span class="p">:</span> <span class="n">best_rmse_round</span><span class="p">,</span>
@@ -944,32 +937,24 @@ function(Bokeh) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">execute_models</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">if</span> <span class="n">execute_models</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_entropy_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">):</span>
     <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
+    <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
     
     <span class="k">for</span> <span class="n">bitrate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]:</span>
         <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bitrate = </span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="c1"># set the target column</span>
         <span class="n">target_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;H_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">_bits&#39;</span>
-        <span class="n">test_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">input_attributes</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># add attribute groups successively</span>
         <span class="k">for</span> <span class="n">attribute_set</span><span class="p">,</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">climate</span><span class="p">,</span> <span class="n">land_cover</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">soil</span><span class="p">],</span> <span class="n">attribute_set_names</span><span class="p">):</span>
 
-            <span class="n">test_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
-            <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">test_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">input_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">input_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-            <span class="c1"># reset the index to ensure the random selection is done properly</span>
-            <span class="n">sample_choices</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span> 
-            <span class="n">lr_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">)</span> 
-            <span class="n">learning_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">lr_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
-            <span class="n">subsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
-            <span class="n">colsamples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_choices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">)</span> 
-
-            <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">test_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
+            <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">input_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
             
             <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
             <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
@@ -981,6 +966,98 @@ function(Bokeh) {
             <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">][</span><span class="n">set_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;trials&#39;</span><span class="p">:</span> <span class="n">trial_df</span><span class="p">,</span> <span class="s1">&#39;test_df&#39;</span><span class="p">:</span> <span class="n">test_df</span><span class="p">,</span>
                 <span class="s1">&#39;test_mae&#39;</span><span class="p">:</span> <span class="n">test_mae</span><span class="p">,</span> <span class="s1">&#39;test_rmse&#39;</span><span class="p">:</span> <span class="n">test_rmse</span><span class="p">}</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_entropy_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bitrate = 4
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    train-mae-mean  train-mae-std  train-rmse-mean  train-rmse-std  \
+0         0.545379       0.002603         0.674352        0.002116   
+1         0.541125       0.002553         0.669146        0.002338   
+2         0.536918       0.002263         0.664212        0.002009   
+3         0.533503       0.002179         0.659835        0.001847   
+4         0.529877       0.002157         0.655406        0.001765   
+5         0.525361       0.002591         0.650119        0.002523   
+6         0.521447       0.003219         0.645521        0.003065   
+7         0.518214       0.003027         0.641703        0.003691   
+8         0.514770       0.003296         0.637500        0.003877   
+9         0.511712       0.003171         0.633927        0.003839   
+10        0.508785       0.003307         0.630419        0.003797   
+11        0.505719       0.003644         0.626780        0.004237   
+12        0.502640       0.003389         0.623291        0.004162   
+13        0.499207       0.003556         0.619080        0.004182   
+14        0.496635       0.003573         0.616126        0.004408   
+15        0.493510       0.004086         0.612297        0.004950   
+16        0.490473       0.004131         0.608723        0.004879   
+17        0.488175       0.004452         0.605852        0.005323   
+18        0.485397       0.004463         0.602529        0.005483   
+19        0.482677       0.004345         0.599260        0.005571   
+20        0.478867       0.004229         0.594515        0.005366   
+21        0.476063       0.004152         0.591057        0.005220   
+22        0.473546       0.004318         0.588104        0.005510   
+23        0.470756       0.004077         0.584806        0.005429   
+
+    test-mae-mean  test-mae-std  test-rmse-mean  test-rmse-std  
+0        0.549249      0.010810        0.679290       0.009071  
+1        0.547781      0.010358        0.677904       0.009035  
+2        0.546527      0.009955        0.676504       0.009181  
+3        0.546076      0.009494        0.676058       0.009252  
+4        0.545689      0.008749        0.675630       0.008628  
+5        0.544842      0.008572        0.674779       0.009125  
+6        0.544319      0.008233        0.674343       0.009275  
+7        0.543748      0.008384        0.674200       0.009867  
+8        0.543322      0.007927        0.673758       0.009827  
+9        0.543042      0.007529        0.673310       0.009819  
+10       0.542612      0.007704        0.672933       0.010493  
+11       0.541663      0.007649        0.672144       0.010685  
+12       0.541102      0.007705        0.671650       0.010629  
+13       0.540615      0.007877        0.671073       0.010869  
+14       0.540375      0.007787        0.670852       0.010908  
+15       0.540189      0.007478        0.670617       0.010712  
+16       0.539668      0.007543        0.669988       0.010921  
+17       0.539739      0.007108        0.670079       0.011040  
+18       0.539401      0.006975        0.669509       0.010717  
+19       0.539085      0.006762        0.669485       0.010522  
+20       0.538873      0.006537        0.669330       0.010252  
+21       0.538862      0.006408        0.669162       0.010759  
+22       0.538544      0.006525        0.668784       0.010769  
+23       0.538405      0.006542        0.668700       0.010260  
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_entropy_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
+
+<span class="nn">Cell In [8], line 18,</span> in <span class="ni">predict_entropy_from_attributes</span><span class="nt">(df, holdout_pct)</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="n">input_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">input_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="ne">---&gt; </span><span class="mi">18</span> <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">input_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span> <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+
+<span class="nn">Cell In [6], line 54,</span> in <span class="ni">run_trials</span><span class="nt">(bitrate, set_name, features, target, input_data, train_indices, test_indices, n_optimization_rounds, nfolds, num_boost_rounds)</span>
+<span class="g g-Whitespace">     </span><span class="mi">52</span> <span class="c1"># print(lr, best_rmse_round, best_mae_round)</span>
+<span class="g g-Whitespace">     </span><span class="mi">53</span> <span class="nb">print</span><span class="p">(</span><span class="n">model_results</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">54</span> <span class="nb">print</span><span class="p">(</span><span class="n">asdf</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">56</span> <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="g g-Whitespace">     </span><span class="mi">57</span>     <span class="s1">&#39;best_rmse_round&#39;</span><span class="p">:</span> <span class="n">best_rmse_round</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">58</span>     <span class="s1">&#39;best_mae_round&#39;</span><span class="p">:</span> <span class="n">best_mae_round</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">64</span>     <span class="s1">&#39;min_train_rmse&#39;</span><span class="p">:</span> <span class="n">model_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_rmse_round</span><span class="p">,</span> <span class="s1">&#39;train-rmse-mean&#39;</span><span class="p">],</span>
+<span class="g g-Whitespace">     </span><span class="mi">65</span> <span class="p">}</span>
+<span class="g g-Whitespace">     </span><span class="mi">66</span> <span class="n">results_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="ne">NameError</span>: name &#39;asdf&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -1040,11 +1117,11 @@ function(Bokeh) {
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html">
-  <div id="f0dae1ab-e875-4a68-8baa-8530c9ace3a1" data-root-id="p1002" style="display: contents;"></div>
+  <div id="a904c7ff-c406-470c-be03-8254c7597ba6" data-root-id="p1002" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"97105c6d-c85c-4a7c-94d2-5f9d66051f27":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1002","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1001"}}}]}};
-  const render_items = [{"docid":"97105c6d-c85c-4a7c-94d2-5f9d66051f27","roots":{"p1002":"f0dae1ab-e875-4a68-8baa-8530c9ace3a1"},"root_ids":["p1002"]}];
+  const docs_json = {"561dff6a-910a-45c6-99ae-449dc91611e8":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1002","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1001"}}}]}};
+  const render_items = [{"docid":"561dff6a-910a-45c6-99ae-449dc91611e8","roots":{"p1002":"a904c7ff-c406-470c-be03-8254c7597ba6"},"root_ids":["p1002"]}];
   void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {
