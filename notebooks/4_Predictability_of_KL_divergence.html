@@ -186,12 +186,10 @@
 <li class="toctree-l2"><a class="reference internal" href="3_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Predictability of Kullback-Leibler (KL) Divergence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Wasserstein Distance (WD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown.html">Markdown Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Content with notebooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown-notebooks.html">Notebooks with MyST Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Discussion.html">Dicussion</a></li>
 </ul>
 
     </div>
@@ -403,6 +401,558 @@ document.write(`
 <h1>Predictability of Kullback-Leibler (KL) Divergence<a class="headerlink" href="#predictability-of-kullback-leibler-kl-divergence" title="Link to this heading">#</a></h1>
 <p>In the first steps, we looked at the predictability of a common hydrological signature and an uncommon information measure, both computed on individual distributions.  If the entropy measure is reasonably predictable from attributes, then the uncertainty of unmonitored locations might be predictable enough for some applications.</p>
 <p>Here we make a comparison of runoff between <strong>many pairs of locations</strong> and ask if the <strong>Kullback-Leibler Divergence</strong> (KLD) of the distribution of unit area runoff between two locations can be predicted from the attributes of both catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.layouts</span> <span class="kn">import</span> <span class="n">gridplot</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Sunset10</span><span class="p">,</span> <span class="n">Vibrant7</span>
+
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="n">xgb</span><span class="o">.</span><span class="n">config_context</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">root_mean_squared_error</span><span class="p">,</span>
+    <span class="n">mean_absolute_error</span><span class="p">,</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">accuracy_score</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">data_processing_functions</span> <span class="k">as</span> <span class="nn">dpf</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+<span class="n">output_notebook</span><span class="p">()</span>
+
+<span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="ecf0d5f1-5dc9-415a-ae4a-81b8388664f2">Loading BokehJS ...</span>
+    </div>
+</div><script type="application/javascript">'use strict';
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded(error = null) {
+    const el = document.getElementById("ecf0d5f1-5dc9-415a-ae4a-81b8388664f2");
+    if (el != null) {
+      const html = (() => {
+        if (typeof root.Bokeh === "undefined") {
+          if (error == null) {
+            return "BokehJS is loading ...";
+          } else {
+            return "BokehJS failed to load.";
+          }
+        } else {
+          const prefix = `BokehJS ${root.Bokeh.version}`;
+          if (error == null) {
+            return `${prefix} successfully loaded.`;
+          } else {
+            return `${prefix} <b>encountered errors</b> while loading and may not function as expected.`;
+          }
+        }
+      })();
+      el.innerHTML = html;
+
+      if (error != null) {
+        const wrapper = document.createElement("div");
+        wrapper.style.overflow = "auto";
+        wrapper.style.height = "5em";
+        wrapper.style.resize = "vertical";
+        const content = document.createElement("div");
+        content.style.fontFamily = "monospace";
+        content.style.whiteSpace = "pre-wrap";
+        content.style.backgroundColor = "rgb(255, 221, 221)";
+        content.textContent = error.stack ?? error.toString();
+        wrapper.append(content);
+        el.append(wrapper);
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(() => display_loaded(error), 100);
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.5.0.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+      try {
+            for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+
+      } catch (error) {display_loaded(error);throw error;
+      }if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("ecf0d5f1-5dc9-415a-ae4a-81b8388664f2")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;BCUB_HYSETS_properties_with_climate_with_entropy.csv&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+<span class="n">station_ids</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;official_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">station_ids</span><span class="p">)</span><span class="si">}</span><span class="s1"> monitored basins in the attribute set.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>There are 1616 monitored basins in the attribute set.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># open an example pairwise results file</span>
+<span class="n">pairs_results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">BASE_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;divergence_test_results&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pairs_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">)</span>
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">,</span> <span class="n">pairs_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kld_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">test_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;dkl&#39;</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span>
+<span class="n">kld_columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;dkl_concurrent_uniform&#39;,
+ &#39;dkl_concurrent_post_-5R&#39;,
+ &#39;dkl_concurrent_post_-4R&#39;,
+ &#39;dkl_concurrent_post_-3R&#39;,
+ &#39;dkl_concurrent_post_-2R&#39;,
+ &#39;dkl_concurrent_post_-1R&#39;,
+ &#39;dkl_concurrent_post_0R&#39;,
+ &#39;dkl_concurrent_post_1R&#39;,
+ &#39;dkl_concurrent_post_2R&#39;,
+ &#39;dkl_concurrent_post_3R&#39;,
+ &#39;dkl_concurrent_post_4R&#39;,
+ &#39;dkl_concurrent_post_5R&#39;,
+ &#39;dkl_concurrent_post_6R&#39;,
+ &#39;dkl_concurrent_post_7R&#39;,
+ &#39;dkl_concurrent_post_8R&#39;,
+ &#39;dkl_concurrent_post_9R&#39;,
+ &#39;dkl_concurrent_post_10R&#39;,
+ &#39;dkl_nonconcurrent_uniform&#39;,
+ &#39;dkl_nonconcurrent_post_-5R&#39;,
+ &#39;dkl_nonconcurrent_post_-4R&#39;,
+ &#39;dkl_nonconcurrent_post_-3R&#39;,
+ &#39;dkl_nonconcurrent_post_-2R&#39;,
+ &#39;dkl_nonconcurrent_post_-1R&#39;,
+ &#39;dkl_nonconcurrent_post_0R&#39;,
+ &#39;dkl_nonconcurrent_post_1R&#39;,
+ &#39;dkl_nonconcurrent_post_2R&#39;,
+ &#39;dkl_nonconcurrent_post_3R&#39;,
+ &#39;dkl_nonconcurrent_post_4R&#39;,
+ &#39;dkl_nonconcurrent_post_5R&#39;,
+ &#39;dkl_nonconcurrent_post_6R&#39;,
+ &#39;dkl_nonconcurrent_post_7R&#39;,
+ &#39;dkl_nonconcurrent_post_8R&#39;,
+ &#39;dkl_nonconcurrent_post_9R&#39;,
+ &#39;dkl_nonconcurrent_post_10R&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
+<span class="n">land_cover</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;land_use_forest_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_grass_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_wetland_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_water_frac_2010&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;land_use_urban_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_shrubs_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_crops_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_snow_ice_frac_2010&#39;</span><span class="p">]</span>
+<span class="n">soil</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logk_ice_x100&#39;</span><span class="p">,</span> <span class="s1">&#39;porosity_x100&#39;</span><span class="p">]</span>
+<span class="n">climate</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prcp&#39;</span><span class="p">,</span> <span class="s1">&#39;srad&#39;</span><span class="p">,</span> <span class="s1">&#39;swe&#39;</span><span class="p">,</span> <span class="s1">&#39;tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;tmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_duration&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_duration&#39;</span><span class="p">]</span>
+<span class="n">all_attributes</span> <span class="o">=</span> <span class="n">terrain</span> <span class="o">+</span> <span class="n">land_cover</span> <span class="o">+</span> <span class="n">soil</span> <span class="o">+</span> <span class="n">climate</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">all_attributes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>26
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
+<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
+<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2500</span>
+<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1">#define if testing concurrent or nonconcurrent data</span>
+<span class="n">concurrent</span> <span class="o">=</span> <span class="s1">&#39;concurrent&#39;</span>
+
+<span class="c1"># the input data file has an associated revision date</span>
+<span class="n">revision_date</span> <span class="o">=</span> <span class="s1">&#39;20240717&#39;</span>
+
+<span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">attribute_set_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">]</span>
+
+<span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;kld_prediction_results&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">results_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_KLD_from_attributes</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">stations</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">,</span> <span class="n">partial_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="n">training_stn_cv_sets</span><span class="p">,</span> <span class="n">test_stn_sets</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">train_test_split_by_official_id</span><span class="p">(</span><span class="n">holdout_pct</span><span class="p">,</span> <span class="n">stations</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">)</span>
+    <span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">bitrate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bitrate = </span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DKL_results_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s2">bits_</span><span class="si">{</span><span class="n">revision_date</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+        <span class="k">if</span> <span class="n">partial_counts</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DKL_results_</span><span class="si">{</span><span class="n">bitrate</span><span class="si">}</span><span class="s2">bits_</span><span class="si">{</span><span class="n">revision_date</span><span class="si">}</span><span class="s2">_partial_counts.csv&quot;</span>
+
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">BASE_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;divergence_test_results&quot;</span><span class="p">,</span> <span class="n">fname</span>
+        <span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">target_col</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">t1</span><span class="o">-</span><span class="n">t0</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">s to load input data&#39;</span><span class="p">)</span>
+        
+        <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">input_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># add attribute groups successively</span>
+        <span class="k">for</span> <span class="n">attribute_set</span><span class="p">,</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">land_cover</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">soil</span><span class="p">,</span> <span class="n">climate</span><span class="p">],</span> <span class="n">attribute_set_names</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Processing </span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1"> attribute set.&#39;</span><span class="p">)</span>
+            <span class="n">input_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span> 
+                        
+            <span class="n">features</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">format_features</span><span class="p">(</span><span class="n">input_attributes</span><span class="p">)</span>
+            
+            <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">run_xgb_trials</span><span class="p">(</span>
+                <span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> 
+                <span class="n">training_stn_cv_sets</span><span class="p">,</span> <span class="n">test_stn_sets</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> 
+                <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">,</span> <span class="n">results_folder</span>
+            <span class="p">)</span>
+            
+            <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+            <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   held-out test rmse: </span><span class="si">{</span><span class="n">test_rmse</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">, mae: </span><span class="si">{</span><span class="n">test_mae</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="c1"># store the test set predictions and actuals</span>
+            <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">][</span><span class="n">set_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;trials&#39;</span><span class="p">:</span> <span class="n">trial_df</span><span class="p">,</span> <span class="s1">&#39;test_df&#39;</span><span class="p">:</span> <span class="n">test_df</span><span class="p">,</span>
+                <span class="s1">&#39;test_mae&#39;</span><span class="p">:</span> <span class="n">test_mae</span><span class="p">,</span> <span class="s1">&#39;test_rmse&#39;</span><span class="p">:</span> <span class="n">test_rmse</span><span class="p">}</span> 
+    <span class="k">return</span> <span class="n">all_test_results</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">priors_to_test</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">prior</span> <span class="ow">in</span> <span class="n">priors_to_test</span><span class="p">;</span>
+    <span class="n">target_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;dkl_</span><span class="si">{</span><span class="n">concurrent</span><span class="si">}</span><span class="s1">_post_</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">R&#39;</span>
+
+    <span class="n">test_results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target_col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">_prior_results.npy&#39;</span>
+    <span class="n">test_results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">test_results_fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">):</span>
+        <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">station_ids</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">all_test_results</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+    <span class="k">for</span> <span class="n">prior</span> <span class="ow">in</span> <span class="n">priors_to_test</span><span class="p">;</span>
+                               <span class="o">^</span>
+<span class="ne">SyntaxError</span>: invalid syntax
+</pre></div>
+</div>
+</div>
+</div>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <span class="target" id="id1"></span></section>

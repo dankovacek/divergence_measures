@@ -33,6 +33,13 @@ The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
 target_col = f'tvd_{concurrent}'
-all_test_results = predict_TVD_from_attributes(target_col, holdout_pct, station_ids, nfolds)
+
+test_results_fname = f'{target_col}_results.npy'
+test_results_fpath = os.path.join('data', test_results_fname)
+if os.path.exists(test_results_fpath):
+    all_test_results = np.load(test_results_fpath, allow_pickle=True).item()
+else:
+    all_test_results = predict_TVD_from_attributes(target_col, holdout_pct, station_ids, nfolds, results_folder)
+    np.save(test_results_fpath, all_test_results)
 -------------------
 
