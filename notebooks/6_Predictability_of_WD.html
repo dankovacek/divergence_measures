@@ -443,7 +443,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="bf0e3565-e6cc-4e65-ab4c-9cb7185db4f2">Loading BokehJS ...</span>
+        <span id="b38a4183-9a4d-41ad-816a-1873d34cef4c">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -608,7 +608,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("bf0e3565-e6cc-4e65-ab4c-9cb7185db4f2");
+    const el = document.getElementById("b38a4183-9a4d-41ad-816a-1873d34cef4c");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -742,7 +742,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("bf0e3565-e6cc-4e65-ab4c-9cb7185db4f2")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("b38a4183-9a4d-41ad-816a-1873d34cef4c")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -1045,10 +1045,10 @@ function(Bokeh) {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bitrate = 4
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    23.31s to load input data
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    23.45s to load input data
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [18:13:38] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [18:16:23] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
 Potential solutions:
 - Use a data structure that matches the device ordinal in the booster.
 - Set the device for booster before call to inplace_predict.

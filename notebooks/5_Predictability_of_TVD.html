@@ -443,7 +443,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="c2248923-3f29-4415-b635-498710a40c59">Loading BokehJS ...</span>
+        <span id="ed7e0f2d-f543-4fca-9dab-69f2141cdab9">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -608,7 +608,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("c2248923-3f29-4415-b635-498710a40c59");
+    const el = document.getElementById("ed7e0f2d-f543-4fca-9dab-69f2141cdab9");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -742,7 +742,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("c2248923-3f29-4415-b635-498710a40c59")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("ed7e0f2d-f543-4fca-9dab-69f2141cdab9")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -1045,10 +1045,10 @@ function(Bokeh) {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bitrate = 4
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    24.93s to load input data
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    23.13s to load input data
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [18:13:05] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [18:15:49] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
 Potential solutions:
 - Use a data structure that matches the device ordinal in the booster.
 - Set the device for booster before call to inplace_predict.
@@ -1071,136 +1071,66 @@ This warning will only be shown once.
 <span class="g g-Whitespace">     </span><span class="mi">34</span> <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
 <span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
 
-<span class="nn">Cell In [8], line 56,</span> in <span class="ni">run_trials</span><span class="nt">(bitrate, set_name, attributes, target, input_data, train_stn_cv_sets, test_stations, n_optimization_rounds, nfolds, num_boost_rounds)</span>
-<span class="g g-Whitespace">     </span><span class="mi">53</span> <span class="n">train_stns</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_training_stations</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cv_test_set</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">55</span> <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_stns</span><span class="p">,</span> <span class="n">cv_test_set</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="ne">---&gt; </span><span class="mi">56</span> <span class="n">cv_train_data</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">filter_input_data_by_official_id</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">train_stns</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span> <span class="n">cv_test_data</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">filter_input_data_by_official_id</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">cv_test_set</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">59</span> <span class="n">X_train</span> <span class="o">=</span> <span class="n">cv_train_data</span><span class="p">[</span><span class="n">attributes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="nn">Cell In [8], line 69,</span> in <span class="ni">run_trials</span><span class="nt">(bitrate, set_name, attributes, target, input_data, train_stn_cv_sets, test_stations, n_optimization_rounds, nfolds, num_boost_rounds)</span>
+<span class="g g-Whitespace">     </span><span class="mi">64</span> <span class="n">model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">65</span>     <span class="o">**</span><span class="n">params</span>
+<span class="g g-Whitespace">     </span><span class="mi">66</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">68</span> <span class="c1"># Xy = xgb.DMatrix(X_train, label=Y_train)</span>
+<span class="ne">---&gt; </span><span class="mi">69</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">70</span> <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">72</span> <span class="n">rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">)</span>
 
-<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:425,</span> in <span class="ni">filter_input_data_by_official_id</span><span class="nt">(df, stations)</span>
-<span class="g g-Whitespace">    </span><span class="mi">424</span> <span class="k">def</span> <span class="nf">filter_input_data_by_official_id</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">stations</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">425</span>     <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stations</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">426</span>             <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stations</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:730,</span> in <span class="ni">require_keyword_args.&lt;locals&gt;.throw_if.&lt;locals&gt;.inner_f</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">728</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">729</span>     <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+<span class="ne">--&gt; </span><span class="mi">730</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:4093,</span> in <span class="ni">DataFrame.__getitem__</span><span class="nt">(self, key)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4091</span> <span class="c1"># Do we have a (boolean) 1d indexer?</span>
-<span class="g g-Whitespace">   </span><span class="mi">4092</span> <span class="k">if</span> <span class="n">com</span><span class="o">.</span><span class="n">is_bool_indexer</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-<span class="ne">-&gt; </span><span class="mi">4093</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem_bool_array</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4095</span> <span class="c1"># We are left with two options: a single key, and a collection of keys,</span>
-<span class="g g-Whitespace">   </span><span class="mi">4096</span> <span class="c1"># We interpret tuples as collections only for non-MultiIndex</span>
-<span class="g g-Whitespace">   </span><span class="mi">4097</span> <span class="n">is_single_key</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_list_like</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/sklearn.py:1090,</span> in <span class="ni">XGBModel.fit</span><span class="nt">(self, X, y, sample_weight, base_margin, eval_set, eval_metric, early_stopping_rounds, verbose, xgb_model, sample_weight_eval_set, base_margin_eval_set, feature_weights, callbacks)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1079</span>     <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1081</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1082</span>     <span class="n">model</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1083</span>     <span class="n">metric</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1088</span>     <span class="n">xgb_model</span><span class="p">,</span> <span class="n">eval_metric</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">early_stopping_rounds</span><span class="p">,</span> <span class="n">callbacks</span>
+<span class="g g-Whitespace">   </span><span class="mi">1089</span> <span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1090</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Booster</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1091</span>     <span class="n">params</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1092</span>     <span class="n">train_dmatrix</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1093</span>     <span class="bp">self</span><span class="o">.</span><span class="n">get_num_boosting_rounds</span><span class="p">(),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1094</span>     <span class="n">evals</span><span class="o">=</span><span class="n">evals</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1095</span>     <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="n">early_stopping_rounds</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1096</span>     <span class="n">evals_result</span><span class="o">=</span><span class="n">evals_result</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1097</span>     <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1098</span>     <span class="n">custom_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1099</span>     <span class="n">verbose_eval</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1100</span>     <span class="n">xgb_model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1101</span>     <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1102</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1104</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_evaluation_result</span><span class="p">(</span><span class="n">evals_result</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1105</span> <span class="k">return</span> <span class="bp">self</span>
 
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:4155,</span> in <span class="ni">DataFrame._getitem_bool_array</span><span class="nt">(self, key)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4152</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4154</span> <span class="n">indexer</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="ne">-&gt; </span><span class="mi">4155</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_take_with_is_copy</span><span class="p">(</span><span class="n">indexer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:730,</span> in <span class="ni">require_keyword_args.&lt;locals&gt;.throw_if.&lt;locals&gt;.inner_f</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">728</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">729</span>     <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+<span class="ne">--&gt; </span><span class="mi">730</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:4153,</span> in <span class="ni">NDFrame._take_with_is_copy</span><span class="nt">(self, indices, axis)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4142</span> <span class="nd">@final</span>
-<span class="g g-Whitespace">   </span><span class="mi">4143</span> <span class="k">def</span> <span class="nf">_take_with_is_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="n">Axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">4144</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">   </span><span class="mi">4145</span><span class="sd">     Internal version of the `take` method that sets the `_is_copy`</span>
-<span class="g g-Whitespace">   </span><span class="mi">4146</span><span class="sd">     attribute to keep track of the parent dataframe (using in indexing</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4151</span><span class="sd">     See the docstring of `take` for full explanation of the parameters.</span>
-<span class="g g-Whitespace">   </span><span class="mi">4152</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">4153</span>     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4154</span>     <span class="c1"># Maybe set copy if we didn&#39;t actually change the index.</span>
-<span class="g g-Whitespace">   </span><span class="mi">4155</span>     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">_get_axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)):</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/training.py:181,</span> in <span class="ni">train</span><span class="nt">(params, dtrain, num_boost_round, evals, obj, feval, maximize, early_stopping_rounds, evals_result, verbose_eval, xgb_model, callbacks, custom_metric)</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">before_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span>     <span class="k">break</span>
+<span class="ne">--&gt; </span><span class="mi">181</span> <span class="n">bst</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">after_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span>     <span class="k">break</span>
 
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:4133,</span> in <span class="ni">NDFrame.take</span><span class="nt">(self, indices, axis, **kwargs)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4128</span>     <span class="c1"># We can get here with a slice via DataFrame.__getitem__</span>
-<span class="g g-Whitespace">   </span><span class="mi">4129</span>     <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">4130</span>         <span class="n">indices</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">indices</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">indices</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span>
-<span class="g g-Whitespace">   </span><span class="mi">4131</span>     <span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">4133</span> <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">take</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">4134</span>     <span class="n">indices</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">4135</span>     <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_block_manager_axis</span><span class="p">(</span><span class="n">axis</span><span class="p">),</span>
-<span class="g g-Whitespace">   </span><span class="mi">4136</span>     <span class="n">verify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">4137</span> <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4138</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constructor_from_mgr</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">new_data</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">4139</span>     <span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;take&quot;</span>
-<span class="g g-Whitespace">   </span><span class="mi">4140</span> <span class="p">)</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/internals/managers.py:894,</span> in <span class="ni">BaseBlockManager.take</span><span class="nt">(self, indexer, axis, verify)</span>
-<span class="g g-Whitespace">    </span><span class="mi">891</span> <span class="n">indexer</span> <span class="o">=</span> <span class="n">maybe_convert_indices</span><span class="p">(</span><span class="n">indexer</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="n">verify</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">893</span> <span class="n">new_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">indexer</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">894</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reindex_indexer</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">895</span>     <span class="n">new_axis</span><span class="o">=</span><span class="n">new_labels</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">896</span>     <span class="n">indexer</span><span class="o">=</span><span class="n">indexer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">897</span>     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">898</span>     <span class="n">allow_dups</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">899</span>     <span class="n">copy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">900</span> <span class="p">)</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/internals/managers.py:687,</span> in <span class="ni">BaseBlockManager.reindex_indexer</span><span class="nt">(self, new_axis, indexer, axis, fill_value, allow_dups, copy, only_slice, use_na_proxy)</span>
-<span class="g g-Whitespace">    </span><span class="mi">680</span>     <span class="n">new_blocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice_take_blocks_ax0</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">681</span>         <span class="n">indexer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">682</span>         <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">683</span>         <span class="n">only_slice</span><span class="o">=</span><span class="n">only_slice</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">684</span>         <span class="n">use_na_proxy</span><span class="o">=</span><span class="n">use_na_proxy</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">685</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">686</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">687</span>     <span class="n">new_blocks</span> <span class="o">=</span> <span class="p">[</span>
-<span class="g g-Whitespace">    </span><span class="mi">688</span>         <span class="n">blk</span><span class="o">.</span><span class="n">take_nd</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">689</span>             <span class="n">indexer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">690</span>             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">691</span>             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">692</span>                 <span class="n">fill_value</span> <span class="k">if</span> <span class="n">fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">blk</span><span class="o">.</span><span class="n">fill_value</span>
-<span class="g g-Whitespace">    </span><span class="mi">693</span>             <span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">694</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">695</span>         <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span>
-<span class="g g-Whitespace">    </span><span class="mi">696</span>     <span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">698</span> <span class="n">new_axes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">699</span> <span class="n">new_axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_axis</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/internals/managers.py:688,</span> in <span class="ni">&lt;listcomp&gt;</span><span class="nt">(.0)</span>
-<span class="g g-Whitespace">    </span><span class="mi">680</span>     <span class="n">new_blocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice_take_blocks_ax0</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">681</span>         <span class="n">indexer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">682</span>         <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">683</span>         <span class="n">only_slice</span><span class="o">=</span><span class="n">only_slice</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">684</span>         <span class="n">use_na_proxy</span><span class="o">=</span><span class="n">use_na_proxy</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">685</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">686</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">687</span>     <span class="n">new_blocks</span> <span class="o">=</span> <span class="p">[</span>
-<span class="ne">--&gt; </span><span class="mi">688</span>         <span class="n">blk</span><span class="o">.</span><span class="n">take_nd</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">689</span>             <span class="n">indexer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">690</span>             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">691</span>             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">692</span>                 <span class="n">fill_value</span> <span class="k">if</span> <span class="n">fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">blk</span><span class="o">.</span><span class="n">fill_value</span>
-<span class="g g-Whitespace">    </span><span class="mi">693</span>             <span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">694</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">695</span>         <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span>
-<span class="g g-Whitespace">    </span><span class="mi">696</span>     <span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">698</span> <span class="n">new_axes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">699</span> <span class="n">new_axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_axis</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/internals/blocks.py:1307,</span> in <span class="ni">Block.take_nd</span><span class="nt">(self, indexer, axis, new_mgr_locs, fill_value)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1304</span>     <span class="n">allow_fill</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="g g-Whitespace">   </span><span class="mi">1306</span> <span class="c1"># Note: algos.take_nd has upcast logic similar to coerce_to_target_dtype</span>
-<span class="ne">-&gt; </span><span class="mi">1307</span> <span class="n">new_values</span> <span class="o">=</span> <span class="n">algos</span><span class="o">.</span><span class="n">take_nd</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1308</span>     <span class="n">values</span><span class="p">,</span> <span class="n">indexer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">allow_fill</span><span class="o">=</span><span class="n">allow_fill</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span>
-<span class="g g-Whitespace">   </span><span class="mi">1309</span> <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1311</span> <span class="c1"># Called from three places in managers, all of which satisfy</span>
-<span class="g g-Whitespace">   </span><span class="mi">1312</span> <span class="c1">#  these assertions</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ExtensionBlock</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">1314</span>     <span class="c1"># NB: in this case, the &#39;axis&#39; kwarg will be ignored in the</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span>     <span class="c1">#  algos.take_nd call above.</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/array_algos/take.py:117,</span> in <span class="ni">take_nd</span><span class="nt">(arr, indexer, axis, fill_value, allow_fill)</span>
-<span class="g g-Whitespace">    </span><span class="mi">114</span>     <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">indexer</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">allow_fill</span><span class="o">=</span><span class="n">allow_fill</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">116</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">117</span> <span class="k">return</span> <span class="n">_take_nd_ndarray</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">indexer</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">allow_fill</span><span class="p">)</span>
-
-<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/array_algos/take.py:162,</span> in <span class="ni">_take_nd_ndarray</span><span class="nt">(arr, indexer, axis, fill_value, allow_fill)</span>
-<span class="g g-Whitespace">    </span><span class="mi">157</span>     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">out_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">159</span> <span class="n">func</span> <span class="o">=</span> <span class="n">_get_take_nd_function</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">160</span>     <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">mask_info</span><span class="o">=</span><span class="n">mask_info</span>
-<span class="g g-Whitespace">    </span><span class="mi">161</span> <span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">162</span> <span class="n">func</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">indexer</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span> <span class="k">if</span> <span class="n">flip_order</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">165</span>     <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">T</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:2051,</span> in <span class="ni">Booster.update</span><span class="nt">(self, dtrain, iteration, fobj)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2047</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_dmatrix_features</span><span class="p">(</span><span class="n">dtrain</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2049</span> <span class="k">if</span> <span class="n">fobj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">2050</span>     <span class="n">_check_call</span><span class="p">(</span>
+<span class="ne">-&gt; </span><span class="mi">2051</span>         <span class="n">_LIB</span><span class="o">.</span><span class="n">XGBoosterUpdateOneIter</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2052</span>             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span> <span class="n">dtrain</span><span class="o">.</span><span class="n">handle</span>
+<span class="g g-Whitespace">   </span><span class="mi">2053</span>         <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2054</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2055</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">2056</span>     <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">output_margin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
