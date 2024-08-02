@@ -186,12 +186,10 @@
 <li class="toctree-l2"><a class="reference internal" href="3_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4_Predictability_of_KL_divergence.html">Predictability of Kullback-Leibler (KL) Divergence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="5_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Wasserstein Distance (WD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown.html">Markdown Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Content with notebooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown-notebooks.html">Notebooks with MyST Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Discussion.html">Dicussion</a></li>
 </ul>
 
     </div>
@@ -387,6 +385,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-input-data">Load Input Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-attribute-groups">Define attribute groups</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set">Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-randomly-permuted-target-values">Test Randomly Permuted Target Values</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
             </nav>
@@ -401,7 +404,9 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-mean-runoff">
 <h1>Predictability of Mean Runoff<a class="headerlink" href="#predictability-of-mean-runoff" title="Link to this heading">#</a></h1>
-<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called gradient boosting using the XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="markdown.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> library to see if runoff can be predicted from catchment attributes as was shown in <span id="id2">[<a class="reference internal" href="markdown.html#id8" title="Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. Water Resources Research, 54(11):8792–8812, 2018.">Addor <em>et al.</em>, 2018</a>]</span>.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called gradient boosting using the XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="3_Predictability_of_entropy.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> library to see if runoff can be predicted from catchment attributes as was shown in <span id="id2">[<a class="reference internal" href="#id9" title="Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. Water Resources Research, 54(11):8792–8812, 2018.">Addor <em>et al.</em>, 2018</a>]</span>.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -440,7 +445,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="f98d5e61-ad71-457f-bc9a-2b366a9f310f">Loading BokehJS ...</span>
+        <span id="b9d36d95-bbe6-477b-a13f-376288a4eb17">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -605,7 +610,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("f98d5e61-ad71-457f-bc9a-2b366a9f310f");
+    const el = document.getElementById("b9d36d95-bbe6-477b-a13f-376288a4eb17");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -739,7 +744,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("f98d5e61-ad71-457f-bc9a-2b366a9f310f")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("b9d36d95-bbe6-477b-a13f-376288a4eb17")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -755,6 +760,9 @@ function(Bokeh) {
   }
 }(window));</script></div>
 </div>
+</section>
+<section id="load-input-data">
+<h2>Load Input Data<a class="headerlink" href="#load-input-data" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
@@ -781,38 +789,101 @@ function(Bokeh) {
 <span class="ne">----&gt; </span><span class="mi">2</span>     <span class="n">mean_runoff</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">compute_mean_runoff</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;mean_runoff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_runoff</span>
 
-<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:485,</span> in <span class="ni">compute_mean_runoff</span><span class="nt">(row)</span>
-<span class="g g-Whitespace">    </span><span class="mi">480</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">482</span> <span class="n">count_pivot_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">stn_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">484</span> <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-<span class="ne">--&gt; </span><span class="mi">485</span>     <span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Period</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">days_in_month</span> <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">months</span><span class="p">]</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">486</span>     <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>     <span class="n">columns</span><span class="o">=</span><span class="n">months</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span> <span class="n">days_90_percent</span> <span class="o">=</span> <span class="n">days_in_month</span> <span class="o">*</span> <span class="mf">0.9</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span> <span class="c1"># Generate the boolean mask</span>
+<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:678,</span> in <span class="ni">compute_mean_runoff</span><span class="nt">(row)</span>
+<span class="g g-Whitespace">    </span><span class="mi">676</span> <span class="c1"># get data</span>
+<span class="g g-Whitespace">    </span><span class="mi">677</span> <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;official_id&#39;</span><span class="p">]</span>
+<span class="ne">--&gt; </span><span class="mi">678</span> <span class="n">df</span> <span class="o">=</span> <span class="n">get_timeseries_data</span><span class="p">(</span><span class="n">stn_id</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">679</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">stn_id</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">680</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
 
-<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:485,</span> in <span class="ni">&lt;listcomp&gt;</span><span class="nt">(.0)</span>
-<span class="g g-Whitespace">    </span><span class="mi">480</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">482</span> <span class="n">count_pivot_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">stn_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">484</span> <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-<span class="ne">--&gt; </span><span class="mi">485</span>     <span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Period</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">days_in_month</span> <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">months</span><span class="p">]</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">486</span>     <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>     <span class="n">columns</span><span class="o">=</span><span class="n">months</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span> <span class="n">days_90_percent</span> <span class="o">=</span> <span class="n">days_in_month</span> <span class="o">*</span> <span class="mf">0.9</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span> <span class="c1"># Generate the boolean mask</span>
+<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:201,</span> in <span class="ni">get_timeseries_data</span><span class="nt">(official_id, min_flow)</span>
+<span class="g g-Whitespace">    </span><span class="mi">163</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">164</span><span class="sd"> Imports streamflow data for a given station ID, processes it to handle low flow values, </span>
+<span class="g g-Whitespace">    </span><span class="mi">165</span><span class="sd"> and returns the processed DataFrame.</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">198</span><span class="sd"> 4  2020-01-05  0.0001                      True</span>
+<span class="g g-Whitespace">    </span><span class="mi">199</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">200</span> <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">STREAMFLOW_DIR</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">official_id</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">201</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">    </span><span class="mi">202</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">official_id</span><span class="si">}</span><span class="s1">_low_flow_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;discharge&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_flow</span>    
+<span class="g g-Whitespace">    </span><span class="mi">203</span> <span class="c1"># assign a small flow value instead of zero</span>
 
-<span class="nn">File ~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:485,</span> in <span class="ni">&lt;listcomp&gt;</span><span class="nt">(.0)</span>
-<span class="g g-Whitespace">    </span><span class="mi">480</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">482</span> <span class="n">count_pivot_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">stn_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">484</span> <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-<span class="ne">--&gt; </span><span class="mi">485</span>     <span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Period</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">days_in_month</span> <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">months</span><span class="p">]</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">486</span>     <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>     <span class="n">columns</span><span class="o">=</span><span class="n">months</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span> <span class="n">days_90_percent</span> <span class="o">=</span> <span class="n">days_in_month</span> <span class="o">*</span> <span class="mf">0.9</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span> <span class="c1"># Generate the boolean mask</span>
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1026,</span> in <span class="ni">read_csv</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1013</span> <span class="n">kwds_defaults</span> <span class="o">=</span> <span class="n">_refine_defaults_read</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1014</span>     <span class="n">dialect</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1015</span>     <span class="n">delimiter</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1022</span>     <span class="n">dtype_backend</span><span class="o">=</span><span class="n">dtype_backend</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1023</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1024</span> <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds_defaults</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1026</span> <span class="k">return</span> <span class="n">_read</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/readers.py:626,</span> in <span class="ni">_read</span><span class="nt">(filepath_or_buffer, kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">623</span>     <span class="k">return</span> <span class="n">parser</span>
+<span class="g g-Whitespace">    </span><span class="mi">625</span> <span class="k">with</span> <span class="n">parser</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">626</span>     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nrows</span><span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1923,</span> in <span class="ni">TextFileReader.read</span><span class="nt">(self, nrows)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1916</span> <span class="n">nrows</span> <span class="o">=</span> <span class="n">validate_integer</span><span class="p">(</span><span class="s2">&quot;nrows&quot;</span><span class="p">,</span> <span class="n">nrows</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1917</span> <span class="k">try</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1918</span>     <span class="c1"># error: &quot;ParserBase&quot; has no attribute &quot;read&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1919</span>     <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1920</span>         <span class="n">index</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1921</span>         <span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1922</span>         <span class="n">col_dict</span><span class="p">,</span>
+<span class="ne">-&gt; </span><span class="mi">1923</span>     <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>  <span class="c1"># type: ignore[attr-defined]</span>
+<span class="g g-Whitespace">   </span><span class="mi">1924</span>         <span class="n">nrows</span>
+<span class="g g-Whitespace">   </span><span class="mi">1925</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1926</span> <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1927</span>     <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py:332,</span> in <span class="ni">CParserWrapper.read</span><span class="nt">(self, nrows)</span>
+<span class="g g-Whitespace">    </span><span class="mi">328</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_check_data_length</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">alldata</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">330</span>     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">data_tups</span><span class="p">)}</span>
+<span class="ne">--&gt; </span><span class="mi">332</span>     <span class="n">names</span><span class="p">,</span> <span class="n">date_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_date_conversions</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">333</span>     <span class="n">index</span><span class="p">,</span> <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_index</span><span class="p">(</span><span class="n">date_data</span><span class="p">,</span> <span class="n">alldata</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">335</span> <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">date_data</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/base_parser.py:880,</span> in <span class="ni">ParserBase._do_date_conversions</span><span class="nt">(self, names, data)</span>
+<span class="g g-Whitespace">    </span><span class="mi">871</span> <span class="nd">@final</span>
+<span class="g g-Whitespace">    </span><span class="mi">872</span> <span class="k">def</span> <span class="nf">_do_date_conversions</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">873</span>     <span class="bp">self</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">876</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]</span> <span class="o">|</span> <span class="n">Index</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Hashable</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="g g-Whitespace">    </span><span class="mi">877</span>     <span class="c1"># returns data, columns</span>
+<span class="g g-Whitespace">    </span><span class="mi">879</span>     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">880</span>         <span class="n">data</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">_process_date_conversion</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">881</span>             <span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">882</span>             <span class="bp">self</span><span class="o">.</span><span class="n">_date_conv</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">883</span>             <span class="bp">self</span><span class="o">.</span><span class="n">parse_dates</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">884</span>             <span class="bp">self</span><span class="o">.</span><span class="n">index_col</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">885</span>             <span class="bp">self</span><span class="o">.</span><span class="n">index_names</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">886</span>             <span class="n">names</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">887</span>             <span class="n">keep_date_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">keep_date_col</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">888</span>             <span class="n">dtype_backend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_backend</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">889</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">891</span>     <span class="k">return</span> <span class="n">names</span><span class="p">,</span> <span class="n">data</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/base_parser.py:1315,</span> in <span class="ni">_process_date_conversion</span><span class="nt">(data_dict, converter, parse_spec, index_col, index_names, columns, keep_date_col, dtype_backend)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1311</span>             <span class="k">continue</span>
+<span class="g g-Whitespace">   </span><span class="mi">1313</span>     <span class="c1"># Pyarrow engine returns Series which we need to convert to</span>
+<span class="g g-Whitespace">   </span><span class="mi">1314</span>     <span class="c1"># numpy array before converter, its a no-op for other parsers</span>
+<span class="ne">-&gt; </span><span class="mi">1315</span>     <span class="n">data_dict</span><span class="p">[</span><span class="n">colspec</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1316</span>         <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="n">colspec</span><span class="p">]),</span> <span class="n">col</span><span class="o">=</span><span class="n">colspec</span>
+<span class="g g-Whitespace">   </span><span class="mi">1317</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1318</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1319</span>     <span class="n">new_name</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">old_names</span> <span class="o">=</span> <span class="n">_try_convert_dates</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1320</span>         <span class="n">converter</span><span class="p">,</span> <span class="n">colspec</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">,</span> <span class="n">orig_names</span>
+<span class="g g-Whitespace">   </span><span class="mi">1321</span>     <span class="p">)</span>
+
+<span class="nn">File ~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/io/parsers/base_parser.py:1152,</span> in <span class="ni">_make_date_converter.&lt;locals&gt;.converter</span><span class="nt">(col, *date_cols)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1149</span>     <span class="k">return</span> <span class="n">date_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="g g-Whitespace">   </span><span class="mi">1151</span> <span class="k">if</span> <span class="n">date_parser</span> <span class="ow">is</span> <span class="n">lib</span><span class="o">.</span><span class="n">no_default</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1152</span>     <span class="n">strs</span> <span class="o">=</span> <span class="n">parsing</span><span class="o">.</span><span class="n">concat_date_cols</span><span class="p">(</span><span class="n">date_cols</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1153</span>     <span class="n">date_fmt</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1154</span>         <span class="n">date_format</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date_format</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">date_format</span>
+<span class="g g-Whitespace">   </span><span class="mi">1155</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1157</span>     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
 
 <span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
@@ -822,7 +893,8 @@ function(Bokeh) {
 <p>Subdivide the attributes into related classes: terrain, land cover, soil, climate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># list all the attributes in the input dataframe</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -832,6 +904,9 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+<section id="define-attribute-groups">
+<h2>Define attribute groups<a class="headerlink" href="#define-attribute-groups" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
@@ -841,13 +916,7 @@ function(Bokeh) {
 <span class="n">soil</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logk_ice_x100&#39;</span><span class="p">,</span> <span class="s1">&#39;porosity_x100&#39;</span><span class="p">]</span>
 <span class="n">climate</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prcp&#39;</span><span class="p">,</span> <span class="s1">&#39;srad&#39;</span><span class="p">,</span> <span class="s1">&#39;swe&#39;</span><span class="p">,</span> <span class="s1">&#39;tmax&#39;</span><span class="p">,</span> <span class="s1">&#39;tmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vp&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;high_prcp_duration&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_freq&#39;</span><span class="p">,</span> <span class="s1">&#39;low_prcp_duration&#39;</span><span class="p">]</span>
 <span class="n">all_attributes</span> <span class="o">=</span> <span class="n">terrain</span> <span class="o">+</span> <span class="n">land_cover</span> <span class="o">+</span> <span class="n">soil</span> <span class="o">+</span> <span class="n">climate</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">all_attributes</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">all_attributes</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -859,7 +928,16 @@ function(Bokeh) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">num_boost_rounds</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;runoff_prediction_results&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_folder</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">results_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">num_boost_rounds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">):</span>
     
     <span class="c1"># randomly select 5% of the stations to leave out for a hold-out test set</span>
     <span class="c1"># to ensure none of the data are seen in training    </span>
@@ -891,10 +969,6 @@ function(Bokeh) {
             <span class="s2">&quot;sampling_method&quot;</span><span class="p">:</span> <span class="s1">&#39;gradient_based&#39;</span><span class="p">,</span>
             <span class="s2">&quot;tree_method&quot;</span><span class="p">:</span> <span class="s1">&#39;hist&#39;</span><span class="p">,</span>
         <span class="p">}</span>
-        
-        <span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="s1">&#39;runoff_prediction_results&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">results_folder</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">results_folder</span><span class="p">)</span>
 
         <span class="n">results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_lr_</span><span class="si">{</span><span class="n">ss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_sub_</span><span class="si">{</span><span class="n">cs</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">_col.csv&#39;</span>
         <span class="n">results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_folder</span><span class="p">,</span> <span class="n">results_fname</span><span class="p">)</span>
@@ -976,26 +1050,7 @@ function(Bokeh) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
-<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
-<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2000</span>
-<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">20</span>
-
-<span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">attribute_set_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;climate&#39;</span><span class="p">:</span> <span class="n">climate</span><span class="p">,</span> 
-    <span class="s1">&#39;+land_cover&#39;</span><span class="p">:</span> <span class="n">land_cover</span><span class="p">,</span>
-    <span class="s1">&#39;+terrain&#39;</span><span class="p">:</span> <span class="n">terrain</span><span class="p">,</span> 
-    <span class="s1">&#39;+soil&#39;</span><span class="p">:</span> <span class="n">soil</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order</span> <span class="n">results_folder</span><span class="p">):</span>
     <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">)</span>
         
@@ -1011,7 +1066,10 @@ function(Bokeh) {
         <span class="n">input_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">test_attributes</span> <span class="o">+</span> <span class="p">[</span><span class="n">target_column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="c1"># reset the index to ensure the random selection is done properly</span>
-        <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span><span class="n">set_name</span><span class="p">,</span> <span class="n">test_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">)</span>
+        <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">run_trials</span><span class="p">(</span>
+            <span class="n">set_name</span><span class="p">,</span> <span class="n">test_attributes</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">train_indices</span><span class="p">,</span> 
+            <span class="n">test_indices</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">,</span> <span class="n">results_folder</span>
+        <span class="p">)</span>
 
         <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
         <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
@@ -1025,6 +1083,25 @@ function(Bokeh) {
             <span class="s1">&#39;test_mae&#39;</span><span class="p">:</span> <span class="n">test_mae</span><span class="p">,</span> <span class="s1">&#39;test_rmse&#39;</span><span class="p">:</span> <span class="n">test_rmse</span><span class="p">,</span>
         <span class="p">}</span> 
     <span class="k">return</span> <span class="n">all_test_results</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
+<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
+<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">attribute_set_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;climate&#39;</span><span class="p">:</span> <span class="n">climate</span><span class="p">,</span> 
+    <span class="s1">&#39;+land_cover&#39;</span><span class="p">:</span> <span class="n">land_cover</span><span class="p">,</span>
+    <span class="s1">&#39;+terrain&#39;</span><span class="p">:</span> <span class="n">terrain</span><span class="p">,</span> 
+    <span class="s1">&#39;+soil&#39;</span><span class="p">:</span> <span class="n">soil</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1079,61 +1156,57 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+<section id="set">
+<h2>Set<a class="headerlink" href="#set" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">group_order_1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">]</span>
-<span class="n">group_order_2</span> <span class="o">=</span> <span class="n">group_order_1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">group_order_3</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">,</span> <span class="s1">&#39;climate&#39;</span><span class="p">]</span>
-<span class="n">group_order_4</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;+soil&#39;</span><span class="p">,</span> <span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_1_results</span> <span class="o">=</span> <span class="n">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order_1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Processing climate attribute set
-    50.86 ± 9.511 RMSE mean on the test set (N=20)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/danbot/Documents/code/data_analysis/lib/python3.10/site-packages/xgboost/core.py:160: UserWarning: [12:18:35] WARNING: /workspace/src/common/error_msg.cc:58: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
-Potential solutions:
-- Use a data structure that matches the device ordinal in the booster.
-- Set the device for booster before call to inplace_predict.
-
-This warning will only be shown once.
-
-  warnings.warn(smsg, UserWarning)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  climate
-   held-out test rmse: 94.55, mae: 43.30
-
- Processing +terrain attribute set
-    21.60 ± 7.149 RMSE mean on the test set (N=20)
-  +terrain
-   held-out test rmse: 49.34, mae: 9.42
-
- Processing +land_cover attribute set
-    18.87 ± 7.182 RMSE mean on the test set (N=20)
-  +land_cover
-   held-out test rmse: 44.49, mae: 8.82
-
- Processing +soil attribute set
-    22.48 ± 7.133 RMSE mean on the test set (N=20)
-  +soil
-   held-out test rmse: 45.87, mae: 9.55
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">group_1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">]</span>
+<span class="n">group_2</span> <span class="o">=</span> <span class="n">group_order_1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">group_3</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">,</span> <span class="s1">&#39;+soil&#39;</span><span class="p">,</span> <span class="s1">&#39;climate&#39;</span><span class="p">]</span>
+<span class="n">group_4</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;+soil&#39;</span><span class="p">,</span> <span class="s1">&#39;climate&#39;</span><span class="p">,</span> <span class="s1">&#39;+land_cover&#39;</span><span class="p">,</span> <span class="s1">&#39;+terrain&#39;</span><span class="p">]</span>
+<span class="n">attribute_group_orders</span> <span class="o">=</span> <span class="p">[</span><span class="n">group_1</span><span class="p">,</span> <span class="n">group_2</span><span class="p">,</span> <span class="n">group_3</span><span class="p">,</span> <span class="n">group_4</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_1_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">grp_1_results</span><span class="p">,</span> <span class="n">group_order_1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Entropy_prediction_results.npy&#39;</span>
+<span class="n">test_results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">test_results_fname</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">):</span>
+    <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_entropy_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">all_test_results</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">group_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">attribute_group_orders</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">test_results_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Mean_runoff_prediction_results_</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">.npy&#39;</span>
+    <span class="n">test_results_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">test_results_fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">):</span>
+        <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">all_test_results</span><span class="p">)</span>
+    
+    <span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="n">group</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="n">all_test_results</span><span class="p">}</span>
+    
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">grp_1_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">],</span> <span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">])</span>
 <span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_1_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
 </pre></div>
@@ -1169,7 +1242,10 @@ This warning will only be shown once.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_2_results</span> <span class="o">=</span> <span class="n">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order_2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">grp_2_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">],</span> <span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">])</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_2_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1199,8 +1275,9 @@ This warning will only be shown once.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_2_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">grp_2_results</span><span class="p">,</span> <span class="n">group_order_2</span><span class="p">)</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_2_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">grp_3_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">],</span> <span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">])</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_3_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1235,38 +1312,9 @@ This warning will only be shown once.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_3_results</span> <span class="o">=</span> <span class="n">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order_3</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Processing +land_cover attribute set
-    31.31 ± 4.011 RMSE mean on the test set (N=20)
-  +land_cover
-   held-out test rmse: 95.53, mae: 34.30
-
- Processing +terrain attribute set
-    15.82 ± 1.890 RMSE mean on the test set (N=20)
-  +terrain
-   held-out test rmse: 60.75, mae: 17.97
-
- Processing +soil attribute set
-    15.63 ± 2.194 RMSE mean on the test set (N=20)
-  +soil
-   held-out test rmse: 62.10, mae: 17.96
-
- Processing climate attribute set
-    14.46 ± 2.925 RMSE mean on the test set (N=20)
-  climate
-   held-out test rmse: 63.59, mae: 16.30
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_3_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">grp_3_results</span><span class="p">,</span> <span class="n">group_order_3</span><span class="p">)</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_3_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">grp_4_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">],</span> <span class="n">group_results</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">])</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_4_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1299,72 +1347,9 @@ This warning will only be shown once.
   }
 })(window);</script></div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_4_results</span> <span class="o">=</span> <span class="n">predict_runoff_from_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">group_order_4</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Processing +soil attribute set
-    49.72 ± 4.015 RMSE mean on the test set (N=20)
-  +soil
-   held-out test rmse: 141.31, mae: 55.00
-
- Processing climate attribute set
-    43.92 ± 6.267 RMSE mean on the test set (N=20)
-  climate
-   held-out test rmse: 138.78, mae: 53.03
-
- Processing +land_cover attribute set
-    29.91 ± 3.635 RMSE mean on the test set (N=20)
-  +land_cover
-   held-out test rmse: 80.82, mae: 26.59
-
- Processing +terrain attribute set
-    14.79 ± 2.820 RMSE mean on the test set (N=20)
-  +terrain
-   held-out test rmse: 63.37, mae: 16.10
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp_4_plots</span> <span class="o">=</span> <span class="n">create_results_plots</span><span class="p">(</span><span class="n">grp_4_results</span><span class="p">,</span> <span class="n">group_order_4</span><span class="p">)</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">gridplot</span><span class="p">(</span><span class="n">grp_4_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-<span class="n">show</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">
-  <div id="e768432b-9245-412c-b134-01e25b96fe1f" data-root-id="p1504" style="display: contents;"></div>
-</div><script type="application/javascript">(function(root) {
-  function embed_document(root) {
-  const docs_json = {"6d0d7c29-c539-48b4-8246-0f3887a005b7":{"version":"3.5.0","title":"Bokeh Application","roots":[{"type":"object","name":"GridPlot","id":"p1504","attributes":{"rows":null,"cols":null,"toolbar":{"type":"object","name":"Toolbar","id":"p1503","attributes":{"tools":[{"type":"object","name":"ToolProxy","id":"p1497","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1408"},{"type":"object","name":"PanTool","id":"p1464"}]}},{"type":"object","name":"ToolProxy","id":"p1498","attributes":{"tools":[{"type":"object","name":"WheelZoomTool","id":"p1409","attributes":{"renderers":"auto"}},{"type":"object","name":"WheelZoomTool","id":"p1465","attributes":{"renderers":"auto"}}]}},{"type":"object","name":"ToolProxy","id":"p1499","attributes":{"tools":[{"type":"object","name":"BoxZoomTool","id":"p1410","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1411","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p1417","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p1416","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}},{"type":"object","name":"BoxZoomTool","id":"p1466","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1467","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p1473","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p1472","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}}]}},{"type":"object","name":"SaveTool","id":"p1500"},{"type":"object","name":"ToolProxy","id":"p1501","attributes":{"tools":[{"type":"object","name":"ResetTool","id":"p1419"},{"type":"object","name":"ResetTool","id":"p1475"}]}},{"type":"object","name":"ToolProxy","id":"p1502","attributes":{"tools":[{"type":"object","name":"HelpTool","id":"p1420"},{"type":"object","name":"HelpTool","id":"p1476"}]}}]}},"children":[[{"type":"object","name":"Figure","id":"p1385","attributes":{"width":350,"height":300,"x_range":{"type":"object","name":"FactorRange","id":"p1395","attributes":{"factors":["+soil","climate","+land_cover","+terrain"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p1387"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p1396"},"y_scale":{"type":"object","name":"LinearScale","id":"p1397"},"title":{"type":"object","name":"Title","id":"p1388","attributes":{"text":"Runoff Predictability"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1427","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1382","attributes":{"selected":{"type":"object","name":"Selection","id":"p1383","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1384"},"data":{"type":"map","entries":[["x",["+soil","climate","+land_cover","+terrain"]],["y1",[141.31071546054164,138.77553204297604,80.81949092722888,63.37318081274692]],["y2",[55.00441327558215,53.033250516931595,26.59386547121485,16.102968423833065]]]}}},"view":{"type":"object","name":"CDSView","id":"p1428","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1429"}}},"glyph":{"type":"object","name":"Line","id":"p1424","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1425","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1426","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y1"},"line_color":"green","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1438","attributes":{"data_source":{"id":"p1382"},"view":{"type":"object","name":"CDSView","id":"p1439","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1440"}}},"glyph":{"type":"object","name":"Line","id":"p1435","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1436","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1437","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y2"},"line_color":"dodgerblue","line_alpha":0.2,"line_width":3}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1394","attributes":{"tools":[{"id":"p1408"},{"id":"p1409"},{"id":"p1410"},{"type":"object","name":"SaveTool","id":"p1418"},{"id":"p1419"},{"id":"p1420"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p1403","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1404","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1405"},"axis_label":"RMSE","major_label_policy":{"type":"object","name":"AllLabels","id":"p1406"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p1398","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p1399"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p1400"},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1401"}}}],"center":[{"type":"object","name":"Grid","id":"p1402","attributes":{"axis":{"id":"p1398"}}},{"type":"object","name":"Grid","id":"p1407","attributes":{"dimension":1,"axis":{"id":"p1403"}}},{"type":"object","name":"Legend","id":"p1430","attributes":{"background_fill_alpha":0.6,"items":[{"type":"object","name":"LegendItem","id":"p1431","attributes":{"label":{"type":"value","value":"rmse"},"renderers":[{"id":"p1427"}]}},{"type":"object","name":"LegendItem","id":"p1441","attributes":{"label":{"type":"value","value":"mae"},"renderers":[{"id":"p1438"}]}}]}}]}},0,0],[{"type":"object","name":"Figure","id":"p1442","attributes":{"width":350,"height":300,"x_range":{"type":"object","name":"DataRange1d","id":"p1443"},"y_range":{"type":"object","name":"DataRange1d","id":"p1444"},"x_scale":{"type":"object","name":"LinearScale","id":"p1452"},"y_scale":{"type":"object","name":"LinearScale","id":"p1453"},"title":{"type":"object","name":"Title","id":"p1445","attributes":{"text":"Test: best model +terrain (N=161)"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1483","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1477","attributes":{"selected":{"type":"object","name":"Selection","id":"p1478","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1479"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"RWWnhviZwT+8l1NDlkUhQGMRSLIHNTlAayqo0h0W4z9Y7x8mc2F+P85FBmQgumQ/bc5TD8XBekAhsHXw7971P5MI8XhQGYg/qzL1IRgnTT/fmF8LVEwMQPNc34QIXP0/K2MYpFIRK0C/isnu+vF3QEq+Qt+IYcs/UJ4EzD7L+j929DCWcpREQPc2BG6xpVZAZ3YiQMzNS0A9NQhfgYccQKUmMF3J278/X2/BSxJqLUAcUx8OFhhhQAFR6jv24jdAVXnpC8X6XEDdlZVguiv0P49WX87V+Pw/m7/XkwQBDUBlmIFDZ9hHQNV4lgJxNOw//YGZBgBnzz+NCWrP19XtP0MPnpmP3DFA9i+a5qoAoz/Awk4XqzqhPymUXoUw9PE/dZtYubRc1z/hscp0/OcCQPi+Q8w65Y8//tLgmcyyzD/uDYd60a0iQAQ1gF/L7dI/abWZ89GJ2z9ff1fcOxITQG42kj0N/ChA4X/fDmACMUDQAW6ALRJHQAmkgNDCyCJAtEVVwItczj8ZlaISnChFQCeNrBFL3wdAZwMgHIKC1T/mKbbBjp7CP8hfAehnuBRAu1sqGkyfQkB2rIco0+CrPxtUxW4HiqY/QUZpVmzaDkB7tdJm7YWoP2oh64IucARAcGMUUYWr9T8MrCPEC3P1P5lBkgOAV0hAONq0LEJYMkBZCZ3PTlmtPxjocrkCIjlAIOJcMD4i2j8l2SjeABTzP4MN969E9DFAZH1v2gRwd0CFrJmpg7DaP6AwGiB3wh1ADZgkHwy9B0CpMc77jN50QPzmnbC3QRlA5jQOZcWF1D+nrIqKtuRFQHXzt4ix5RFAW96RevqYKUAcMCJxBgjzP59OmDezdPU/3zV4Of636j/4SgWDNr/RP4s/DsNPD0lAgXJZgPMZ3D/7ZflFWS/yP2vaPsPpHsI/VYie0TxfgkBAluGYxJA/QNNDVXGtSgNAeYzN+gvgwj9JtNdRtRUOQAsPpUSOjShAH5AqjejKM0BAEWy6cjJdQOcKlExx2d8/7xa0nu/gcUBOo3LSD1QSQCd1iz8QMwJA9fn+IOS4R0BwsWMIGoaLQG1QGOD7v/Q/D2shha1uwz83v2y0g2RKQP5Zd0wM/94/TmdUen7rYECcnccOyYnmP7cA4JR6ssc/Z22RbbVCBkD99+aKB3C2P4PPvgAIyuY/vnCnwYOVkUCiBPd+UM5BQCSjzjIm8wtAzbjAk2gFuz+618at0oQBQEVedIKf9BJAMedZ7QgLdkB0ZOFFgwbMPxQ/XZItuag/WRQ5L9Mj4D8nPiLTFs0CQO6POErEQ5o/ndH4ChIP0z847EcRJlf+P2U2zj7GhuQ/VlhQBLQswj/rbIFtQhV4QIxCp3Fu7IVACVqvjvLJ6T/5ztrVYCUnQFFBAOq58sk/vbn7Ck0qAEBQD/ectX7nP2fAvDSxngpAC09fPcoNqD8w0k7bgz8WQNziA1GIA/c/O90a00uxkz8H2AVdrG0RQMsNqq5JLhJAL0RVEG85UkDPYiXIw9wOQL+zT+ydP9A/vb/JpzmSR0AtPuLChENTQI1ZYhnGGss/RH59KBxM6j/D/ncVR4AqQFOCdrbzvilA8WEU74pHE0A1F2EZ/FnVPzaayrfnICNAS/LSKbbPsz9QoBbjFXARQB32DYIoRQ5ABQBJlb5v8D9ozuOl2svjP9ilQXNQ2NI/c+Bf8JHE9D9AAJxYzKHzPw=="},"shape":[161],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"AHs1P2JRSUEwBBFCgFltP4Ceqb6Ahd2+7SYPRNB5GEAAj/6+QMwIv1D8O0B8Md9ALg2yQckxkUMAnMy94AnyP2DYf0HIQ5pCfC5SQhyb9kAAVTG+kmt4QcXHNENOx+pBLicGQaw+rkCQ3xBAkOcyQJ6LPEJAu3I/gAKsvqCugj9+4rhBAOC0PQAEtT4A8H9AgKSRPtA9JEAAmCS9wKQfPxfShkEAIFS9AARRvrIxNEHoMAVBgLicvvCbM0L8Be5AgOyFPvdVEULA1JBAgCs9v4CdZT/k1hBBXYYuQsCjE7+gspC/gAoQQYA4Vr+mXwJBACWWvkDBVz9tAhZCThdnQQBtQb64of5BAF6GPpCTH0Amm2hBAtKzQ4AsNj/soTxBdN7BQF946kM8DgNBALU9PlSlAkJgb5hAxoxLQWCzgz9w3hRAUBcPQAD1tT/UOzRCwKF7P6DJOkCAZUE/DB8zRDImzEF8JbdAgO+BPoBF5r5E/RJBmjLIQdh8jUFAl2U/7kpbQ+77BEHwxSlA6NBSQvtTkEOgmAJAIHtAQORDO0Ig4HpABEnlQsDqIkAAiLA+EJ4oQMAPYL9gMFBALhW/RBdjDEJALCxAkEvrQEBACUAMDShBRtfbQwCeHT4AIA2+QC0sQFh7gECAbtA+oNSRvzjwokCQTMBAAMjdPVUVkENfH1NEgJTLP9vUm0GAD6s/vFOsQFAVQUCsxMtAoM/5P1w90kDAk+Y/QFO5v4hUp0A4lf9Awo58QvR6AkFAtYK/rREMQm8FiEKAMIK/gF2rPsOajUGZTudB4FQvQICwwT72dCtBAJUZvnCePEAYefFAgDHYPyDUckDAk05A4PSNP0DVH0A="},"shape":[161],"dtype":"float32","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1484","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1485"}}},"glyph":{"type":"object","name":"Scatter","id":"p1480","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.8},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"Scatter","id":"p1481","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.1},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"Scatter","id":"p1482","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"size":{"type":"value","value":3},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.2},"hatch_alpha":{"type":"value","value":0.2}}}}},{"type":"object","name":"GlyphRenderer","id":"p1492","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1486","attributes":{"selected":{"type":"object","name":"Selection","id":"p1487","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1488"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"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"},"shape":[1000],"dtype":"float64","order":"little"}],["y",[-1.3302659011125066,-0.16583430456483716,0.9985972919828323,2.1630288885305022,3.3274604850781726,4.491892081625842,5.656323678173512,6.820755274721181,7.985186871268851,9.14961846781652,10.31405006436419,11.478481660911859,12.64291325745953,13.8073448540072,14.97177645055487,16.136208047102535,17.300639643650207,18.465071240197876,19.629502836745544,20.793934433293217,21.958366029840885,23.122797626388554,24.287229222936222,25.451660819483894,26.616092416031563,27.78052401257923,28.944955609126904,30.109387205674572,31.273818802222245,32.43825039876991,33.60268199531758,34.767113591865254,35.93154518841292,37.095976784960584,38.260408381508256,39.424839978055935,40.5892715746036,41.753703171151265,42.91813476769894,44.08256636424661,45.246997960794275,46.41142955734194,47.57586115388962,48.74029275043729,49.904724346984956,51.06915594353262,52.23358754008029,53.398019136627966,54.56245073317564,55.7268823297233,56.891313926270975,58.05574552281865,59.22017711936631,60.38460871591398,61.54904031246165,62.71347190900932,63.87790350555699,65.04233510210466,66.20676669865233,67.3711982952,68.53562989174767,69.70006148829535,70.86449308484302,72.02892468139069,73.19335627793836,74.35778787448604,75.52221947103368,76.68665106758138,77.85108266412902,79.0155142606767,80.17994585722437,81.34437745377204,82.50880905031971,83.67324064686738,84.83767224341506,86.00210383996273,87.1665354365104,88.33096703305804,89.49539862960575,90.65983022615342,91.82426182270106,92.98869341924873,94.1531250157964,95.31755661234408,96.48198820889175,97.64641980543942,98.8108514019871,99.97528299853477,101.13971459508244,102.30414619163008,103.46857778817775,104.63300938472543,105.7974409812731,106.96187257782077,108.12630417436844,109.29073577091611,110.45516736746379,111.61959896401146,112.7840305605591,113.9484621571068,115.11289375365448,116.27732535020212,117.44175694674982,118.60618854329746,119.77062013984514,120.93505173639281,122.09948333294048,123.26391492948815,124.42834652603582,125.5927781225835,126.75720971913117,127.92164131567881,129.08607291222648,130.25050450877416,131.4149361053218,132.5793677018695,133.74379929841714,134.90823089496482,136.0726624915125,137.23709408806016,138.40152568460783,139.5659572811555,140.73038887770318,141.89482047425085,143.05925207079852,144.22368366734617,145.38811526389387,146.5525468604415,147.71697845698918,148.88141005353688,150.04584165008453,151.2102732466322,152.37470484317984,153.53913643972754,154.70356803627521,155.86799963282286,157.03243122937056,158.19686282591823,159.36129442246587,160.52572601901355,161.69015761556125,162.8545892121089,164.01902080865656,165.18345240520424,166.3478840017519,167.51231559829958,168.67674719484722,169.84117879139492,171.00561038794257,172.17004198449024,173.33447358103794,174.49890517758558,175.66333677413326,176.82776837068096,177.9921999672286,179.15663156377627,180.32106316032394,181.48549475687162,182.6499263534193,183.81435794996693,184.9787895465146,186.1432211430623,187.30765273960995,188.47208433615762,189.6365159327053,190.80094752925297,191.96537912580064,193.12981072234828,194.29424231889598,195.45867391544365,196.6231055119913,197.787537108539,198.95196870508667,200.11640030163431,201.28083189818202,202.44526349472966,203.60969509127733,204.774126687825,205.93855828437268,207.10298988092035,208.267421477468,209.4318530740157,210.59628467056336,211.760716267111,212.92514786365868,214.08957946020638,215.25401105675402,216.4184426533017,217.5828742498494,218.74730584639704,219.9117374429447,221.07616903949236,222.24060063604006,223.40503223258773,224.56946382913537,225.73389542568307,226.89832702223072,228.0627586187784,229.22719021532606,230.39162181187373,231.5560534084214,232.72048500496908,233.88491660151675,235.04934819806442,236.2137797946121,237.37821139115974,238.54264298770744,239.70707458425508,240.87150618080275,242.03593777735045,243.2003693738981,244.36480097044577,245.52923256699341,246.69366416354111,247.8580957600888,249.02252735663643,250.18695895318413,251.3513905497318,252.51582214627945,253.68025374282712,254.8446853393748,256.00911693592246,257.17354853247014,258.3379801290178,259.5024117255655,260.66684332211315,261.8312749186608,262.9957065152085,264.16013811175617,265.3245697083039,266.4890013048515,267.6534329013992,268.81786449794686,269.98229609449453,271.1467276910422,272.3111592875899,273.47559088413755,274.6400224806852,275.80445407723283,276.96888567378056,278.13331727032823,279.29774886687585,280.4621804634236,281.62661205997125,282.79104365651887,283.9554752530666,285.11990684961427,286.2843384461619,287.4487700427096,288.6132016392573,289.7776332358049,290.94206483235257,292.10649642890024,293.2709280254479,294.4353596219956,295.59979121854326,296.76422281509093,297.9286544116386,299.0930860081863,300.25751760473395,301.4219492012816,302.5863807978293,303.75081239437696,304.91524399092464,306.07967558747225,307.24410718402,308.4085387805676,309.57297037711527,310.737401973663,311.9018335702106,313.0662651667583,314.230696763306,315.39512835985363,316.5595599564013,317.72399155294903,318.88842314949665,320.0528547460443,321.21728634259205,322.38171793913966,323.54614953568733,324.710581132235,325.8750127287827,327.03944432533035,328.20387592187797,329.3683075184257,330.53273911497337,331.697170711521,332.8616023080687,334.0260339046164,335.190465501164,336.3548970977117,337.5193286942594,338.683760290807,339.84819188735474,341.01262348390236,342.17705508045003,343.3414866769977,344.5059182735454,345.67034987009305,346.8347814666407,347.9992130631884,349.16364465973606,350.32807625628374,351.4925078528314,352.6569394493791,353.82137104592675,354.9858026424744,356.1502342390221,357.3146658355697,358.47909743211744,359.6435290286651,360.80796062521273,361.97239222176046,363.13682381830813,364.30125541485575,365.4656870114034,366.63011860795115,367.79455020449876,368.95898180104643,370.12341339759416,371.2878449941418,372.45227659068945,373.6167081872372,374.7811397837848,375.94557138033247,377.11000297688014,378.2744345734278,379.4388661699755,380.6032977665231,381.7677293630708,382.9321609596185,384.0965925561661,385.26102415271384,386.4254557492615,387.58988734580913,388.75431894235686,389.91875053890453,391.08318213545215,392.2476137319999,393.4120453285475,394.57647692509516,395.7409085216429,396.9053401181905,398.0697717147382,399.2342033112859,400.3986349078335,401.5630665043812,402.72749810092887,403.89192969747654,405.0563612940242,406.22079289057183,407.38522448711956,408.54965608366723,409.71408768021485,410.8785192767626,412.04295087331025,413.20738246985786,414.3718140664056,415.53624566295326,416.7006772595009,417.86510885604855,419.0295404525963,420.1939720491439,421.35840364569157,422.5228352422393,423.6872668387869,424.8516984353346,426.01613003188226,427.1805616284299,428.3449932249776,429.5094248215253,430.67385641807294,431.8382880146206,433.0027196111683,434.16715120771596,435.33158280426363,436.4960144008113,437.660445997359,438.82487759390665,439.98930919045426,441.153740787002,442.3181723835496,443.4826039800973,444.647035576645,445.8114671731926,446.9758987697403,448.140330366288,449.30476196283564,450.4691935593833,451.63362515593104,452.79805675247866,453.96248834902633,455.126919945574,456.2913515421217,457.45578313866935,458.62021473521696,459.7846463317647,460.94907792831236,462.11350952486,463.2779411214077,464.4423727179554,465.606804314503,466.7712359110507,467.9356675075984,469.100099104146,470.26453070069374,471.4289622972414,472.593393893789,473.75782549033676,474.9222570868844,476.08668868343204,477.2511202799797,478.4155518765274,479.57998347307506,480.74441506962273,481.9088466661704,483.0732782627181,484.23770985926575,485.4021414558134,486.5665730523611,487.73100464890877,488.89543624545644,490.0598678420041,491.2242994385517,492.3887310350994,493.5531626316471,494.71759422819474,495.8820258247424,497.04645742129014,498.21088901783776,499.37532061438543,500.53975221093316,501.7041838074808,502.86861540402845,504.0330470005762,505.1974785971238,506.36191019367146,507.52634179021913,508.6907733867668,509.8552049833145,511.01963657986215,512.1840681764099,513.3484997729576,514.5129313695052,515.6773629660529,516.8417945626005,518.0062261591482,519.1706577556959,520.3350893522436,521.4995209487912,522.6639525453389,523.8283841418865,524.9928157384343,526.1572473349819,527.3216789315296,528.4861105280772,529.6505421246248,530.8149737211725,531.9794053177202,533.1438369142679,534.3082685108155,535.4727001073632,536.6371317039109,537.8015633004585,538.9659948970061,540.130426493554,541.2948580901016,542.4592896866492,543.6237212831969,544.7881528797445,545.9525844762921,547.11701607284,548.2814476693876,549.4458792659352,550.610310862483,551.7747424590306,552.9391740555782,554.103605652126,555.2680372486736,556.4324688452213,557.596900441769,558.7613320383166,559.9257636348642,561.0901952314119,562.2546268279597,563.4190584245073,564.5834900210549,565.7479216176026,566.9123532141502,568.0767848106979,569.2412164072457,570.4056480037933,571.5700796003409,572.7345111968887,573.8989427934363,575.0633743899839,576.2278059865317,577.3922375830793,578.556669179627,579.7211007761747,580.8855323727223,582.0499639692699,583.2143955658177,584.3788271623654,585.543258758913,586.7076903554607,587.8721219520083,589.036553548556,590.2009851451037,591.3654167416514,592.529848338199,593.6942799347468,594.8587115312944,596.023143127842,597.1875747243896,598.3520063209373,599.5164379174851,600.6808695140327,601.8453011105804,603.009732707128,604.1741643036756,605.3385959002234,606.5030274967711,607.6674590933187,608.8318906898664,609.996322286414,611.1607538829617,612.3251854795094,613.489617076057,614.6540486726047,615.8184802691525,616.9829118657001,618.1473434622477,619.3117750587954,620.476206655343,621.6406382518908,622.8050698484385,623.9695014449861,625.1339330415337,626.2983646380815,627.4627962346291,628.6272278311768,629.7916594277245,630.9560910242722,632.1205226208198,633.2849542173674,634.4493858139151,635.6138174104627,636.7782490070105,637.9426806035582,639.1071122001058,640.2715437966534,641.4359753932011,642.6004069897488,643.7648385862965,644.9292701828442,646.0937017793918,647.2581333759395,648.4225649724872,649.5869965690348,650.7514281655825,651.9158597621303,653.0802913586779,654.2447229552255,655.4091545517732,656.5735861483208,657.7380177448684,658.9024493414163,660.0668809379639,661.2313125345115,662.3957441310592,663.5601757276069,664.7246073241545,665.8890389207022,667.0534705172499,668.2179021137975,669.3823337103452,670.5467653068929,671.7111969034405,672.8756284999881,674.040060096536,675.2044916930836,676.3689232896312,677.5333548861789,678.6977864827265,679.8622180792742,681.026649675822,682.1910812723696,683.3555128689172,684.519944465465,685.6843760620126,686.8488076585602,688.0132392551079,689.1776708516556,690.3421024482033,691.506534044751,692.6709656412986,693.8353972378462,694.999828834394,696.1642604309417,697.3286920274893,698.4931236240369,699.6575552205846,700.8219868171323,701.9864184136799,703.1508500102277,704.3152816067753,705.479713203323,706.6441447998707,707.8085763964183,708.9730079929659,710.1374395895136,711.3018711860614,712.466302782609,713.6307343791567,714.7951659757043,715.9595975722519,717.1240291687997,718.2884607653474,719.452892361895,720.6173239584427,721.7817555549904,722.946187151538,724.1106187480857,725.2750503446334,726.439481941181,727.6039135377288,728.7683451342764,729.932776730824,731.0972083273716,732.2616399239193,733.4260715204671,734.5905031170147,735.7549347135624,736.91936631011,738.0837979066577,739.2482295032054,740.4126610997531,741.5770926963007,742.7415242928485,743.9059558893961,745.0703874859437,746.2348190824914,747.399250679039,748.5636822755868,749.7281138721345,750.8925454686821,752.0569770652297,753.2214086617774,754.3858402583251,755.5502718548728,756.7147034514205,757.8791350479681,759.0435666445157,760.2079982410635,761.3724298376111,762.5368614341587,763.7012930307066,764.8657246272542,766.0301562238018,767.1945878203494,768.3590194168971,769.5234510134447,770.6878826099925,771.8523142065402,773.0167458030878,774.1811773996354,775.3456089961832,776.5100405927308,777.6744721892785,778.8389037858262,780.0033353823738,781.1677669789215,782.3321985754692,783.4966301720168,784.6610617685644,785.8254933651123,786.9899249616599,788.1543565582075,789.3187881547552,790.4832197513028,791.6476513478505,792.8120829443983,793.9765145409459,795.1409461374935,796.3053777340413,797.4698093305889,798.6342409271365,799.7986725236842,800.963104120232,802.1275357167796,803.2919673133272,804.4563989098749,805.6208305064225,806.7852621029701,807.949693699518,809.1141252960656,810.2785568926132,811.4429884891609,812.6074200857086,813.7718516822562,814.936283278804,816.1007148753516,817.2651464718992,818.429578068447,819.5940096649946,820.7584412615422,821.9228728580899,823.0873044546377,824.2517360511853,825.416167647733,826.5805992442806,827.7450308408282,828.9094624373759,830.0738940339237,831.2383256304713,832.4027572270189,833.5671888235667,834.7316204201143,835.8960520166619,837.0604836132096,838.2249152097573,839.389346806305,840.5537784028527,841.7182099994003,842.8826415959479,844.0470731924956,845.2115047890434,846.375936385591,847.5403679821387,848.7047995786863,849.869231175234,851.0336627717817,852.1980943683294,853.362525964877,854.5269575614248,855.6913891579724,856.85582075452,858.0202523510677,859.1846839476153,860.349115544163,861.5135471407108,862.6779787372584,863.842410333806,865.0068419303536,866.1712735269014,867.3357051234491,868.5001367199967,869.6645683165444,870.828999913092,871.9934315096397,873.1578631061874,874.3222947027351,875.4867262992827,876.6511578958305,877.8155894923781,878.9800210889257,880.1444526854734,881.308884282021,882.4733158785688,883.6377474751165,884.8021790716641,885.9666106682117,887.1310422647595,888.2954738613071,889.4599054578548,890.6243370544025,891.7887686509501,892.9532002474978,894.1176318440455,895.2820634405931,896.4464950371407,897.6109266336886,898.7753582302362,899.9397898267838,901.1042214233314,902.2686530198791,903.4330846164268,904.5975162129745,905.7619478095222,906.9263794060698,908.0908110026174,909.2552425991652,910.4196741957128,911.5841057922604,912.7485373888082,913.9129689853559,915.0774005819035,916.2418321784512,917.4062637749988,918.5706953715464,919.7351269680943,920.8995585646419,922.0639901611895,923.2284217577372,924.3928533542849,925.5572849508325,926.7217165473803,927.8861481439279,929.0505797404755,930.2150113370233,931.3794429335709,932.5438745301185,933.7083061266661,934.872737723214,936.0371693197616,937.2016009163092,938.3660325128569,939.5304641094045,940.6948957059521,941.8593273025,943.0237588990476,944.1881904955952,945.352622092143,946.5170536886906,947.6814852852382,948.845916881786,950.0103484783336,951.1747800748813,952.339211671429,953.5036432679766,954.6680748645242,955.832506461072,956.9969380576197,958.1613696541673,959.325801250715,960.4902328472626,961.6546644438102,962.8190960403579,963.9835276369057,965.1479592334533,966.3123908300009,967.4768224265487,968.6412540230963,969.8056856196439,970.9701172161916,972.1345488127394,973.298980409287,974.4634120058347,975.6278436023823,976.7922751989299,977.9567067954777,979.1211383920254,980.285569988573,981.4500015851207,982.6144331816683,983.778864778216,984.9432963747637,986.1077279713113,987.272159567859,988.4365911644068,989.6010227609544,990.765454357502,991.9298859540497,993.0943175505973,994.2587491471451,995.4231807436928,996.5876123402404,997.752043936788,998.9164755333356,1000.0809071298834,1001.2453387264311,1002.4097703229787,1003.5742019195264,1004.7386335160741,1005.9030651126217,1007.0674967091694,1008.231928305717,1009.3963599022647,1010.5607914988125,1011.7252230953601,1012.8896546919077,1014.0540862884554,1015.218517885003,1016.3829494815508,1017.5473810780985,1018.7118126746461,1019.8762442711937,1021.0406758677415,1022.2051074642891,1023.3695390608368,1024.5339706573845,1025.698402253932,1026.8628338504798,1028.0272654470275,1029.191697043575,1030.3561286401227,1031.5205602366705,1032.6849918332182,1033.849423429766,1035.0138550263134,1036.1782866228612,1037.3427182194089,1038.5071498159566,1039.671581412504,1040.8360130090518,1042.0004446055996,1043.164876202147,1044.3293077986948,1045.4937393952425,1046.6581709917903,1047.8226025883378,1048.9870341848855,1050.1514657814332,1051.3158973779807,1052.4803289745284,1053.6447605710762,1054.809192167624,1055.9736237641716,1057.1380553607191,1058.3024869572669,1059.4669185538148,1060.6313501503623,1061.79578174691,1062.9602133434576,1064.1246449400053,1065.289076536553,1066.4535081331007,1067.6179397296485,1068.782371326196,1069.9468029227437,1071.1112345192912,1072.275666115839,1073.440097712387,1074.6045293089344,1075.7689609054821,1076.9333925020296,1078.0978240985773,1079.2622556951248,1080.4266872916728,1081.5911188882205,1082.755550484768,1083.9199820813158,1085.0844136778633,1086.248845274411,1087.4132768709587,1088.5777084675065,1089.7421400640542,1090.9065716606017,1092.0710032571494,1093.235434853697,1094.3998664502446,1095.5642980467926,1096.72872964334,1097.8931612398878,1099.0575928364353,1100.222024432983,1101.3864560295306,1102.5508876260785,1103.7153192226262,1104.8797508191738,1106.0441824157215,1107.208614012269,1108.3730456088167,1109.5374772053647,1110.7019088019122,1111.86634039846,1113.0307719950074,1114.1952035915551,1115.3596351881026,1116.5240667846506,1117.6884983811983,1118.8529299777458,1120.0173615742935,1121.181793170841,1122.3462247673888,1123.5106563639363,1124.6750879604842,1125.839519557032,1127.0039511535795,1128.1683827501272,1129.3328143466747,1130.4972459432224,1131.6616775397704,1132.8261091363179,1133.9905407328656,1135.154972329413,1136.3194039259608,1137.4838355225083,1138.6482671190563,1139.812698715604,1140.9771303121515,1142.1415619086993,1143.3059935052468,1144.4704251017945,1145.6348566983422,1146.79928829489,1147.9637198914377,1149.1281514879852,1150.292583084533,1151.4570146810804,1152.6214462776281,1153.785877874176,1154.9503094707236,1156.1147410672713,1157.2791726638188,1158.4436042603666,1159.608035856914,1160.772467453462,1161.9368990500097]]]}}},"view":{"type":"object","name":"CDSView","id":"p1493","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1494"}}},"glyph":{"type":"object","name":"Line","id":"p1489","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_width":3,"line_dash":[6]}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1490","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.1,"line_width":3,"line_dash":[6]}},"muted_glyph":{"type":"object","name":"Line","id":"p1491","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.2,"line_width":3,"line_dash":[6]}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1451","attributes":{"tools":[{"id":"p1464"},{"id":"p1465"},{"id":"p1466"},{"type":"object","name":"SaveTool","id":"p1474"},{"id":"p1475"},{"id":"p1476"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p1459","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1460","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1461"},"axis_label":"$$\\text{Predicted Mean} \\left[ m^3 / s \\right]$$","major_label_policy":{"type":"object","name":"AllLabels","id":"p1462"}}}],"below":[{"type":"object","name":"LinearAxis","id":"p1454","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1455","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1456"},"axis_label":"$$\\text{Observed Mean} \\left[ m^3 / s \\right]$$","major_label_policy":{"type":"object","name":"AllLabels","id":"p1457"}}}],"center":[{"type":"object","name":"Grid","id":"p1458","attributes":{"axis":{"id":"p1454"}}},{"type":"object","name":"Grid","id":"p1463","attributes":{"dimension":1,"axis":{"id":"p1459"}}},{"type":"object","name":"Legend","id":"p1495","attributes":{"location":"top_left","items":[{"type":"object","name":"LegendItem","id":"p1496","attributes":{"label":{"type":"value","value":"R\u00b2=0.86"},"renderers":[{"id":"p1492"}]}}]}}]}},0,1]]}}]}};
-  const render_items = [{"docid":"6d0d7c29-c539-48b4-8246-0f3887a005b7","roots":{"p1504":"e768432b-9245-412c-b134-01e25b96fe1f"},"root_ids":["p1504"]}];
-  void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
-  }
-  if (root.Bokeh !== undefined) {
-    embed_document(root);
-  } else {
-    let attempts = 0;
-    const timer = setInterval(function(root) {
-      if (root.Bokeh !== undefined) {
-        clearInterval(timer);
-        embed_document(root);
-      } else {
-        attempts++;
-        if (attempts > 100) {
-          clearInterval(timer);
-          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
-        }
-      }
-    }, 10, root)
-  }
-})(window);</script></div>
-</div>
+</section>
+<section id="test-randomly-permuted-target-values">
+<h2>Test Randomly Permuted Target Values<a class="headerlink" href="#test-randomly-permuted-target-values" title="Link to this heading">#</a></h2>
 <p>As a last iteration, randomize the order of the mean_runoff column to test what the algorithm is learning.</p>
 <p>The predictive power decreases substantially across all groupings of input attributes.</p>
 <div class="cell docutils container">
@@ -1438,6 +1423,7 @@ This warning will only be shown once.
   }
 })(window);</script></div>
 </div>
+</section>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
@@ -1519,6 +1505,11 @@ This warning will only be shown once.
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-input-data">Load Input Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-attribute-groups">Define attribute groups</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set">Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-randomly-permuted-target-values">Test Randomly Permuted Target Values</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
   </nav></div>
