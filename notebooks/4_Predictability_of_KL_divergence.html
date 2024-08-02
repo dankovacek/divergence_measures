@@ -189,7 +189,7 @@
 <li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="Discussion.html">Dicussion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Discussion.html">Discussion</a></li>
 </ul>
 
     </div>
@@ -385,6 +385,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-attribute-data">Load attribute data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-pairwise-attribute-comparisons">Load pairwise attribute comparisons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-attribute-groupings">Define attribute groupings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-trial-parameters">Set trial parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-models">Run Models</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
             </nav>
@@ -399,6 +407,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-kullback-leibler-kl-divergence">
 <h1>Predictability of Kullback-Leibler (KL) Divergence<a class="headerlink" href="#predictability-of-kullback-leibler-kl-divergence" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
 <p>In the first steps, we looked at the predictability of a common hydrological signature and an uncommon information measure, both computed on individual distributions.  If the entropy measure is reasonably predictable from attributes, then the uncertainty of unmonitored locations might be predictable enough for some applications.</p>
 <p>Here we make a comparison of runoff between <strong>many pairs of locations</strong> and ask if the <strong>Kullback-Leibler Divergence</strong> (KLD) of the distribution of unit area runoff between two locations can be predicted from the attributes of both catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
 <div class="cell docutils container">
@@ -444,7 +454,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="b313a039-9a55-4710-b41b-379e7e62c385">Loading BokehJS ...</span>
+        <span id="efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -609,7 +619,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("b313a039-9a55-4710-b41b-379e7e62c385");
+    const el = document.getElementById("efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -743,7 +753,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("b313a039-9a55-4710-b41b-379e7e62c385")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -759,6 +769,8 @@ function(Bokeh) {
   }
 }(window));</script></div>
 </div>
+<section id="load-attribute-data">
+<h3>Load attribute data<a class="headerlink" href="#load-attribute-data" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
@@ -775,6 +787,10 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+<section id="load-pairwise-attribute-comparisons">
+<h3>Load pairwise attribute comparisons<a class="headerlink" href="#load-pairwise-attribute-comparisons" title="Link to this heading">#</a></h3>
+<p>Load a few rows from one of the pairwise data files.  These contain attributes about divergence measures that are computed on concurrent and non-concurrent time series at two monitored locations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># open an example pairwise results file</span>
@@ -833,6 +849,9 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+<section id="define-attribute-groupings">
+<h3>Define attribute groupings<a class="headerlink" href="#define-attribute-groupings" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
@@ -852,6 +871,9 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+<section id="set-trial-parameters">
+<h3>Set trial parameters<a class="headerlink" href="#set-trial-parameters" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
@@ -927,6 +949,10 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="run-models">
+<h2>Run Models<a class="headerlink" href="#run-models" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">priors_to_test</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
@@ -953,6 +979,7 @@ function(Bokeh) {
 </div>
 </div>
 </div>
+</section>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <span class="target" id="id1"></span></section>
@@ -1022,6 +1049,14 @@ function(Bokeh) {
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-attribute-data">Load attribute data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-pairwise-attribute-comparisons">Load pairwise attribute comparisons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-attribute-groupings">Define attribute groupings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-trial-parameters">Set trial parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-models">Run Models</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
   </nav></div>
