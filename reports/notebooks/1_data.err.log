@@ -17,81 +17,106 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# create a new output filename 
-output_filename = attributes_filename.replace('.csv', f'_with_entropy.csv')
-output_fpath = os.path.join('data', output_filename)
+# the 'process' variable is here so jupyter doesn't go computing 
+# a million rows per iteration when the book is built for pushing to github pages.  
 
-# the bitrate dictates the number of quantization levels = 2**b, i.e. 4 bits = 16 levels
-quant_labels = []
-if not os.path.exists(output_fpath):
-    bitrates = [4, 6, 8]
-    for bitrate in bitrates:
-        label = f'H_{bitrate}_bits'
-        print(f'Processing {bitrate} bit entropy')
-        df[label] = df.apply(lambda row: dpf.compute_observed_series_entropy(row, bitrate), axis=1)
-        quant_labels.append(label)
-    # save the results
-    df.to_csv(output_fpath, index=False)
-else:
-    df = pd.read_csv(output_fpath)
-    quant_labels = [e for e in df.columns if e.startswith('H')]
+process = True
+if process:
+    for use_partial_counts in partial_counts[::-1]:
+        for bitrate in bitrates:
+            print(f'Processing pairs at {bitrate} bits quantization (concurrent data={use_partial_counts})')
+            results_fname = f'DKL_results_{bitrate}bits_{revision_date}.csv'
+            if use_partial_counts == True:
+                results_fname = results_fname.replace('.csv', '_partial_counts.csv')
+
+            out_fpath = os.path.join('data/', results_fname)
+            existing_results = dpf.check_processed_results(out_fpath)
+
+            if existing_results.empty:
+                id_pairs_filtered = id_pairs
+            else:
+                id_pairs_filtered = dpf.filter_processed_pairs(existing_results, id_pairs)
+                print(f'    {len(existing_results)} existing results loaded.')
+            
+            # define the input array for multiprocessing
+            inputs = [
+                (
+                    proxy_stn, target_stn, bitrate, completeness_threshold, 
+                    min_years, use_partial_counts, attr_cols, climate_cols, 
+                    pseudo_counts
+                ) for proxy_stn, target_stn in id_pairs_filtered
+            ]
+
+            batch_files = dpf.process_pairwise_comparisons(inputs, bitrate, results_fname, batch_size)
+
+            print(f'    Processed {len(sample_pairs)} pairs at ({bitrate} bits) in {time() - t0:.1f} seconds')
+            print(f'    Concatenating {len(batch_files)} batch files.')
+
+            if len(batch_files) > 0:
+                all_results = pd.concat([pd.read_csv(f, engine='pyarrow') for f in batch_files], axis=0)
+                all_results.to_csv(out_fpath, index=False)
+                if os.path.exists(out_fpath):
+                    for f in batch_files:
+                        os.remove(f)
+                print(f'    Wrote {len(all_results)} results to {out_fpath}')
+            else:
+                print('    No new results to write to file.')
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
+[0;31mRemoteTraceback[0m                           Traceback (most recent call last)
+[0;31mRemoteTraceback[0m: 
+"""
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+  File "/usr/lib/python3.10/multiprocessing/pool.py", line 48, in mapstar
+    return list(map(*args))
+  File "/home/danbot/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py", line 1671, in process_batch
+    result["nested_catchments"] = check_if_nested(
+  File "/home/danbot/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py", line 1034, in check_if_nested
+    print(asdf)
+NameError: name 'asdf' is not defined
+"""
+
+The above exception was the direct cause of the following exception:
+
 [0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn [10], line 12[0m
-[1;32m     10[0m     label [38;5;241m=[39m [38;5;124mf[39m[38;5;124m'[39m[38;5;124mH_[39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m_bits[39m[38;5;124m'[39m
-[1;32m     11[0m     [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124mProcessing [39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m bit entropy[39m[38;5;124m'[39m)
-[0;32m---> 12[0m     df[label] [38;5;241m=[39m [43mdf[49m[38;5;241;43m.[39;49m[43mapply[49m[43m([49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mrow[49m[43m:[49m[43m [49m[43mdpf[49m[38;5;241;43m.[39;49m[43mcompute_observed_series_entropy[49m[43m([49m[43mrow[49m[43m,[49m[43m [49m[43mbitrate[49m[43m)[49m[43m,[49m[43m [49m[43maxis[49m[38;5;241;43m=[39;49m[38;5;241;43m1[39;49m[43m)[49m
-[1;32m     13[0m     quant_labels[38;5;241m.[39mappend(label)
-[1;32m     14[0m [38;5;66;03m# save the results[39;00m
-
-File [0;32m~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:10374[0m, in [0;36mDataFrame.apply[0;34m(self, func, axis, raw, result_type, args, by_row, engine, engine_kwargs, **kwargs)[0m
-[1;32m  10360[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpandas[39;00m[38;5;21;01m.[39;00m[38;5;21;01mcore[39;00m[38;5;21;01m.[39;00m[38;5;21;01mapply[39;00m [38;5;28;01mimport[39;00m frame_apply
-[1;32m  10362[0m op [38;5;241m=[39m frame_apply(
-[1;32m  10363[0m     [38;5;28mself[39m,
-[1;32m  10364[0m     func[38;5;241m=[39mfunc,
+Cell [0;32mIn [16], line 31[0m
+[1;32m     22[0m [38;5;66;03m# define the input array for multiprocessing[39;00m
+[1;32m     23[0m inputs [38;5;241m=[39m [
+[1;32m     24[0m     (
+[1;32m     25[0m         proxy_stn, target_stn, bitrate, completeness_threshold, 
 [0;32m   (...)[0m
-[1;32m  10372[0m     kwargs[38;5;241m=[39mkwargs,
-[1;32m  10373[0m )
-[0;32m> 10374[0m [38;5;28;01mreturn[39;00m [43mop[49m[38;5;241;43m.[39;49m[43mapply[49m[43m([49m[43m)[49m[38;5;241m.[39m__finalize__([38;5;28mself[39m, method[38;5;241m=[39m[38;5;124m"[39m[38;5;124mapply[39m[38;5;124m"[39m)
+[1;32m     28[0m     ) [38;5;28;01mfor[39;00m proxy_stn, target_stn [38;5;129;01min[39;00m id_pairs_filtered
+[1;32m     29[0m ]
+[0;32m---> 31[0m batch_files [38;5;241m=[39m [43mdpf[49m[38;5;241;43m.[39;49m[43mprocess_pairwise_comparisons[49m[43m([49m[43minputs[49m[43m,[49m[43m [49m[43mbitrate[49m[43m,[49m[43m [49m[43mresults_fname[49m[43m,[49m[43m [49m[43mbatch_size[49m[43m)[49m
+[1;32m     33[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124m    Processed [39m[38;5;132;01m{[39;00m[38;5;28mlen[39m(sample_pairs)[38;5;132;01m}[39;00m[38;5;124m pairs at ([39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m bits) in [39m[38;5;132;01m{[39;00mtime()[38;5;250m [39m[38;5;241m-[39m[38;5;250m [39mt0[38;5;132;01m:[39;00m[38;5;124m.1f[39m[38;5;132;01m}[39;00m[38;5;124m seconds[39m[38;5;124m'[39m)
+[1;32m     34[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124m    Concatenating [39m[38;5;132;01m{[39;00m[38;5;28mlen[39m(batch_files)[38;5;132;01m}[39;00m[38;5;124m batch files.[39m[38;5;124m'[39m)
 
-File [0;32m~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/apply.py:916[0m, in [0;36mFrameApply.apply[0;34m(self)[0m
-[1;32m    913[0m [38;5;28;01melif[39;00m [38;5;28mself[39m[38;5;241m.[39mraw:
-[1;32m    914[0m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m[38;5;241m.[39mapply_raw(engine[38;5;241m=[39m[38;5;28mself[39m[38;5;241m.[39mengine, engine_kwargs[38;5;241m=[39m[38;5;28mself[39m[38;5;241m.[39mengine_kwargs)
-[0;32m--> 916[0m [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mapply_standard[49m[43m([49m[43m)[49m
+File [0;32m~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:993[0m, in [0;36mprocess_pairwise_comparisons[0;34m(inputs, bitrate, out_fname, batch_size)[0m
+[1;32m    987[0m [38;5;66;03m# results = [][39;00m
+[1;32m    988[0m [38;5;66;03m# for batch_inputs in batch[:2]:[39;00m
+[1;32m    989[0m [38;5;66;03m#     result = process_batch(batch_inputs)[39;00m
+[1;32m    990[0m [38;5;66;03m#     results.append(result)[39;00m
+[1;32m    992[0m [38;5;28;01mwith[39;00m mp[38;5;241m.[39mPool([38;5;241m4[39m) [38;5;28;01mas[39;00m pool:
+[0;32m--> 993[0m    results [38;5;241m=[39m [43mpool[49m[38;5;241;43m.[39;49m[43mmap[49m[43m([49m[43mprocess_batch[49m[43m,[49m[43m [49m[43mbatch[49m[43m)[49m
+[1;32m    994[0m    results [38;5;241m=[39m [r [38;5;28;01mfor[39;00m r [38;5;129;01min[39;00m results [38;5;28;01mif[39;00m r [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m]
+[1;32m    996[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(results) [38;5;241m==[39m [38;5;241m0[39m:
 
-File [0;32m~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/apply.py:1063[0m, in [0;36mFrameApply.apply_standard[0;34m(self)[0m
-[1;32m   1061[0m [38;5;28;01mdef[39;00m [38;5;21mapply_standard[39m([38;5;28mself[39m):
-[1;32m   1062[0m     [38;5;28;01mif[39;00m [38;5;28mself[39m[38;5;241m.[39mengine [38;5;241m==[39m [38;5;124m"[39m[38;5;124mpython[39m[38;5;124m"[39m:
-[0;32m-> 1063[0m         results, res_index [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mapply_series_generator[49m[43m([49m[43m)[49m
-[1;32m   1064[0m     [38;5;28;01melse[39;00m:
-[1;32m   1065[0m         results, res_index [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mapply_series_numba()
+File [0;32m/usr/lib/python3.10/multiprocessing/pool.py:367[0m, in [0;36mPool.map[0;34m(self, func, iterable, chunksize)[0m
+[1;32m    362[0m [38;5;28;01mdef[39;00m [38;5;21mmap[39m([38;5;28mself[39m, func, iterable, chunksize[38;5;241m=[39m[38;5;28;01mNone[39;00m):
+[1;32m    363[0m [38;5;250m    [39m[38;5;124;03m'''[39;00m
+[1;32m    364[0m [38;5;124;03m    Apply `func` to each element in `iterable`, collecting the results[39;00m
+[1;32m    365[0m [38;5;124;03m    in a list that is returned.[39;00m
+[1;32m    366[0m [38;5;124;03m    '''[39;00m
+[0;32m--> 367[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_map_async[49m[43m([49m[43mfunc[49m[43m,[49m[43m [49m[43miterable[49m[43m,[49m[43m [49m[43mmapstar[49m[43m,[49m[43m [49m[43mchunksize[49m[43m)[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[43m)[49m
 
-File [0;32m~/Documents/code/data_analysis/lib/python3.10/site-packages/pandas/core/apply.py:1081[0m, in [0;36mFrameApply.apply_series_generator[0;34m(self)[0m
-[1;32m   1078[0m [38;5;28;01mwith[39;00m option_context([38;5;124m"[39m[38;5;124mmode.chained_assignment[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m):
-[1;32m   1079[0m     [38;5;28;01mfor[39;00m i, v [38;5;129;01min[39;00m [38;5;28menumerate[39m(series_gen):
-[1;32m   1080[0m         [38;5;66;03m# ignore SettingWithCopy here in case the user mutates[39;00m
-[0;32m-> 1081[0m         results[i] [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mfunc[49m[43m([49m[43mv[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43margs[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mkwargs[49m[43m)[49m
-[1;32m   1082[0m         [38;5;28;01mif[39;00m [38;5;28misinstance[39m(results[i], ABCSeries):
-[1;32m   1083[0m             [38;5;66;03m# If we have a view on v, we need to make a copy because[39;00m
-[1;32m   1084[0m             [38;5;66;03m#  series_generator will swap out the underlying data[39;00m
-[1;32m   1085[0m             results[i] [38;5;241m=[39m results[i][38;5;241m.[39mcopy(deep[38;5;241m=[39m[38;5;28;01mFalse[39;00m)
+File [0;32m/usr/lib/python3.10/multiprocessing/pool.py:774[0m, in [0;36mApplyResult.get[0;34m(self, timeout)[0m
+[1;32m    772[0m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m[38;5;241m.[39m_value
+[1;32m    773[0m [38;5;28;01melse[39;00m:
+[0;32m--> 774[0m     [38;5;28;01mraise[39;00m [38;5;28mself[39m[38;5;241m.[39m_value
 
-Cell [0;32mIn [10], line 12[0m, in [0;36m<lambda>[0;34m(row)[0m
-[1;32m     10[0m     label [38;5;241m=[39m [38;5;124mf[39m[38;5;124m'[39m[38;5;124mH_[39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m_bits[39m[38;5;124m'[39m
-[1;32m     11[0m     [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124mProcessing [39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m bit entropy[39m[38;5;124m'[39m)
-[0;32m---> 12[0m     df[label] [38;5;241m=[39m df[38;5;241m.[39mapply([38;5;28;01mlambda[39;00m row: [43mdpf[49m[38;5;241;43m.[39;49m[43mcompute_observed_series_entropy[49m[43m([49m[43mrow[49m[43m,[49m[43m [49m[43mbitrate[49m[43m)[49m, axis[38;5;241m=[39m[38;5;241m1[39m)
-[1;32m     13[0m     quant_labels[38;5;241m.[39mappend(label)
-[1;32m     14[0m [38;5;66;03m# save the results[39;00m
-
-File [0;32m~/Documents/code/24/divergence_measures/docs/notebooks/data_processing_functions.py:399[0m, in [0;36mcompute_observed_series_entropy[0;34m(row, bitrate)[0m
-[1;32m    397[0m unique, counts [38;5;241m=[39m np[38;5;241m.[39munique(df[[38;5;124mf[39m[38;5;124m'[39m[38;5;132;01m{[39;00mbitrate[38;5;132;01m}[39;00m[38;5;124m_bits_quantized[39m[38;5;124m'[39m], return_counts[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
-[1;32m    398[0m count_dict [38;5;241m=[39m {k: [38;5;241m1[39m[38;5;241m/[39mv [38;5;28;01mfor[39;00m k, v [38;5;129;01min[39;00m [38;5;28mzip[39m(unique, counts)}
-[0;32m--> 399[0m frequencies [38;5;241m=[39m [count_dict[e] [38;5;28;01mif[39;00m e [38;5;129;01min[39;00m count_dict [38;5;28;01melse[39;00m [38;5;241m0[39m [38;5;28;01mfor[39;00m e [38;5;129;01min[39;00m [38;5;28mrange[39m([38;5;241m1[39m, [38;5;241m2[39m[38;5;241m*[39m[38;5;241m*[39m[43mb[49m)]
-[1;32m    400[0m normed_frequencies [38;5;241m=[39m frequencies [38;5;241m/[39m [38;5;28msum[39m(frequencies)
-[1;32m    401[0m H [38;5;241m=[39m entropy(normed_frequencies, base[38;5;241m=[39m[38;5;241m2[39m)
-
-[0;31mNameError[0m: name 'b' is not defined
-NameError: name 'b' is not defined
+[0;31mNameError[0m: name 'asdf' is not defined
+NameError: name 'asdf' is not defined
 
