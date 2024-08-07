@@ -4,36 +4,46 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 from scipy.stats import entropy, wasserstein_distance, linregress
+from sklearn.metrics import (
+    root_mean_squared_error,
+    mean_absolute_error,
+)
 
 from shapely.geometry import Point
+
+import xgboost as xgb
 
 import multiprocessing as mp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-STREAMFLOW_DIR = os.path.join(DATA_DIR, 'hysets_streamflow_timeseries')
+DATA_DIR = os.path.join(BASE_DIR, "data")
+STREAMFLOW_DIR = os.path.join(DATA_DIR, "hysets_streamflow_timeseries")
 
-hs_properties_path = os.path.join(DATA_DIR, 'BCUB_HYSETS_properties_with_climate.csv')
+hs_properties_path = os.path.join(DATA_DIR, "BCUB_HYSETS_properties_with_climate.csv")
 hs_df = pd.read_csv(hs_properties_path)
-hs_df['geometry'] = hs_df.apply(lambda x: Point(x['centroid_lon_deg_e'], x['centroid_lat_deg_n']), axis=1)
+hs_df["geometry"] = hs_df.apply(
+    lambda x: Point(x["centroid_lon_deg_e"], x["centroid_lat_deg_n"]), axis=1
+)
+
 
 class Station:
     """
     A class used to represent a Station.
 
-    The Station class initializes an object with attributes based on a provided dictionary of station information. 
+    The Station class initializes an object with attributes based on a provided dictionary of station information.
     Each key-value pair in the dictionary is unpacked and set as an attribute of the Station object.
 
     Attributes
     ----------
     id : str
         The official ID of the station, derived from the 'Official_ID' key in the provided dictionary.
-    
+
     Methods
     -------
     __init__(self, station_info) -> None
         Initializes the Station object by unpacking a dictionary of station information into attributes.
     """
+
     def __init__(self, station_info, bitrate) -> None:
         """
         Initializes the Station object.
@@ -41,8 +51,8 @@ class Station:
         Parameters
         ----------
         station_info : dict
-            A dictionary containing information about the station. Each key-value pair in the dictionary 
-            will be set as an attribute of the Station object. The 'Official_ID' key in the dictionary will 
+            A dictionary containing information about the station. Each key-value pair in the dictionary
+            will be set as an attribute of the Station object. The 'Official_ID' key in the dictionary will
             be used to set the 'id' attribute of the Station object.
         """
         # the input station_info is a dict,
@@ -50,21 +60,19 @@ class Station:
         for k, v in station_info.items():
             setattr(self, k, v)
 
-
         self.id = self.official_id
-        self.sim_label = f'{self.id}_sim'
-        self.obs_label = f'{self.id}'
-        self.sim_log_label = f'{self.id}_sim_log10'
-        self.obs_log_label = f'{self.id}_log10'
+        self.sim_label = f"{self.id}_sim"
+        self.obs_label = f"{self.id}"
+        self.sim_log_label = f"{self.id}_sim_log10"
+        self.obs_log_label = f"{self.id}_log10"
         # self.UR_label = f'{self.id}_UR'
         # self.logUR_label = f'{self.id}_logUR'
         # self.log_sim_label = f'{self.id}_sim_log10'
-        self.sim_quantized_label = f'sim_quantized_{self.id}_{bitrate}b'
-        self.obs_quantized_label = f'obs_quantized_{self.id}_{bitrate}b'
+        self.sim_quantized_label = f"sim_quantized_{self.id}_{bitrate}b"
+        self.obs_quantized_label = f"obs_quantized_{self.id}_{bitrate}b"
         # self.quantized_label_ = f'quantized_{self.id}_sim_{bitrate}b'
 
 
-        
 def check_processed_results(out_fpath):
     """
     Checks for existing processed results at the specified file path and loads them into a DataFrame if available.
@@ -94,16 +102,16 @@ def check_processed_results(out_fpath):
     ...     print("Results loaded successfully.")
     ... else:
     ...     print("No existing results found.")
-    """    
-    dtype_spec = {'proxy': str, 'target': str}
+    """
+    dtype_spec = {"proxy": str, "target": str}
     if os.path.exists(out_fpath):
         results_df = pd.read_csv(out_fpath, dtype=dtype_spec)
-        print(f'    Loaded {len(results_df)} existing results')
+        print(f"    Loaded {len(results_df)} existing results")
         return results_df
     else:
-        print('    No existing results found')
+        print("    No existing results found")
         return pd.DataFrame()
-    
+
 
 def filter_processed_pairs(results_df, id_pairs):
     """
@@ -139,23 +147,24 @@ def filter_processed_pairs(results_df, id_pairs):
     [('B', 'Z'), ('C', 'Y')]
     """
     # Convert list of pairs to DataFrame for easy merging
-    id_pairs_df = pd.DataFrame(id_pairs, columns=['proxy', 'target'])
-    
+    id_pairs_df = pd.DataFrame(id_pairs, columns=["proxy", "target"])
+
     # Perform an outer merge and keep only those rows that are NaN in results_df index
     # This indicates that these rows were not found in results_df
-    merged_df = id_pairs_df.merge(results_df, on=['proxy', 'target'], how='left', indicator=True)
-    filtered_df = merged_df[merged_df['_merge'] == 'left_only']
-    
+    merged_df = id_pairs_df.merge(
+        results_df, on=["proxy", "target"], how="left", indicator=True
+    )
+    filtered_df = merged_df[merged_df["_merge"] == "left_only"]
+
     # Convert the filtered DataFrame back to a list of tuples
-    remaining_pairs = list(zip(filtered_df['proxy'], filtered_df['target']))
-    
+    remaining_pairs = list(zip(filtered_df["proxy"], filtered_df["target"]))
+
     return remaining_pairs
 
-    
-    
+
 def get_timeseries_data(official_id, min_flow=1e-4):
     """
-    Imports streamflow data for a given station ID, processes it to handle low flow values, 
+    Imports streamflow data for a given station ID, processes it to handle low flow values,
     and returns the processed DataFrame.
 
     Parameters
@@ -171,7 +180,7 @@ def get_timeseries_data(official_id, min_flow=1e-4):
     pd.DataFrame
         A pandas DataFrame containing the processed streamflow data with the following modifications:
         - The 'discharge' column is renamed to the station ID (`official_id`).
-        - A new column named '{official_id}_low_flow_flag' is added, indicating where the discharge 
+        - A new column named '{official_id}_low_flow_flag' is added, indicating where the discharge
           was below the `min_flow`.
         - Discharge values below `min_flow` are clipped to `min_flow`.
 
@@ -191,37 +200,37 @@ def get_timeseries_data(official_id, min_flow=1e-4):
     3  2020-01-04  0.0025                     False
     4  2020-01-05  0.0001                      True
     """
-    fpath = os.path.join(STREAMFLOW_DIR, f'{official_id}.csv')
-    df = pd.read_csv(fpath, parse_dates=['time'])
-    df[f'{official_id}_low_flow_flag'] = df['discharge'] < min_flow    
+    fpath = os.path.join(STREAMFLOW_DIR, f"{official_id}.csv")
+    df = pd.read_csv(fpath, parse_dates=["time"])
+    df[f"{official_id}_low_flow_flag"] = df["discharge"] < min_flow
     # assign a small flow value instead of zero
-    df['discharge'] = df['discharge'].clip(lower=min_flow)
-    # rename the discharge column to the station id    
-    df.rename(columns={'discharge': official_id}, inplace=True)   
-    
+    df["discharge"] = df["discharge"].clip(lower=min_flow)
+    # rename the discharge column to the station id
+    df.rename(columns={"discharge": official_id}, inplace=True)
+
     return df
 
 
 def retrieve_nonconcurrent_data(proxy, target):
     """
-    Retrieves and merges non-concurrent time series data for two stations, `proxy` and `target`, 
+    Retrieves and merges non-concurrent time series data for two stations, `proxy` and `target`,
     and returns a combined DataFrame.
 
     Parameters
     ----------
     proxy : str
-        The station ID for the proxy/donor time series data. The proxy is the regional 
+        The station ID for the proxy/donor time series data. The proxy is the regional
         station that is used as a model for an ungauged location
     target : str
-        The station ID for the target time series data.  The target is the location 
+        The station ID for the target time series data.  The target is the location
         where runoff is simulated.
 
         Returns
     -------
     pd.DataFrame
-        A pandas DataFrame containing the combined time series data for both `proxy` and `target` stations. 
-        The DataFrame is indexed by time and contains the data for both stations, with missing values 
-        filled as NaN where there is no overlap in time. Additionally, a 'year' column is included 
+        A pandas DataFrame containing the combined time series data for both `proxy` and `target` stations.
+        The DataFrame is indexed by time and contains the data for both stations, with missing values
+        filled as NaN where there is no overlap in time. Additionally, a 'year' column is included
         that extracts the year from the time index.
 
     Notes
@@ -237,17 +246,17 @@ def retrieve_nonconcurrent_data(proxy, target):
     >>> df = retrieve_nonconcurrent_data('stationA', 'stationB')
     >>> df.head()
                         stationA   stationB  year
-    time                                    
+    time
     2020-01-01 00:00:00      0.1        NaN  2020
     2020-01-01 01:00:00      0.2        0.4  2020
     2020-01-01 02:00:00      NaN        0.5  2020
     2020-01-01 03:00:00      0.3        0.6  2020
     2020-01-01 04:00:00      0.4        NaN  2020
     """
-    df1 = get_timeseries_data(proxy).set_index('time')
-    df2 = get_timeseries_data(target).set_index('time')
-    df = pd.concat([df1, df2], join='outer', axis=1)
-    df['year'] = df.index.year
+    df1 = get_timeseries_data(proxy).set_index("time")
+    df2 = get_timeseries_data(target).set_index("time")
+    df = pd.concat([df1, df2], join="outer", axis=1)
+    df["year"] = df.index.year
     return df
 
 
@@ -300,9 +309,9 @@ def transform_and_jitter(df, station):
 
     if df[station.id].min() < 1e-5:
         print(df[station.id].min())
-        msg = f'Noise addition creates values < 1e-5 (ID: {station.id})'
+        msg = f"Noise addition creates values < 1e-5 (ID: {station.id})"
         print(msg)
-    
+
     # log transform the data
     df[station.obs_log_label] = np.log10(df[station.id])
     return df
@@ -346,10 +355,10 @@ def compute_distance(stn1, stn2):
     >>> print(f"Distance: {distance:.2f} km")
     Distance: 4.91 km
     """
-    p1 = Point(stn1['Centroid_Lon_deg_E'], stn1['Centroid_Lat_deg_N'])
-    p2 = Point(stn2['Centroid_Lon_deg_E'], stn2['Centroid_Lat_deg_N'])
-    gdf = gpd.GeoDataFrame(geometry=[p1, p2], crs='EPSG:4326')
-    gdf = gdf.to_crs('EPSG:3005')
+    p1 = Point(stn1["Centroid_Lon_deg_E"], stn1["Centroid_Lat_deg_N"])
+    p2 = Point(stn2["Centroid_Lon_deg_E"], stn2["Centroid_Lat_deg_N"])
+    gdf = gpd.GeoDataFrame(geometry=[p1, p2], crs="EPSG:4326")
+    gdf = gdf.to_crs("EPSG:3005")
     distance = gdf.distance(gdf.shift()) / 1000
     return distance.values[1]
 
@@ -385,7 +394,7 @@ def compute_observed_series_entropy(row, bitrate):
     >>> print(f'Entropy: {H:.4f}')
     """
     # get data
-    stn_id = row['official_id']
+    stn_id = row["official_id"]
     df = get_timeseries_data(stn_id)
     df.dropna(subset=[stn_id], inplace=True)
     min_q, max_q = df[stn_id].min() - 1e-6, df[stn_id].max() + 1e-6
@@ -393,10 +402,12 @@ def compute_observed_series_entropy(row, bitrate):
     # use equal width bins in log10 space
     log_edges = np.linspace(np.log10(min_q), np.log10(max_q), 2**bitrate)
     linear_edges = [10**e for e in log_edges]
-    df[f'{bitrate}_bits_quantized'] = np.digitize(df[stn_id], linear_edges)
-    unique, counts = np.unique(df[f'{bitrate}_bits_quantized'], return_counts=True)
-    count_dict = {k: 1/v for k, v in zip(unique, counts)}
-    frequencies = [count_dict[e] if e in count_dict else 0 for e in range(1, 2**bitrate)]
+    df[f"{bitrate}_bits_quantized"] = np.digitize(df[stn_id], linear_edges)
+    unique, counts = np.unique(df[f"{bitrate}_bits_quantized"], return_counts=True)
+    count_dict = {k: 1 / v for k, v in zip(unique, counts)}
+    frequencies = [
+        count_dict[e] if e in count_dict else 0 for e in range(1, 2**bitrate)
+    ]
     normed_frequencies = frequencies / sum(frequencies)
     return entropy(normed_frequencies, base=2)
 
@@ -414,6 +425,41 @@ def format_features(input_attributes):
 
 
 def train_test_split_by_official_id(holdout_pct, stations, nfolds):
+    """
+    Splits a list of stations into training and holdout test sets, and further splits the training set into cross-validation folds, randomly shuffling the order of training set stations to generate random cross validation subsets.
+
+    Parameters:
+    -----------
+    holdout_pct : float
+        The percentage of stations to be used as the holdout test set. This should be a float between 0 and 1.
+
+    stations : list
+        A list of station identifiers.
+
+    nfolds : int
+        The number of folds for cross-validation splitting of the training set.
+
+    Returns:
+    --------
+    training_cv_sets : list of numpy.ndarray
+        A list containing `nfolds` arrays, each representing a fold of training stations for cross-validation.
+
+    holdout_test_stns : numpy.ndarray
+        An array of station identifiers that are reserved for the holdout test set.
+
+    Example:
+    --------
+    >>> stations = ['station1', 'station2', 'station3', 'station4', 'station5']
+    >>> train_test_split_by_official_id(0.2, stations, 3)
+    (array([['station2', 'station1'], ['station3'], ['station4']], dtype='<U8'),
+    array(['station5'], dtype='<U8'))
+
+    Notes:
+    ------
+    - The function randomly selects stations for the holdout test set without replacement.
+    - The remaining stations are shuffled and split into `nfolds` approximately equal sets for cross-validation.
+    - The randomness in selecting and shuffling the stations can be controlled by setting a random seed before calling this function.
+    """
     n_holdout = int(len(stations) * holdout_pct)
     holdout_test_stns = np.random.choice(stations, n_holdout, replace=False)
     training_stations = [e for e in stations if e not in holdout_test_stns]
@@ -421,89 +467,360 @@ def train_test_split_by_official_id(holdout_pct, stations, nfolds):
     training_cv_sets = np.array_split(np.array(training_stations), nfolds)
     return training_cv_sets, holdout_test_stns
 
+
 def filter_input_data_by_official_id(df, stations):
-    return df[df["proxy"].isin(stations)
-            & df["target"].isin(stations)].copy()
+    """
+    Filters a DataFrame to include only rows where both 'proxy' and 'target' columns match a given list of station identifiers.
+
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The input DataFrame containing the data to be filtered. It must include 'proxy' and 'target' columns.
+
+    stations : list
+        A list of station identifiers to filter the DataFrame by.
+
+    Returns:
+    --------
+    pandas.DataFrame
+        A filtered copy of the input DataFrame where both 'proxy' and 'target' columns contain values from the given list of station identifiers.
+
+    Example:
+    --------
+    >>> import pandas as pd
+    >>> data = {'proxy': ['station1', 'station2', 'station3', 'station4'],
+                'target': ['station1', 'station2', 'station5', 'station4'],
+                'value': [10, 20, 30, 40]}
+    >>> df = pd.DataFrame(data)
+    >>> stations = ['station1', 'station2', 'station4']
+    >>> filter_input_data_by_official_id(df, stations)
+         proxy   target  value
+    0  station1  station1     10
+    1  station2  station2     20
+    3  station4  station4     40
+
+    Notes:
+    ------
+    - The function returns a copy of the filtered DataFrame to avoid modifying the original DataFrame.
+    - The filtering is performed using the 'proxy' and 'target' columns to ensure that both columns' values are in the specified list of stations.
+    """
+    return df[df["proxy"].isin(stations) & df["target"].isin(stations)].copy()
+
+
+def train_xgb_model(
+    input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds
+):
+
+    train_data = filter_input_data_by_official_id(input_data, train_stns)
+    test_data = filter_input_data_by_official_id(input_data, test_stns)
+
+    X_train = train_data[attributes].values
+    Y_train = train_data[target].values
+    X_test = test_data[attributes].values
+    Y_test = test_data[target].values
+
+    model = xgb.XGBRegressor(**params)
+
+    dtrain = xgb.DMatrix(X_train, label=Y_train)
+    dtest = xgb.DMatrix(X_test, label=Y_test)
+
+    eval_list = [(dtrain, "train"), (dtest, "eval")]
+
+    bst = xgb.train(
+        params,
+        dtrain,
+        num_boost_rounds,
+        evals=eval_list,
+        verbose_eval=0,
+        early_stopping_rounds=20,
+    )
+
+    predicted_y = bst.predict(dtest)
+
+    test_results = pd.DataFrame(
+        {
+            "predicted": predicted_y,
+            "actual": Y_test,
+        }
+    )
+
+    rmse = root_mean_squared_error(predicted_y, Y_test)
+    mae = mean_absolute_error(predicted_y, Y_test)
+
+    return bst, rmse, mae, test_results
+
+
+def run_xgb_CV_trials(
+    set_name,
+    features,
+    target,
+    input_data,
+    train_indices,
+    test_indices,
+    n_optimization_rounds,
+    nfolds,
+    num_boost_rounds,
+    results_folder,
+):
+
+    # randomly select 5% of the stations to leave out for a hold-out test set
+    # to ensure none of the data are seen in training
+    X_train, Y_train = (
+        input_data.loc[train_indices, features].values,
+        input_data.loc[train_indices, target].values,
+    )
+    X_test, Y_test = (
+        input_data.loc[test_indices, features].values,
+        input_data.loc[test_indices, target].values,
+    )
+
+    sample_choices = np.arange(0.5, 0.9, 0.02)
+    lr_choices = np.arange(0.001, 0.1, 0.0005)
+    learning_rates = np.random.choice(lr_choices, n_optimization_rounds)
+    subsamples = np.random.choice(sample_choices, n_optimization_rounds)
+    colsamples = np.random.choice(sample_choices, n_optimization_rounds)
+
+    all_results = []
+    for trial in range(n_optimization_rounds):
+
+        lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
+
+        params = {
+            # "objective": "reg:absoluteerror",
+            "objective": "reg:squarederror",
+            "eval_metric": "rmse",
+            "eta": lr,
+            # "max_depth": 6,  # use default max_depth
+            # "min_child_weight": 1, # use colsample and subsample instead of min_child_weight
+            "subsample": ss,
+            "colsample_bytree": cs,
+            "seed": 42,
+            "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
+            "sampling_method": "gradient_based",
+            "tree_method": "hist",
+        }
+
+        results_fname = f"{set_name}_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
+        results_fpath = os.path.join(results_folder, results_fname)
+
+        model_results = xgb.cv(
+            params=params,
+            dtrain=xgb.DMatrix(X_train, label=Y_train),
+            num_boost_round=num_boost_rounds,
+            nfold=nfolds,
+            metrics=["mae", "rmse"],
+            early_stopping_rounds=20,
+            verbose_eval=False,
+        )
+        best_rmse_round = model_results["test-rmse-mean"].idxmin()
+        best_mae_round = model_results["test-mae-mean"].idxmin()
+        # print(lr, best_rmse_round, best_mae_round)
+
+        results_dict = {
+            "best_rmse_round": best_rmse_round,
+            "best_mae_round": best_mae_round,
+            "min_test_mae": model_results.loc[best_mae_round, "test-mae-mean"],
+            "min_test_rmse": model_results.loc[best_rmse_round, "test-rmse-mean"],
+            "min_mae_stdev": model_results.loc[best_mae_round, "test-mae-std"],
+            "min_rmse_stdev": model_results.loc[best_rmse_round, "test-rmse-std"],
+            "min_train_mae": model_results.loc[best_mae_round, "train-mae-mean"],
+            "min_train_rmse": model_results.loc[best_rmse_round, "train-rmse-mean"],
+        }
+        results_cols = list(results_dict.keys())
+        results_dict.update(params)
+
+        all_results.append(results_dict)
+        if (trial > 0) & (trial % 20 == 0):
+            print(f"   completed {trial}/{n_optimization_rounds}")
+
+    # save the trial results
+    trial_results = pd.DataFrame(all_results)
+    trial_results.to_csv(results_fpath)
+    trial_mean = trial_results["min_test_mae"].mean()
+    trial_stdev = trial_results["min_mae_stdev"].mean()
+
+    # print(trial_results.sort_values('min_test_mae'))
+
+    print(
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set (N={len(trial_results)})"
+    )
+
+    param_cols = list(params.keys())
+
+    # get the optimal hyperparameters
+    optimal_rmse_idx = trial_results["min_test_rmse"].idxmin()
+    optimal_mae_idx = trial_results["min_test_mae"].idxmin()
+
+    best_rmse_params = trial_results.loc[optimal_rmse_idx, param_cols].to_dict()
+    best_mae_params = trial_results.loc[optimal_mae_idx, param_cols].to_dict()
+
+    dtrain = xgb.DMatrix(X_train, label=Y_train)
+    dtest = xgb.DMatrix(X_test, label=Y_test)
+
+    eval_list = [(dtrain, "train"), (dtest, "eval")]
+
+    final_model = xgb.train(
+        best_rmse_params,
+        dtrain,
+        2 * num_boost_rounds,
+        evals=eval_list,
+        verbose_eval=0,
+        early_stopping_rounds=20,
+    )
+
+    predicted_y = final_model.predict(dtest)
+
+    test_results = pd.DataFrame(
+        {
+            "predicted": predicted_y,
+            "actual": Y_test,
+        }
+    )
+
+    return trial_results, test_results
+
+
+def run_xgb_trials_custom_CV(
+    bitrate,
+    set_name,
+    attributes,
+    target,
+    input_data,
+    train_stn_cv_sets,
+    test_stations,
+    n_optimization_rounds,
+    nfolds,
+    num_boost_rounds,
+    results_folder,
+):
+
+    # select random hyperparameters for n_optimization_rounds
+    sample_choices = np.arange(0.5, 0.9, 0.02)  # subsample and colsample percentages
+    lr_choices = np.arange(0.001, 0.1, 0.0005)  # learning rates
+    learning_rates = np.random.choice(lr_choices, n_optimization_rounds)
+    subsamples = np.random.choice(sample_choices, n_optimization_rounds)
+    colsamples = np.random.choice(sample_choices, n_optimization_rounds)
+    num_boost_rounds = 2500
+
+    all_results = []
+    for trial in range(n_optimization_rounds):
+
+        lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
+
+        params = {
+            "objective": "reg:squarederror",
+            "eval_metric": "rmse",
+            "eta": lr,
+            # "n_estimators": num_boost_rounds,
+            # "max_depth": 6,  # use default max_depth
+            # "min_child_weight": 1, # use colsample and subsample instead of min_child_weight
+            "subsample": ss,
+            "colsample_bytree": cs,
+            "seed": 42,
+            "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
+            "sampling_method": "gradient_based",
+            "tree_method": "hist",
+        }
+
+        results_fname = (
+            f"{set_name}_{bitrate}_bits_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
+        )
+        results_fpath = os.path.join(results_folder, results_fname)
+
+        # we need to manually do CV because we're separating by stations
+        # to prevent data leakage across training rounds
+        cv_mses, cv_rmses, best_mae_rounds, best_rmse_rounds = [], [], None, None
+
+        all_training_stations = np.array(
+            [np.array(e) for e in train_stn_cv_sets]
+        ).flatten()
+
+        n_cv = 0
+        cv_df = pd.DataFrame()
+        cv_rmses, cv_maes = [], []
+        for cv_test_stns in train_stn_cv_sets:
+
+            train_stns = [e for e in all_training_stations if e not in cv_test_stns]
+
+            assert len(np.intersect1d(train_stns, cv_test_stns)) == 0
+
+            cv_model, rmse, mae, cv_test = train_xgb_model(
+                input_data,
+                train_stns,
+                cv_test_stns,
+                attributes,
+                target,
+                params,
+                num_boost_rounds,
+            )
+
+            cv_rmses.append(rmse)
+            cv_maes.append(mae)
+
+        cv_mean_rmse, cv_std_rmse = np.mean(cv_rmses), np.std(cv_rmses)
+        cv_mean_mae, cv_std_mae = np.mean(cv_maes), np.std(cv_maes)
+
+        results_dict = {
+            "test_mae": cv_mean_mae,
+            "test_rmse": cv_mean_rmse,
+            "mae_stdev": cv_std_mae,
+            "rmse_stdev": cv_std_rmse,
+        }
+        results_cols = list(results_dict.keys())
+        results_dict.update(params)
+
+        all_results.append(results_dict)
+        if (trial > 0) & (trial % 20 == 0):
+            print(f"   completed {trial}/{n_optimization_rounds}")
+
+    # save the trial results
+    trial_results = pd.DataFrame(all_results)
+    trial_results.to_csv(results_fpath)
+    trial_mean = trial_results["test_rmse"].mean()
+    trial_stdev = trial_results["rmse_stdev"].mean()
+
+    print(
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set (N={len(trial_results)})"
+    )
+
+    param_cols = list(params.keys())
+
+    # get the optimal hyperparameters
+    optimal_rmse_idx = trial_results["test_rmse"].idxmin()
+    optimal_mae_idx = trial_results["test_mae"].idxmin()
+
+    best_rmse_params = trial_results.loc[optimal_rmse_idx, param_cols].to_dict()
+    best_mae_params = trial_results.loc[optimal_mae_idx, param_cols].to_dict()
+
+    final_model, rmse, mae, test_results = train_xgb_model(
+        input_data,
+        all_training_stations,
+        test_stations,
+        attributes,
+        target,
+        best_rmse_params,
+        2 * num_boost_rounds,
+    )
+
+    return trial_results, test_results
 
 
 def train_test_split(df, holdout_pct):
     """
-    Split the input data into training and test sets.  
+    Split the input data into training and test sets.
     The proportion of test data is holdout_pct.
     Return the data as arrays.
     """
     n_holdout = int(holdout_pct * len(df))
     test_idxs = np.random.choice(df.index.values, n_holdout, replace=False)
     train_idxs = [i for i in df.index.values if i not in test_idxs]
-    
+
     common_idxs = np.intersect1d(train_idxs, test_idxs)
     assert len(common_idxs) == 0
-    
+
     return train_idxs, test_idxs
 
 
-def compute_mean_runoff(row):
-    """
-    Retrieves daily average flow time series and computes mean runoff for complete months
-    based on 90% of days in month.
-
-    Parameters
-    ----------
-    row : pd.Series
-        A pandas Series containing information about the station. It must include the key 'official_id' which specifies the station ID.
-
-    Returns
-    -------
-    float
-        The mean unit runoff.
-
-    Notes
-    -----
-    - The function retrieves the time series data for the specified station ID.
-    - It drops incomplete years such that the mean estimate is not skewed by missing seasonal trends.
-    - The mean unit area runoff is returned.
-
-    Example
-    -------
-    >>> row = pd.Series({'official_id': 'station123'})
-    >>> mean_runoff = compute_mean_runoff(row)
-    >>> print(f'Mean Runoff: {mean_runoff:.4f}')
-    """
-    # get data
-    stn_id = row['official_id']
-    df = get_timeseries_data(stn_id)
-    df.dropna(subset=[stn_id], inplace=True)
-    df['year'] = df['time'].dt.year
-    df['month'] = df['time'].dt.month
-    years = sorted(np.unique(df['year'].values))
-    months = sorted(np.unique(df['month'].values))
-    counts = df.groupby(['year', 'month']).count()
-
-    count_pivot_df = df.pivot_table(values=stn_id, index='year', columns='month', aggfunc='count')
-    
-    days_in_month = pd.DataFrame(
-        [[pd.Period(f'{year}-{month}').days_in_month for month in months] for year in years],
-        index=years,
-        columns=months
-    )
-    days_90_percent = days_in_month * 0.9
-    
-    # Generate the boolean mask
-    try:
-        boolean_mask = count_pivot_df > days_90_percent.values
-    except Exception as ex:
-        print(count_pivot_df)
-        print(days_in_month)
-    
-    pivot_mean = df.pivot_table(values=stn_id, index='year', columns='month', aggfunc='mean')
-
-    # apply the boolean mask to filter incomplete months
-    filtered_df = pivot_mean.where(boolean_mask)
-    month_means = filtered_df.mean(axis=0)
-    
-    return month_means.mean() 
-
-    
 def compute_cdf(data):
     """
     Computes the cumulative distribution function (CDF) for a given dataset.
@@ -534,8 +851,77 @@ def compute_cdf(data):
     [0.2, 0.4, 0.6, 0.8, 1.0]
     """
     sorted_data = np.sort(data)
-    yvals = np.arange(1, len(sorted_data)+1) / float(len(sorted_data))
+    yvals = np.arange(1, len(sorted_data) + 1) / float(len(sorted_data))
     return sorted_data, yvals
+
+
+def compute_mean_runoff(row):
+    """
+    Retrieves daily average flow time series and computes mean runoff for complete months
+    based on 90% of days in month.
+
+    Parameters
+    ----------
+    row : pd.Series
+        A pandas Series containing information about the station. It must include the key 'official_id' which specifies the station ID.
+
+    Returns
+    -------
+    float
+        The mean unit runoff.
+
+    Notes
+    -----
+    - The function retrieves the time series data for the specified station ID.
+    - It drops incomplete years such that the mean estimate is not skewed by missing seasonal trends.
+    - The mean unit area runoff is returned.
+
+    Example
+    -------
+    >>> row = pd.Series({'official_id': 'station123'})
+    >>> mean_runoff = compute_mean_runoff(row)
+    >>> print(f'Mean Runoff: {mean_runoff:.4f}')
+    """
+    # get data
+    stn_id = row["official_id"]
+    df = get_timeseries_data(stn_id)
+    df.dropna(subset=[stn_id], inplace=True)
+    df["year"] = df["time"].dt.year
+    df["month"] = df["time"].dt.month
+    years = sorted(np.unique(df["year"].values))
+    months = sorted(np.unique(df["month"].values))
+    counts = df.groupby(["year", "month"]).count()
+
+    count_pivot_df = df.pivot_table(
+        values=stn_id, index="year", columns="month", aggfunc="count"
+    )
+
+    days_in_month = pd.DataFrame(
+        [
+            [pd.Period(f"{year}-{month}").days_in_month for month in months]
+            for year in years
+        ],
+        index=years,
+        columns=months,
+    )
+    days_90_percent = days_in_month * 0.9
+
+    # Generate the boolean mask
+    try:
+        boolean_mask = count_pivot_df > days_90_percent.values
+    except Exception as ex:
+        print(count_pivot_df)
+        print(days_in_month)
+
+    pivot_mean = df.pivot_table(
+        values=stn_id, index="year", columns="month", aggfunc="mean"
+    )
+
+    # apply the boolean mask to filter incomplete months
+    filtered_df = pivot_mean.where(boolean_mask)
+    month_means = filtered_df.mean(axis=0)
+
+    return month_means.mean()
 
 
 def process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size):
@@ -577,53 +963,58 @@ def process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size):
     """
     t0 = time()
     if len(inputs) == 0:
-        print('    No new pairs to process')
+        print("    No new pairs to process")
         return None
-    
-    
-    n_batches = max(len(inputs) // batch_size, 1)
-    batch_inputs = np.array_split(np.array(inputs, dtype=object), n_batches)
 
-    print(f'    Processing {len(inputs)} pairs in {n_batches} batches at {bitrate} bits')
+    n_batches = max(len(inputs) // batch_size, 1)
+    batches = np.array_split(np.array(inputs, dtype=object), n_batches)
+
+    print(
+        f"    Processing {len(inputs)} pairs in {n_batches} batches at {bitrate} bits"
+    )
     batch_no = 0
     batch_files = []
 
-    for batch in batch_inputs[:2]:
-        batch_output_fname = out_fname.replace('.csv', f'_batch_{batch_no}.csv')
-        batch_output_path = os.path.join(DATA_DIR, 'temp_batches', batch_output_fname)
+    for batch in batches:
+        batch_output_fname = out_fname.replace(".csv", f"_batch_{batch_no}.csv")
+        batch_output_path = os.path.join(DATA_DIR, "temp_batches", batch_output_fname)
         if os.path.exists(batch_output_path):
-            print(f'    Batch {batch_no} already processed.')
+            print(f"    Batch {batch_no} already processed.")
             batch_no += 1
             batch_files.append(batch_output_path)
             continue
 
         # results = []
-        # for b in batch[:2]:
-        #     result = process_batch(b)
+        # for batch_inputs in batch[:2]:
+        #     result = process_batch(batch_inputs)
         #     results.append(result)
 
-        with mp.Pool() as pool:
-            results = pool.map(process_batch, batch)
-            results = [r for r in results if r is not None]
+        with mp.Pool(4) as pool:
+           results = pool.map(process_batch, batch)
+           results = [r for r in results if r is not None]
 
         if len(results) == 0:
-            print('    No new results in current batch to save')
+            print("    No new results in current batch to save")
             continue
-        
+
         t1 = time()
-        print(f'    Processed batch {batch_no}/{len(batch_inputs)} -- {batch_size} pairs ({len(results)} good results) in {t1 - t0:.1f} seconds')
-        
+        progress_msg = (
+            f"    Processed batch {batch_no}/{len(batch_inputs)} -- {batch_size} pairs"
+        )
+        progress_msg += f" ({len(results)} good results) in {t1 - t0:.1f} seconds"
+        print(progress_msg)
+
         new_results_df = pd.DataFrame(results)
-        new_results_df['target'] = new_results_df['target'].astype(str)
-        new_results_df['proxy'] = new_results_df['proxy'].astype(str)
+        new_results_df["target"] = new_results_df["target"].astype(str)
+        new_results_df["proxy"] = new_results_df["proxy"].astype(str)
 
         if len(new_results_df) == 0:
-            print('    No new results in current batch to save')
+            print("    No new results in current batch to save")
             continue
         else:
             pass
             new_results_df.to_csv(batch_output_path, index=False)
-            print(f'    Saved {len(new_results_df)} new results to file.')
+            print(f"    Saved {len(new_results_df)} new results to file.")
             batch_files.append(batch_output_path)
         batch_no += 1
     return batch_files
@@ -633,17 +1024,19 @@ def check_if_nested(proxy_data, target_data):
     """
     Create an attribute to identify when
     catchments are nested.
-    Returns: 
+    Returns:
         0: No intersection
         1: The donor/proxy station is downstream of the target
         2: The donor/proxy station is upstream of the target.
     """
-    proxy, target = proxy_data['geometry'], target_data['geometry']
-    pid = proxy_data['official_id']
-    tid = target_data['official_id']
+    proxy, target = proxy_data["geometry"], target_data["geometry"]
+    print(proxy, target)
+    print(asdf)
+    pid = proxy_data["official_id"]
+    tid = target_data["official_id"]
     nested = 0
     a, b, c = proxy.intersects(target), proxy.contains(target), target.contains(proxy)
-    
+
     if proxy.intersects(target):
         # if polygons intersect, check if the smaller one is mostly within the bigger one
         # can't use 'contained' because bounds may not align perfectly
@@ -651,18 +1044,17 @@ def check_if_nested(proxy_data, target_data):
         target_pct_diff = diff.area / target.area
         proxy_pct_diff = diff.area / proxy.area
         nested = 1
-        
+
         if target.area > proxy.area:
             nested = 2
-            
+
         if (proxy_pct_diff < 0.25) & (target_pct_diff < 0.25):
             nested = 0
             # print(pid, tid)
             # print(f'Proxy: {proxy.area/1e6:.1f} km2')
             # print(f'Target: {target.area/1e6:.1f} km2')
             # print(f'    Polygons intersect but may not be nested. target pct diff = {target_pct_diff:.3f} proxy pct diff {proxy_pct_diff:.3f}')
-            # raise Exception('Polygons intersect but may not be nested.')    
-    
+            # raise Exception('Polygons intersect but may not be nested.')
     return nested
 
 
@@ -711,12 +1103,10 @@ def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
     # reserve two bins for out of range values at left and right
     n_bins = 2**bitrate - 2
     min_log_val = np.log10(data[proxy.obs_label].min())
-    # shift the right edge slightly to ensure the maximum value 
-    # falls in the last bin
     max_log_val = np.log10(data[proxy.obs_label].max())
-    
+
     if min_log_val == max_log_val:
-        raise Exception('Min. and max. log values should not be equal.')
+        raise Exception("Min. and max. log values should not be equal.")
         # print('   Min and max log values are the same.  Adding small amount of noise.')
         # max_log_val += epsilon
 
@@ -736,11 +1126,13 @@ def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
     # there should be n_bins edges which define n_bins - 1 bins
     # this is to reserve 2 bin for out-of-range values to the right
     assert len(bin_edges) == n_bins + 1
-    
+
     return bin_edges
 
 
-def error_adjusted_fractional_bin_counts(values, bin_edges, error_factor=0.1):
+def error_adjusted_fractional_bin_counts(
+    observations, bin_edges, bitrate, error_factor=0.1
+):
     """
     Computes error-adjusted fractional bin counts for a given set of values by considering an error factor.
 
@@ -771,125 +1163,101 @@ def error_adjusted_fractional_bin_counts(values, bin_edges, error_factor=0.1):
     >>> counts = error_adjusted_fractional_bin_counts(values, bin_edges, error_factor=0.05)
     >>> print(counts)
     """
+
+    # drop nan values
+    values = observations[~np.isnan(observations)].values
+
     lower_bounds = values * (1 - error_factor)
     upper_bounds = values * (1 + error_factor)
-    
-    # Calculate bin midpoints
-    bin_midpoints = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+    # Compute bin widths
+    value_widths = upper_bounds - lower_bounds
 
     # Initialize the bin counts
-    bin_counts = np.zeros(len(bin_midpoints))
-    
+    bin_counts = np.zeros(2**bitrate)
+
     # Create a matrix of bin edges
     bin_edges_lower = bin_edges[:-1]
     bin_edges_upper = bin_edges[1:]
 
-    # Compute the overlap for each value with each bin
-    try:
-        overlap_matrix = np.maximum(0, np.minimum(upper_bounds[:, None], bin_edges_upper) - np.maximum(lower_bounds[:, None], bin_edges_lower))
-    except Exception as ex:
-        print(bin_edges)
+    # Compute the amount each value +/- error overlaps the bins
+    # np.minimum(upper_bounds[:, None], bin_edges_upper)
+    #    ---> takes the smaller of the upper bin edge and the upper bound of the value range
+    # np.maximum(lower_bounds[:, None], bin_edges_lower)
+    #    ---> takes the larger of the lower bin edge and the lower bound of the value range
+    overlap_matrix = np.maximum(
+        0,
+        np.minimum(upper_bounds[:, None], bin_edges_upper)
+        - np.maximum(lower_bounds[:, None], bin_edges_lower),
+    )
 
-        raise Exception('Error calculating overlap matrix')
-    # Compute bin widths
-    bin_widths = bin_edges_upper - bin_edges_lower
+    # handle cases where bounds are outside bin ranges
+    min_bin_edge, max_bin_edge = bin_edges_lower[0], bin_edges_upper[-1]
+
+    # Extend the overlap matrix to include virtual bins
+    extended_overlap_matrix = np.zeros((len(values), 2**bitrate))
+
+    # Copy the original overlaps into the extended matrix
+    extended_overlap_matrix[:, 1:-1] = overlap_matrix
+    
+    # Vectorized handling of out-of-bounds lower bounds
+    out_of_bounds_lower = lower_bounds < min_bin_edge
+    extended_overlap_matrix[out_of_bounds_lower, 0] = min_bin_edge - lower_bounds[out_of_bounds_lower]
+
+    # Vectorized handling of out-of-bounds upper bounds
+    out_of_bounds_upper = upper_bounds > max_bin_edge
+    extended_overlap_matrix[out_of_bounds_upper, -1] = upper_bounds[out_of_bounds_upper] - max_bin_edge
+
+    # Vectorized handling of completely out-of-bounds cases
+    completely_out_of_bounds_left = upper_bounds < min_bin_edge
+    completely_out_of_bounds_right = lower_bounds > max_bin_edge
+    
+    # Set the adjusted widths to the value widths for completely out-of-bounds cases
+    extended_overlap_matrix[completely_out_of_bounds_left, 0] = value_widths[completely_out_of_bounds_left]
+    extended_overlap_matrix[completely_out_of_bounds_right, -1] = value_widths[completely_out_of_bounds_right]
+
+    # assert that the overlap matrix sums to the value bounds along rows
+    assert np.allclose(
+        np.sum(extended_overlap_matrix, axis=1), value_widths, atol=1e-2
+    ), f"overlaps dont add up to value width"
 
     # Fractional counts based on the overlap
-    fractional_counts = overlap_matrix / bin_widths
+    fractional_counts = extended_overlap_matrix / value_widths[:, None]
 
     # Sum fractional counts for each bin
     bin_counts = np.sum(fractional_counts, axis=0)
 
-    # Normalize bin counts to ensure the sum is equal to the number of observations
-    total_observations = len(values)
-    bin_counts *= (total_observations / np.sum(bin_counts))
+    # find where fractional counts is greater than zero in the left-most bin
+    assert np.allclose(
+        np.sum(fractional_counts, axis=1), 1, atol=1e-2
+    ), f"Fractional counts don't sum to 1."
+
+    assert round(sum(bin_counts), 0) == len(
+        values
+    ), f"Error in bin counts: {sum(bin_counts)} != {len(values)}"
 
     return bin_counts
 
 
-def compute_error_adjusted_probabilities(df, series, bin_edges, error_factor=0.1):
-    """
-    Computes error-adjusted probabilities for a given series in a DataFrame by adding uniformly distributed error.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        The DataFrame containing the time series data.
-    series : str
-        The column name of the series for which to compute the probabilities.
-    bin_edges : np.ndarray
-        The edges of the bins used for quantizing the series.
-    error_factor : float, optional
-        The factor of uniformly distributed error to be added to the observed data (default is 0.1).
-
-    Returns
-    -------
-    np.ndarray
-        An array of error-adjusted frequencies corresponding to each bin.
-
-    Notes
-    -----
-    - The function first computes the bin numbers for the series values based on the provided bin edges.
-    - It then calculates fractional bin counts adjusted for measurement error.
-    - The sum of the fractional error counts is checked to ensure it is approximately equal to the sum of the original bin counts.
-    - The function returns the error-adjusted frequencies, ensuring that their sum is approximately 1.
-
-    Example
-    -------
-    >>> data = {'series': np.random.rand(100)}
-    >>> df = pd.DataFrame(data)
-    >>> bin_edges = np.linspace(0, 1, 11)
-    >>> frequencies = compute_error_adjusted_probabilities(df, 'series', bin_edges, error_factor=0.05)
-    >>> print(frequencies)
-    """
-    n_sample = len(df[series])
-    # bin_edges = np.array([10**e for e in log_bin_edges])
-    bin_nos = np.digitize(df[series], bin_edges)
-    unique, bin_counts = np.unique(bin_nos, return_counts=True)
-    
-    fractional_error_counts = error_adjusted_fractional_bin_counts(df[series], bin_edges, error_factor)
-        
-    # ensure that the number of observations hasn't changed
+def compute_unadjusted_counts(df, target, bin_edges, bitrate, concurrent_data):
     try:
-        sum_difference = abs(sum(bin_counts) - sum(fractional_error_counts))
-        assert sum_difference < 0.01
-    except AssertionError:
-        print(f'simple and linear counts are not equal')
-    
-    error_adjusted_frequencies = fractional_error_counts / n_sample
-    
-    # frequency_mapping = {k:v for k, v in zip(unique, error_frequencies)}
-    
-    # Check if the sum of frequencies is within 0.01 of 1
-    if (abs(sum(error_adjusted_frequencies) - 1) >= 0.01):
-        raise ValueError("Sum of frequencies is not within 0.01 of 1")
-
-    return error_adjusted_frequencies
-
-
-def compute_counts(df, target, bin_edges):
-    try:
-        # note that digitize is 1-indexed
-        # print('n bin edges ', len(bin_edges))
-        df[target.obs_quantized_label] = np.digitize(df[target.obs_label], bin_edges)
-        df[target.sim_quantized_label] = np.digitize(df[target.sim_label], bin_edges)
-        # uns, scount = np.unique(df[target.sim_quantized_label], return_counts=True)
-        # uno, ocount = np.unique(df[target.obs_quantized_label], return_counts=True)
-        # print(uns)
-        # print(uno)
+        # note that np.digitize is 1-indexed
+        df[target.obs_quantized_label] = np.digitize(
+            df[target.obs_label], bin_edges
+        )  # P(X)
+        df[target.sim_quantized_label] = np.digitize(
+            df[target.sim_label], bin_edges
+        )  # Q(X)
     except Exception as e:
-        print(f'Error digitizing series: {e}')
-        raise Exception('Error digitizing series')
+        print(f"Error digitizing series: {e}")
+        raise Exception("Error digitizing series")
     # count the occurrences of each quantized value
     # the "simulated" series is the proxy/donor series
-    # and the "observed" series is the target location 
+    # and the "observed" series is the target location
     obs_count_df = df.groupby(target.obs_quantized_label).count()
     sim_count_df = df.groupby(target.sim_quantized_label).count()
-    og_sim_count = sim_count_df[target.sim_label].copy().sum()
-    
-    n_obs = np.nansum(obs_count_df[target.obs_label])
-    n_sim = np.nansum(sim_count_df[target.sim_label])
-    
+    # og_sim_count = sim_count_df[target.sim_label].copy().sum()
+
     count_df = pd.DataFrame(index=range(2**bitrate))
     count_df[target.obs_label] = 0
     count_df[target.sim_label] = 0
@@ -897,11 +1265,27 @@ def compute_counts(df, target, bin_edges):
     count_df[target.obs_label] += obs_count_df[target.obs_label]
     count_df[target.sim_label] += sim_count_df[target.sim_label]
     count_df.fillna(0, inplace=True)
+
     return count_df
 
 
+def test_probability_distribution_sums_to_one(p, bitrate):
+    # check for rounding errors, p should sum to 1
+    # if not, renormalize the probabilities
+    sum_p = np.sum(p)
+    if round(sum_p, 2) != 1.0:
+        diff = 1.0 - sum_p
+        p += diff / 2**bitrate
+        new_sum = round(np.sum(p), 2)
+        
+        if new_sum != 1.0:
+            raise Exception(f"Renormalization of probabilities failed: {new_sum}")
+    return p
 
-def compute_prior_adjusted_probabilities(count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges):
+
+def compute_posterior_Q_probabilities(
+    count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges
+):
     """
     Computes the observed and simulated probabilities for a given target station using quantization and pseudo counts.
 
@@ -935,6 +1319,8 @@ def compute_prior_adjusted_probabilities(count_df, target, bitrate, pseudo_count
     - If `concurrent_data` is True, it checks that the number of observations and simulations match.
     - It adds one pseudo count to each bin to represent the uniform prior and adjusts probabilities if necessary.
     - Posterior probabilities are computed based on a range of pseudo counts to test sensitivity.
+    - p_obs is the observed (target) frequencies P(X)
+    - p_sim is the simulated (proxy/donor) frequencies Q(X)
 
     Example
     -------
@@ -953,49 +1339,43 @@ def compute_prior_adjusted_probabilities(count_df, target, bitrate, pseudo_count
     >>> print(p_obs)
     >>> print(q_df)
     """
+
+    n_obs = np.nansum(count_df[target.obs_label])
+    n_sim = np.nansum(count_df[target.sim_label])
+
     if concurrent_data:
-        assert n_obs == n_sim, 'Number of observations and simulations do not match.'
-          
+        assert round(n_obs, 0) == round(n_sim, 0), f"Number of observations and simulations do not match. n_obs={n_obs}, n_sim={n_sim}"
+    # else:
+    #     print("non-concurrent")
+    #     print(n_obs, n_sim)
+
+    # normalize p_obs and p_sim
     p_obs = count_df[target.obs_label].values / n_obs
     p_sim = count_df[target.sim_label].values / n_sim
+    assert round(np.sum(p_sim), 2) == 1.0, "p_sim does not sum to 1.0"
 
-    # print(concurrent_data, n_obs, n_sim, round(p_obs.sum(), 2), round(p_sim.sum(), 2))
-    
-    # here we add one pseudo-count to each bin to represent the uniform prior
-    # doesn't matter what label you use, all columns are the same
     q_df = pd.DataFrame()
-    q_df['q_sim_no_prior'] = p_sim
-    q_df['q_uniform'] = 1.0 / 2.0**bitrate
+    q_df["q_sim_no_prior"] = p_sim
 
-    # check for rounding errors, p and q should sum to 1
-    # if not, renormalize the probabilities
-    sum_q = np.sum(q_df['q_uniform'])
-    if round(sum_q, 2) != 1.0:
-        diff = 1.0 - sum_q
-        q_df['q_uniform'] += diff / 2**bitrate
-        new_sum = np.sum(q_df['q_uniform'])
-        print(f'adjusted q_uniform: {new_sum:.3f}')
+    uniform_p = [1.0 / 2.0**bitrate for _ in range(2**bitrate)]
+    q_df["q_uniform"] = test_probability_distribution_sums_to_one(uniform_p, bitrate)
 
-    sum_p = np.sum(p_obs)
-    if round(sum_p, 2) != 1.0:
-        diff = 1.0 - sum_p
-        p_obs += diff / 2**bitrate
-        new_sum = np.sum(p_obs)
-        if round(new_sum, 2) != 1.0:
-            raise Exception('Renormalization of observed probabilities failed.')
-    
-    # compute the posterior probabilities based on 
+    # compute the posterior probabilities based on
     # a wide range of priors to test sensitivity
     for pseudo_counts in pseudo_counts:
         adjusted_counts = [x + 10**pseudo_counts for x in count_df[target.sim_label]]
         tot_adjusted_counts = np.nansum(adjusted_counts)
-        q_df[f'q_post_{pseudo_counts}R'] = adjusted_counts / tot_adjusted_counts
-        assert np.round(q_df[f'q_post_{pseudo_counts}R'].sum(), 2) == 1, 'Posterior probabilities do not sum to 1.'
-    
+        q_df[f"q_post_{pseudo_counts}R"] = adjusted_counts / tot_adjusted_counts
+        assert (
+            np.round(q_df[f"q_post_{pseudo_counts}R"].sum(), 2) == 1
+        ), "Posterior probabilities do not sum to 1."
+
     return p_obs, q_df
 
 
-def process_probabilities(df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts):
+def process_probabilities(
+    df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
+):
     """
     Processes the probabilities of observed and simulated data for a given proxy and target station.
 
@@ -1040,26 +1420,39 @@ def process_probabilities(df, proxy, target, bitrate, concurrent_data, partial_c
     >>> target = Station(id='target', obs_label='target_obs', sim_label='target_sim')
     >>> p_obs, p_sim, bin_edges = process_probabilities(df, proxy, target, 8, True, False)
     >>> print(p_obs, p_sim, bin_edges)
-    """    
+    """
     # compute the bin edges based on equal width in log space
     bin_edges = uniform_log_bins(df, proxy, bitrate)
-        
-    if partial_counts == True:
-        # add a uniformly distributed error to the observed data
-        # and compute probabilities from partial observation counts
-        # where counts are divided based on the proportion of the bin 
-        # that the measurement error falls within
-        p_obs = compute_error_adjusted_probabilities(df, target.obs_label, bin_edges, error_factor=0.1)
-        p_sim = compute_error_adjusted_probabilities(df, target.sim_label, bin_edges, error_factor=0.1)
 
-    else:
-        # computes the observed P and simulation Q distribution probabilities 
+    if partial_counts == False:
+        # computes the observed P and simulation Q distribution probabilities
         # as dicts by bin number, probability key-value pairs
         # test a wide range of uniform priors via pseudo counts
-        count_df = compute_counts(df, target, bin_edges)
-        p_obs, p_sim = compute_prior_adjusted_probabilities(
-            count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges)
-            
+        count_df = compute_unadjusted_counts(
+            df, target, bin_edges, bitrate, concurrent_data
+        )
+    else:
+        # add a uniformly distributed error to the observed data
+        # and compute probabilities from partial observation counts
+        # where counts are divided based on the proportion of the bin
+        # that the measurement error falls within
+        fractional_obs_counts = error_adjusted_fractional_bin_counts(
+            df[target.obs_label], np.array(bin_edges), bitrate, error_factor=0.1
+        )
+        fractional_sim_counts = error_adjusted_fractional_bin_counts(
+            df[target.sim_label], np.array(bin_edges), bitrate, error_factor=0.1
+        )
+
+        count_df = pd.DataFrame(index=range(2**bitrate))
+        count_df[target.obs_label] = 0
+        count_df[target.sim_label] = 0
+        count_df[target.obs_label] += fractional_obs_counts
+        count_df[target.sim_label] += fractional_sim_counts
+        count_df.fillna(0, inplace=True)
+
+    p_obs, p_sim = compute_posterior_Q_probabilities(
+        count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges
+    )
     return p_obs, p_sim, bin_edges
 
 
@@ -1102,9 +1495,9 @@ def compute_cod(df, obs, sim):
         _, _, r_value, _, _ = linregress(df[obs.id], df[sim.id])
         return r_value**2
     except Exception as ex:
-        print(f'Linear regression failed on {obs.id} and {sim.id} (N={len(df)})')
+        print(f"Linear regression failed on {obs.id} and {sim.id} (N={len(df)})")
         return 0
-    
+
 
 def compute_nse(df, obs, sim):
     """
@@ -1126,7 +1519,7 @@ def compute_nse(df, obs, sim):
 
     Notes
     -----
-    - NSE is computed as 1 minus the ratio of the sum of squared differences between observed and simulated values 
+    - NSE is computed as 1 minus the ratio of the sum of squared differences between observed and simulated values
     to the sum of squared differences between observed values and the mean of observed values.
     - The function handles cases where the mean of the observed values is used in the denominator.
 
@@ -1142,9 +1535,10 @@ def compute_nse(df, obs, sim):
     0.995...
     """
     obs_mean = df[obs.id].mean()
-    return 1 - (df[sim.id] - df[obs.id]).pow(2).sum() / (df[obs.id] - obs_mean).pow(2).sum()
-    obs_mean = df[obs.id].mean()
-    return 1 - (df[sim.id] - df[obs.id]).pow(2).sum() / (df[obs.id] - obs_mean).pow(2).sum()
+    return (
+        1
+        - (df[sim.id] - df[obs.id]).pow(2).sum() / (df[obs.id] - obs_mean).pow(2).sum()
+    )
 
 
 def compute_kge(df, obs, sim):
@@ -1167,7 +1561,7 @@ def compute_kge(df, obs, sim):
 
     Notes
     -----
-    - KGE is computed using the correlation coefficient, the ratio of the means, and the ratio of the coefficients of 
+    - KGE is computed using the correlation coefficient, the ratio of the means, and the ratio of the coefficients of
     variation between observed and simulated series.
     - The function combines these components into the KGE formula to evaluate the efficiency.
 
@@ -1188,11 +1582,10 @@ def compute_kge(df, obs, sim):
     sim_mean = df[sim.id].mean()
     obs_std = df[obs.id].std()
     sim_std = df[sim.id].std()
-    r = np.corrcoef(df[obs.id], df[sim.id])[0,1]
+    r = np.corrcoef(df[obs.id], df[sim.id])[0, 1]
     beta = sim_mean / obs_mean
     gamma = (sim_std / sim_mean) / (obs_std / obs_mean)
-    return 1 - np.sqrt((r-1)**2 + (beta - 1)**2 + (gamma - 1)**2)
-
+    return 1 - np.sqrt((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2)
 
 
 def process_batch(inputs):
@@ -1209,6 +1602,9 @@ def process_batch(inputs):
         - completeness_threshold (float): The threshold for data completeness.
         - min_years (int): The number of years for which data is considered.
         - partial_counts (bool): A flag indicating whether partial counts are used.
+        - attr_cols (list): list of attributes (features)
+        - climate_cols (list): climate attribute columns
+        - pseudo_counts (list): array of integers representing prior distribution pseudo-counts
 
     Returns
     -------
@@ -1222,9 +1618,9 @@ def process_batch(inputs):
     - Data completeness is checked, and the function raises an error if required information is missing.
     - Concurrent and non-concurrent data is retrieved, transformed, and jittered.
     - Simulated flow at the target station is calculated based on unit area runoff scaling.
-    - Various efficiency metrics such as Coefficient of Determination (COD), Nash-Sutcliffe Efficiency (NSE), 
+    - Various efficiency metrics such as Coefficient of Determination (COD), Nash-Sutcliffe Efficiency (NSE),
     and Kling-Gupta Efficiency (KGE) are computed for the concurrent data.
-    - Probability Mass Functions (PMFs) and divergences are processed for both concurrent and non-concurrent data 
+    - Probability Mass Functions (PMFs) and divergences are processed for both concurrent and non-concurrent data
     if sufficient observations are available.
 
     Example
@@ -1236,102 +1632,142 @@ def process_batch(inputs):
     ... else:
     ...     print("No results processed.")
     """
-    proxy, target, bitrate, completeness_threshold, min_years, partial_counts, attr_cols, climate_cols, pseudo_counts = inputs
-        
+    (
+        proxy,
+        target,
+        bitrate,
+        completeness_threshold,
+        min_years,
+        partial_counts,
+        attr_cols,
+        climate_cols,
+        pseudo_counts,
+    ) = inputs
+
     proxy_id, target_id = str(proxy), str(target)
     bitrate = int(bitrate)
     completeness_threshold = float(completeness_threshold)
     min_years = int(min_years)
     min_observations = min_years * completeness_threshold * 365
 
-    result = {'proxy': str(proxy_id), 'target': str(target_id), 'bitrate': bitrate, 'completeness_threshold': completeness_threshold}    
-    
+    # create a result dict object for tracking results of the batch comparison
+    result = {
+        "proxy": str(proxy_id),
+        "target": str(target_id),
+        "bitrate": bitrate,
+        "completeness_threshold": completeness_threshold,
+    }
+
     station_info = {
-        'proxy': hs_df[hs_df['official_id'] == proxy_id].copy().to_dict(orient='records')[0],
-        'target': hs_df[hs_df['official_id'] == target_id].copy().to_dict(orient='records')[0]
+        "proxy": hs_df[hs_df["official_id"] == proxy_id]
+        .copy()
+        .to_dict(orient="records")[0],
+        "target": hs_df[hs_df["official_id"] == target_id]
+        .copy()
+        .to_dict(orient="records")[0],
     }
 
     # check if the polygons are nested
-    result['nested_catchments'] = check_if_nested(station_info['proxy'], station_info['target'])
+    result["nested_catchments"] = check_if_nested(
+        station_info["proxy"], station_info["target"]
+    )
 
     # we don't need to add the attributes, these can be retrieved later.
-    # HOWEVER, sacrificing a bit of disk space now 
+    # HOWEVER, sacrificing a bit of disk space now
     # saves substantial computation time later
-    for l in ['proxy', 'target']:
+    for l in ["proxy", "target"]:
         for c in attr_cols + climate_cols:
-            result[f'{l}_{c.lower()}'] = station_info[l][c.lower()]
-    
+            result[f"{l}_{c.lower()}"] = station_info[l][c.lower()]
+
     # for stn in pair:
-    proxy = Station(station_info['proxy'], bitrate)
-    target = Station(station_info['target'], bitrate)
-    
+    proxy = Station(station_info["proxy"], bitrate)
+    target = Station(station_info["target"], bitrate)
+
     # compute spatial distance
-    p1, p2 = station_info['proxy']['geometry'].centroid, station_info['target']['geometry'].centroid
+    p1, p2 = (
+        station_info["proxy"]["geometry"].centroid,
+        station_info["target"]["geometry"].centroid,
+    )
     # compute the distance between catchment centroids (km)
     centroid_distance = p1.distance(p2) / 1000
-    result['centroid_distance'] = round(centroid_distance, 2)
-    if centroid_distance > 1000: return None
+    result["centroid_distance"] = round(centroid_distance, 2)
+    if centroid_distance > 1000:
+        return None
 
     if np.isnan(target.drainage_area_km2):
-        raise ValueError(f'No drainage area for {target_id}')
+        raise ValueError(f"No drainage area for {target_id}")
     if np.isnan(proxy.drainage_area_km2):
-        raise ValueError(f'No drainage area for {proxy_id}')
+        raise ValueError(f"No drainage area for {proxy_id}")
 
     # Retrieve the data for both stations
+    # this is all data, including non-concurrent
     adf = retrieve_nonconcurrent_data(proxy_id, target_id)
-    
+
     for stn in [proxy, target]:
         adf = transform_and_jitter(adf, stn)
 
     # simulate flow at the target based on equal unit area runoff scaling
-    adf[target.sim_label] = adf[proxy.id] * (target.drainage_area_km2 / proxy.drainage_area_km2)
+    adf[target.sim_label] = adf[proxy.id] * (
+        target.drainage_area_km2 / proxy.drainage_area_km2
+    )
 
     # filter for the concurrent data
-    df = adf.copy().dropna(subset=[proxy_id, target_id], how='any')
+    df = adf.copy().dropna(subset=[proxy_id, target_id], how="any")
     counts = df[[proxy_id, target_id]].count(axis=0)
 
     if counts[proxy_id] != counts[target_id]:
-        raise ValueError(f'Unequal counts for {proxy_id} and {target_id}')
-    
-    result['num_concurrent_obs'] = len(df)
+        raise ValueError(f"Unequal counts for {proxy_id} and {target_id}")
+
+    result["num_concurrent_obs"] = len(df)
     counts = adf.count(axis=0)
 
     proxy.n_obs, target.n_obs = counts[proxy_id], counts[target_id]
-    result[f'proxy_n_obs'] = proxy.n_obs
-    result[f'target_n_obs'] = target.n_obs
+    result[f"proxy_n_obs"] = proxy.n_obs
+    result[f"target_n_obs"] = target.n_obs
 
-    result[f'proxy_frac_concurrent'] = len(df) / proxy.n_obs
-    result[f'target_frac_concurrent'] = len(df) / target.n_obs
-    
+    result[f"proxy_frac_concurrent"] = len(df) / proxy.n_obs
+    result[f"target_frac_concurrent"] = len(df) / target.n_obs
+
     if (counts[proxy_id] == 0) or (counts[target_id] == 0):
-        print(f'   Zero observation count detected.  Skipping.')
+        print(f"   Zero observation count detected.  Skipping.")
         return None
-            
-    if len(df) > min_observations:        
+
+    if len(df) > min_observations:
         # compute coefficient of determination
-        result['cod'] = compute_cod(df, proxy, target)
+        result["cod"] = compute_cod(df, proxy, target)
 
         # compute Nash-Sutcliffe efficiency
-        result['nse'] = compute_nse(df, proxy, target)
+        result["nse"] = compute_nse(df, proxy, target)
 
         # compute the Kling-Gupta efficiency
-        result['kge'] = compute_kge(df, proxy, target)
-    
-    # process the PMFs and divergences for concurrent data 
+        result["kge"] = compute_kge(df, proxy, target)
+
+    # process the PMFs and divergences for concurrent data
     # using a range of uniform priors via pseudo counts
     if len(df) > min_observations:
-        # print('processing concurrent data')
-        p_obs, p_sim, bin_edges = process_probabilities(df, proxy, target, bitrate, True, partial_counts, pseudo_counts)
-        result = process_divergences(p_obs, p_sim, bin_edges, bitrate, True, result)
-    
-    if (target.n_obs > min_observations) & (proxy.n_obs > min_observations):
-        # process the PMFs and divergences for concurrent=False
-        # print('processing non-concurrent data')        
-        p_obs, p_sim, bin_edges = process_probabilities(adf, proxy, target, bitrate, False, partial_counts, pseudo_counts)
-        result = process_divergences(p_obs, p_sim, bin_edges, bitrate, False, result)            
-        
-    return result
+        # df is concurrent data, so the results
+        # are updating concurrent data here
+        # df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
+        concurrent_data = True
+        p_obs, p_sim, bin_edges = process_probabilities(
+            df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
+        )
+        result = process_divergences(
+            result, p_obs, p_sim, bin_edges, bitrate, concurrent_data
+        )
 
+    if (target.n_obs > min_observations) & (proxy.n_obs > min_observations):
+        # adf is all data (includes non-concurrent), so the results
+        # are updated if both series meet the minimum length
+        concurrent_data = False
+        p_obs, p_sim, bin_edges = process_probabilities(
+            adf, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
+        )
+        result = process_divergences(
+            result, p_obs, p_sim, bin_edges, bitrate, concurrent_data
+        )
+
+    return result
 
 
 def check_distribution(p, q, c):
@@ -1361,11 +1797,10 @@ def check_distribution(p, q, c):
     sum_p = round(np.nansum(p), 2)
     sum_q = round(np.nansum(q), 2)
 
-    msg = f'{c}: sum(p)={sum_p:.2f} sum(q)={sum_q:.2f}'        
+    msg = f"{c}: sum(p)={sum_p:.2f} sum(q)={sum_q:.2f}"
     assert sum_p == 1.0 and sum_q == 1.0, msg
 
 
-    
 def process_KL_divergence(p_obs, p_sim, bitrate, concurrent_data):
     """
     Processes the Kullback-Leibler (KL) divergence between observed and simulated probability distributions.
@@ -1408,11 +1843,11 @@ def process_KL_divergence(p_obs, p_sim, bitrate, concurrent_data):
     """
     # dkl_df = uf.compute_kl_divergence(p_obs, p_sim, bitrate, concurrent_data)
     df = pd.DataFrame()
-    df['bin'] = range(1, 2**bitrate+1)
-    df.set_index('bin', inplace=True)
+    df["bin"] = range(1, 2**bitrate + 1)
+    df.set_index("bin", inplace=True)
 
     for c in p_sim.columns:
-        if c == 'q_sim_no_prior':
+        if c == "q_sim_no_prior":
             continue
         q = p_sim[c].values
         p = p_obs
@@ -1420,29 +1855,29 @@ def process_KL_divergence(p_obs, p_sim, bitrate, concurrent_data):
         # ensure that the probabilities sum to 1
         check_distribution(p, q, c)
 
-        label = 'dkl_nonconcurrent_' + '_'.join(c.split('_')[1:])
+        label = "dkl_nonconcurrent_" + "_".join(c.split("_")[1:])
         if concurrent_data is True:
-            label = 'dkl_concurrent_' + '_'.join(c.split('_')[1:])
+            label = "dkl_concurrent_" + "_".join(c.split("_")[1:])
 
         kld = 0
         for i in range(len(p)):
             if (p[i] == 0) | (q[i] == 0):
                 # we define 0 * log(0/0) = 0
-                # but q[i] should not be zero because 
+                # but q[i] should not be zero because
                 # we added a pseudo-count (Dirichlet) prior
                 continue
             if q[i] == 0:
-                raise Exception(f'q[i] is zero at i={i}')
+                raise Exception(f"q[i] is zero at i={i}")
             else:
                 kld = p[i] * np.log2(p[i] / q[i])
-                df.loc[i+1, label] = kld
+                df.loc[i + 1, label] = kld
 
     sum_dkl = df.sum()
 
     if any(sum_dkl.values) <= 0:
-        print(f'negative or zero dkl')
+        print(f"negative or zero dkl")
         print(sum_dkl.values)
-    
+
     return sum_dkl
 
 
@@ -1464,7 +1899,7 @@ def compute_tvd(p, q, q_uniform, concurrent_data):
     Returns
     -------
     dict
-        A dictionary containing the TVD between the observed and simulated distributions and the TVD 
+        A dictionary containing the TVD between the observed and simulated distributions and the TVD
         between the observed and uniform distributions.
 
     Notes
@@ -1483,11 +1918,11 @@ def compute_tvd(p, q, q_uniform, concurrent_data):
     {'tvd_concurrent': 0.1, 'tvd_concurrent_max': 0.165}
     """
     results = {}
-    tvd_label = f'tvd_nonconcurrent'
+    tvd_label = f"tvd_nonconcurrent"
     if concurrent_data is True:
-        tvd_label = f'tvd_concurrent'
+        tvd_label = f"tvd_concurrent"
     results[tvd_label] = np.sum(np.abs(np.subtract(p, q))) / 2
-    results[tvd_label + '_max'] = np.sum(np.abs(np.subtract(p, q_uniform))) / 2
+    results[tvd_label + "_max"] = np.sum(np.abs(np.subtract(p, q_uniform))) / 2
     return results
 
 
@@ -1511,7 +1946,7 @@ def compute_wasserstein_distance(bin_edges, p, q, q_uniform, concurrent_data):
     Returns
     -------
     dict
-        A dictionary containing the Wasserstein distance between the observed and simulated distributions 
+        A dictionary containing the Wasserstein distance between the observed and simulated distributions
         and the Wasserstein distance between the observed and uniform distributions.
 
     Notes
@@ -1532,38 +1967,42 @@ def compute_wasserstein_distance(bin_edges, p, q, q_uniform, concurrent_data):
     {'wasserstein_nonconcurrent': 0.05, 'wasserstein_nonconcurrent_max': 0.1}
     """
     result = {}
-    wasserstein_label = f'wasserstein_nonconcurrent'
+    wasserstein_label = f"wasserstein_nonconcurrent"
     if concurrent_data is True:
-        wasserstein_label = f'wasserstein_concurrent'
-    
+        wasserstein_label = f"wasserstein_concurrent"
+
     # Compute the bin midpoints in the linear space
     # this represents the water volume in the bin
     bin_midpoints = list(np.add(bin_edges[:-1], bin_edges[1:]) / 2)
 
-    # append the lowest and highest edges to the bin midpoints 
+    # append the lowest and highest edges to the bin midpoints
     # to serve as the weight (volume) of the highest bin
     bin_midpoints = [bin_edges[0]] + bin_midpoints + [bin_edges[-1]]
     # check for monitonicity
     assert np.all(np.diff(bin_midpoints) >= 0)
 
     try:
-        result[wasserstein_label] = wasserstein_distance(bin_midpoints, bin_midpoints, p, q) 
-        result[wasserstein_label + '_max'] = wasserstein_distance(bin_midpoints, bin_midpoints, p, q_uniform)   
+        result[wasserstein_label] = wasserstein_distance(
+            bin_midpoints, bin_midpoints, p, q
+        )
+        result[wasserstein_label + "_max"] = wasserstein_distance(
+            bin_midpoints, bin_midpoints, p, q_uniform
+        )
         return result
     except ValueError as e:
-        print(f'Error computing Wasserstein distance: {e}')
-        print(f'p: {len(p)}')
+        print(f"Error computing Wasserstein distance: {e}")
+        print(f"p: {len(p)}")
         print(p)
-        print(f'q: {len(q)}')
+        print(f"q: {len(q)}")
         print(q)
-        print(f'bin_midpoints: {len(bin_midpoints)}')
-        print(f'bin_edges: {len(bin_edges)}')
-        raise Exception('Wasserstein distance computation failed')
+        print(f"bin_midpoints: {len(bin_midpoints)}")
+        print(f"bin_edges: {len(bin_edges)}")
+        raise Exception("Wasserstein distance computation failed")
         # result[wasserstein_label] = np.nan
         # result[wasserstein_label + '_max'] = np.nan
 
 
-def process_divergences(p_obs, p_sim, bin_edges, bitrate, concurrent_data, result):
+def process_divergences(result, p_obs, p_sim, bin_edges, bitrate, concurrent_data):
     """
     Processes the divergences between observed and simulated probability distributions, including KL divergence, TVD, and Wasserstein distance.
 
@@ -1610,11 +2049,13 @@ def process_divergences(p_obs, p_sim, bin_edges, bitrate, concurrent_data, resul
     dkl_by_prior = process_KL_divergence(p_obs, p_sim, bitrate, concurrent_data)
 
     p = p_obs
-    q = p_sim['q_sim_no_prior'].values
-    q_uniform = p_sim['q_uniform'].values
+    q = p_sim["q_sim_no_prior"].values
+    q_uniform = p_sim["q_uniform"].values
 
     tvd_result = compute_tvd(p, q, q_uniform, concurrent_data)
-    wd_result = compute_wasserstein_distance(bin_edges, p, q, q_uniform, concurrent_data)
+    wd_result = compute_wasserstein_distance(
+        bin_edges, p, q, q_uniform, concurrent_data
+    )
 
     result.update(tvd_result)
     result.update(wd_result)

@@ -1,7 +1,12 @@
 docs/notebooks/data/hysets_streamflow_timeseries/
 docs/notebooks/data/divergence_test_results/
 docs/notebooks/data/temp_batches/*
-
+docs/notebooks/data/runoff_prediction_results/*
+docs/notebooks/data/entropy_prediction_results/*
+docs/notebooks/data/emd_prediction_results/*
+docs/notebooks/data/tvd_prediction_results/*
+docs/notebooks/data/kld_prediction_results/*
+.ipynb_checkpoints/
 docs/_build
 docs/.ipynb_checkpoints
 */superseded/
