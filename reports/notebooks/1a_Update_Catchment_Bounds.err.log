@@ -1,0 +1,68 @@
+Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+ab_df_remaining = ab_df_remaining.sort_values(by=['bcub_region_code'])
+
+pour_pt_filenames = []
+for rc in list(set(ab_df_remaining['bcub_region_code'])):
+    print(f'Processing {rc}')
+    to_check = ab_df_remaining[ab_df_remaining['bcub_region_code'] == rc].copy()[['Official_ID', 'Centroid_Lat_deg_N', 'Centroid_Lon_deg_E']]
+    to_check['geometry'] = to_check.apply(lambda x: Point(x['Centroid_Lon_deg_E'], x['Centroid_Lat_deg_N']), axis=1)
+    check_pts = gpd.GeoDataFrame(to_check, crs='4326')
+    check_pts = check_pts.to_crs(3005)
+    # load the stream raster
+    stream_dem_path = os.path.join(dem_folder, f'{rc}_USGS_3DEP_3005_stream.tif')
+    temp_fpath = f'data/catchment_polygons/updated_polygon_set/{rc}_pour_points.shp'
+    if not os.path.exists(temp_fpath):
+        nearest_px = nearest_stream_pixel(stream_dem_path, check_pts)
+        nearest_px.to_file(temp_fpath)
+    print(f'   ...processed {rc}')
+    pour_pt_filenames.append(temp_fpath)  
+
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+[0;32m/tmp/ipykernel_380655/2682100807.py[0m in [0;36m?[0;34m()[0m
+[0;32m----> 1[0;31m [0mab_df_remaining[0m [0;34m=[0m [0mab_df_remaining[0m[0;34m.[0m[0msort_values[0m[0;34m([0m[0mby[0m[0;34m=[0m[0;34m[[0m[0;34m'bcub_region_code'[0m[0;34m][0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m      2[0m [0;34m[0m[0m
+[1;32m      3[0m [0mpour_pt_filenames[0m [0;34m=[0m [0;34m[[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[1;32m      4[0m [0;32mfor[0m [0mrc[0m [0;32min[0m [0mlist[0m[0;34m([0m[0mset[0m[0;34m([0m[0mab_df_remaining[0m[0;34m[[0m[0;34m'bcub_region_code'[0m[0;34m][0m[0;34m)[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py[0m in [0;36m?[0;34m(self, by, axis, ascending, inplace, kind, na_position, ignore_index, key)[0m
+[1;32m   6754[0m         [0;32melif[0m [0mlen[0m[0;34m([0m[0mby[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6755[0m             [0;31m# len(by) == 1[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6756[0m [0;34m[0m[0m
+[1;32m   6757[0m             [0mby[0m [0;34m=[0m [0mby[0m[0;34m[[0m[0;36m0[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 6758[0;31m             [0mk[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0m_get_label_or_level_values[0m[0;34m([0m[0mby[0m[0;34m,[0m [0maxis[0m[0;34m=[0m[0maxis[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   6759[0m [0;34m[0m[0m
+[1;32m   6760[0m             [0;31m# need to rewrap column in Series to apply key function[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6761[0m             [0;32mif[0m [0mkey[0m [0;32mis[0m [0;32mnot[0m [0;32mNone[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py[0m in [0;36m?[0;34m(self, key, axis)[0m
+[1;32m   1774[0m             [0mvalues[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mxs[0m[0;34m([0m[0mkey[0m[0;34m,[0m [0maxis[0m[0;34m=[0m[0mother_axes[0m[0;34m[[0m[0;36m0[0m[0;34m][0m[0;34m)[0m[0;34m.[0m[0m_values[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1775[0m         [0;32melif[0m [0mself[0m[0;34m.[0m[0m_is_level_reference[0m[0;34m([0m[0mkey[0m[0;34m,[0m [0maxis[0m[0;34m=[0m[0maxis[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1776[0m             [0mvalues[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0maxes[0m[0;34m[[0m[0maxis[0m[0;34m][0m[0;34m.[0m[0mget_level_values[0m[0;34m([0m[0mkey[0m[0;34m)[0m[0;34m.[0m[0m_values[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1777[0m         [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 1778[0;31m             [0;32mraise[0m [0mKeyError[0m[0;34m([0m[0mkey[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   1779[0m [0;34m[0m[0m
+[1;32m   1780[0m         [0;31m# Check for duplicates[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1781[0m         [0;32mif[0m [0mvalues[0m[0;34m.[0m[0mndim[0m [0;34m>[0m [0;36m1[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mKeyError[0m: 'bcub_region_code'
+

@@ -15,20 +15,31 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# import the HYSETS attributes data
-hysets_df = pd.read_csv('data/HYSETS_watershed_properties.txt', sep=';')
-len(df)
-df.columns
+# the bitrate dictates the number of quantization levels = 2**b, i.e. 4 bits = 16 levels
+quant_labels = []
+if not os.path.exists(output_fpath):
+    bitrates = [4, 6, 8, 9, 10, 11, 12]
+    for bitrate in bitrates:
+        label = f'H_{bitrate}_bits'
+        print(f'Processing {bitrate} bit entropy')
+        df[label] = df.apply(lambda row: dpf.compute_observed_series_entropy(row, bitrate), axis=1)
+        quant_labels.append(label)
+    # save the results
+    df.to_csv(output_fpath, index=False)
+else:
+    df = pd.read_csv(output_fpath)
+    quant_labels = [e for e in df.columns if e.startswith('H')]
 ------------------
 
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[2], line 3[0m
-[1;32m      1[0m [38;5;66;03m# import the HYSETS attributes data[39;00m
-[1;32m      2[0m hysets_df [38;5;241m=[39m pd[38;5;241m.[39mread_csv([38;5;124m'[39m[38;5;124mdata/HYSETS_watershed_properties.txt[39m[38;5;124m'[39m, sep[38;5;241m=[39m[38;5;124m'[39m[38;5;124m;[39m[38;5;124m'[39m)
-[0;32m----> 3[0m [38;5;28mlen[39m([43mdf[49m)
-[1;32m      4[0m df[38;5;241m.[39mcolumns
+Cell [0;32mIn[5], line 3[0m
+[1;32m      1[0m [38;5;66;03m# the bitrate dictates the number of quantization levels = 2**b, i.e. 4 bits = 16 levels[39;00m
+[1;32m      2[0m quant_labels [38;5;241m=[39m []
+[0;32m----> 3[0m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m os[38;5;241m.[39mpath[38;5;241m.[39mexists([43moutput_fpath[49m):
+[1;32m      4[0m     bitrates [38;5;241m=[39m [[38;5;241m4[39m, [38;5;241m6[39m, [38;5;241m8[39m, [38;5;241m9[39m, [38;5;241m10[39m, [38;5;241m11[39m, [38;5;241m12[39m]
+[1;32m      5[0m     [38;5;28;01mfor[39;00m bitrate [38;5;129;01min[39;00m bitrates:
 
-[0;31mNameError[0m: name 'df' is not defined
+[0;31mNameError[0m: name 'output_fpath' is not defined
 

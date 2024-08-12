@@ -1,0 +1,1390 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Update HYSETS Catchment Polygons &#8212; On the predictability of f-divergence measures from catchment attributes</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/1a_Update_Catchment_Bounds';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Process Target Variables" href="1c_Process_Target_Variables.html" />
+    <link rel="prev" title="Data" href="1_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="On the predictability of f-divergence measures from catchment attributes - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="On the predictability of f-divergence measures from catchment attributes - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="1_data.html">Data</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Update HYSETS Catchment Polygons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1c_Process_Target_Variables.html">Process Target Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="2_Methods.html">Methods</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="2a_Predictability_of_Mean_Runoff.html">Predictability of Mean Runoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2b_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2c_Predictability_of_KL_divergence.html">Predictability of Kullback-Leibler (KL) Divergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2d_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2e_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="Discussion.html">Discussion</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/dankovacek/divergence_measures" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/dankovacek/divergence_measures/issues/new?title=Issue%20on%20page%20%2Fnotebooks/1a_Update_Catchment_Bounds.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/1a_Update_Catchment_Bounds.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Update HYSETS Catchment Polygons</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-data">Import Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-hysets-data">Import HYSETS data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-bcub-study-region-bounds">Import (BCUB) study region bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-original-hysets-polygons">Load the original HYSETS polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-updated-wsc-polygons">Check for updated WSC polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-updated-usgs-polygons">Check for updated USGS polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-remaining-artificial-bounds-catchments-derive-them-from-usgs-3dep-dem">For the remaining ‘artificial bounds’ catchments, derive them from USGS 3DEP DEM.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-dem-folder-need-processed-stream-raster">Set DEM folder – need processed stream raster</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#find-the-nearest-pixel-in-the-stream-raster-corresponding-to-the-point-geometry">Find the nearest pixel in the stream raster corresponding to the point geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delineate-catchments-with-whiteboxtools">Delineate catchments with Whiteboxtools</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convert-raster-to-vector-polygons">Convert raster to vector polygons</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="update-hysets-catchment-polygons">
+<h1>Update HYSETS Catchment Polygons<a class="headerlink" href="#update-hysets-catchment-polygons" title="Link to this heading">#</a></h1>
+<p>The HYSETS dataset <span id="id1">[<a class="reference internal" href="#id6" title="Richard Arsenault, François Brissette, Jean-Luc Martel, Magali Troin, Guillaume Lévesque, Jonathan Davidson-Chaput, Mariana Castañeda Gonzalez, Ali Ameli, and Annie Poulin. A comprehensive, multisource database for hydrometeorological modeling of 14,425 north american watersheds. Scientific Data, 7(1):243, 2020.">Arsenault <em>et al.</em>, 2020</a>]</span> contains an “artificial boundaries” flag to indicate where the catchment boundary for the monitoring location is approximated due to either missing data or uncertainty in catchment delineation, in general due to small drainage area.  In July 2022, the Water Survey of Canada published updated polygons for over 8000 catchments in Canada.  We use updated catchment boundaries where available and additionally check the USGS database for updated polygons.  Polygons updated from USGS and WSC official sources cover 64% of the “artificial bounds” flagged catchments, and the remaining flags are updated using the closest matching station in the <a class="reference external" href="https://doi.org/10.5683/SP3/JNKZVT">BCUB dataset</a>.</p>
+<p>To start, download the HYSETS catchment polygons (<code class="docutils literal notranslate"><span class="pre">HYSETS_watershed_boundaries.zip</span></code>) from <a class="reference external" href="https://osf.io/rpc3w/">that dataset’s open data repository</a>.</p>
+<p>The resulting updated polygons are used in the next chapter/section to extract and validate attributes as part of the supporting information for technical validation of the associated publication.</p>
+<section id="import-data">
+<h2>Import Data<a class="headerlink" href="#import-data" title="Link to this heading">#</a></h2>
+<section id="import-hysets-data">
+<h3>Import HYSETS data<a class="headerlink" href="#import-hysets-data" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">json</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the filename where the updated results will be stored</span>
+<span class="n">updated_fpath</span> <span class="o">=</span> <span class="s1">&#39;data/BCUB_watershed_bounds_updated.geojson&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the HYSETS attributes data</span>
+<span class="n">hysets_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/HYSETS_watershed_properties.txt&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="n">hysets_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;Watershed_ID&#39;, &#39;Source&#39;, &#39;Name&#39;, &#39;Official_ID&#39;, &#39;Centroid_Lat_deg_N&#39;,
+       &#39;Centroid_Lon_deg_E&#39;, &#39;Drainage_Area_km2&#39;, &#39;Drainage_Area_GSIM_km2&#39;,
+       &#39;Flag_GSIM_boundaries&#39;, &#39;Flag_Artificial_Boundaries&#39;, &#39;Elevation_m&#39;,
+       &#39;Slope_deg&#39;, &#39;Gravelius&#39;, &#39;Perimeter&#39;, &#39;Flag_Shape_Extraction&#39;,
+       &#39;Aspect_deg&#39;, &#39;Flag_Terrain_Extraction&#39;, &#39;Land_Use_Forest_frac&#39;,
+       &#39;Land_Use_Grass_frac&#39;, &#39;Land_Use_Wetland_frac&#39;, &#39;Land_Use_Water_frac&#39;,
+       &#39;Land_Use_Urban_frac&#39;, &#39;Land_Use_Shrubs_frac&#39;, &#39;Land_Use_Crops_frac&#39;,
+       &#39;Land_Use_Snow_Ice_frac&#39;, &#39;Flag_Land_Use_Extraction&#39;,
+       &#39;Permeability_logk_m2&#39;, &#39;Porosity_frac&#39;, &#39;Flag_Subsoil_Extraction&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="import-bcub-study-region-bounds">
+<h3>Import (BCUB) study region bounds<a class="headerlink" href="#import-bcub-study-region-bounds" title="Link to this heading">#</a></h3>
+<p>Get the region bounds from the BCUB dataset <a class="reference external" href="https://doi.org/10.5683/SP3/JNKZVT">https://doi.org/10.5683/SP3/JNKZVT</a> or just skip this step and use the pre-processed file (<code class="docutils literal notranslate"><span class="pre">data/data/study_region_stations.geojson</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the BCUB (study) region boundary</span>
+<span class="n">region_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">&#39;data/BCUB_regions_4326.geojson&#39;</span><span class="p">)</span>
+<span class="n">region_gdf</span> <span class="o">=</span> <span class="n">region_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">)</span>
+<span class="c1"># simplify the geometries (100m threshold) and add a small buffer (250m) to capture HYSETS station points recorded with low accuracy near boundaries</span>
+<span class="n">region_gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">region_gdf</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="c1"># region_gdf = region_gdf.to_crs(4326)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the stations contained in the study region</span>
+<span class="n">centroids</span> <span class="o">=</span> <span class="n">hysets_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;Centroid_Lon_deg_E&#39;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;Centroid_Lat_deg_N&#39;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">hysets_points</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">hysets_df</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">centroids</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
+<span class="n">hysets_points</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">hysets_points</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Watershed_ID</th>
+      <th>Source</th>
+      <th>Name</th>
+      <th>Official_ID</th>
+      <th>Centroid_Lat_deg_N</th>
+      <th>Centroid_Lon_deg_E</th>
+      <th>Drainage_Area_km2</th>
+      <th>Drainage_Area_GSIM_km2</th>
+      <th>Flag_GSIM_boundaries</th>
+      <th>Flag_Artificial_Boundaries</th>
+      <th>...</th>
+      <th>Land_Use_Water_frac</th>
+      <th>Land_Use_Urban_frac</th>
+      <th>Land_Use_Shrubs_frac</th>
+      <th>Land_Use_Crops_frac</th>
+      <th>Land_Use_Snow_Ice_frac</th>
+      <th>Flag_Land_Use_Extraction</th>
+      <th>Permeability_logk_m2</th>
+      <th>Porosity_frac</th>
+      <th>Flag_Subsoil_Extraction</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>HYDAT</td>
+      <td>SAINT JOHN RIVER AT FORT KENT</td>
+      <td>01AD002</td>
+      <td>47.25806</td>
+      <td>-68.59583</td>
+      <td>14703.9211</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0.0258</td>
+      <td>0.0089</td>
+      <td>0.0749</td>
+      <td>0.0242</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-14.719327</td>
+      <td>0.180905</td>
+      <td>1</td>
+      <td>POINT (4899816.377 1923344.02)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>HYDAT</td>
+      <td>ST. FRANCIS RIVER AT OUTLET OF GLASIER LAKE</td>
+      <td>01AD003</td>
+      <td>47.20661</td>
+      <td>-68.95694</td>
+      <td>1358.6435</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0.0219</td>
+      <td>0.0174</td>
+      <td>0.0410</td>
+      <td>0.0414</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-14.056491</td>
+      <td>0.206450</td>
+      <td>1</td>
+      <td>POINT (4884971.27 1899554.089)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>HYDAT</td>
+      <td>MADAWASKA (RIVIERE) A 6 KM EN AVAL DU BARRAGE ...</td>
+      <td>01AD015</td>
+      <td>47.53850</td>
+      <td>-68.59180</td>
+      <td>2712.0000</td>
+      <td>2693.814</td>
+      <td>1</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0.0487</td>
+      <td>0.0230</td>
+      <td>0.0351</td>
+      <td>0.0600</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-14.537390</td>
+      <td>0.165357</td>
+      <td>1</td>
+      <td>POINT (4877510.023 1944961.323)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>HYDAT</td>
+      <td>FISH RIVER NEAR FORT KENT</td>
+      <td>01AE001</td>
+      <td>47.23750</td>
+      <td>-68.58278</td>
+      <td>2245.7638</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0.0630</td>
+      <td>0.0115</td>
+      <td>0.0641</td>
+      <td>0.0528</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-14.687869</td>
+      <td>0.170597</td>
+      <td>1</td>
+      <td>POINT (4902150.016 1922495.089)</td>
+    </tr>
+  </tbody>
+</table>
+<p>4 rows × 30 columns</p>
+</div></div></div>
+</div>
+<p>Note that these are just the artificial bounds flagged rows, below we check for other corrections/updates from official sources.</p>
+</section>
+<section id="load-the-original-hysets-polygons">
+<h3>Load the original HYSETS polygons<a class="headerlink" href="#load-the-original-hysets-polygons" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hs_path</span> <span class="o">=</span> <span class="s1">&#39;data/catchment_polygons/HYSETS_watershed_boundaries/HYSETS_watershed_boundaries_20200730.shp&#39;</span>
+<span class="n">hs_polygons</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">hs_path</span><span class="p">)</span>
+<span class="n">hs_polygons</span> <span class="o">=</span> <span class="n">hs_polygons</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcub_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">&#39;data/study_region_stations.geojson&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bcub_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+<span class="c1"># the bcub geometries are (centroid) points from the HYSETS properties, </span>
+<span class="c1"># set the geometry to the HYSETS polygons instead</span>
+<span class="n">catchment_geometries</span> <span class="o">=</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hs_polygons</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">hs_polygons</span><span class="p">[</span><span class="s1">&#39;OfficialID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">],</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">catchment_geometries</span>
+<span class="n">bcub_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">hs_polygons</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>EPSG:4326
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ab_df</span> <span class="o">=</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Flag_Artificial_Boundaries&#39;</span><span class="p">]</span><span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bcub_gdf</span><span class="p">)</span><span class="si">}</span><span class="s1"> catchment geometries are flagged &quot;artificial bounds&quot;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>408/1618 catchment geometries are flagged &quot;artificial bounds&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wsc_ab</span> <span class="o">=</span> <span class="n">ab_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ab_df</span><span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;HYDAT&#39;</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">usgs_ab</span> <span class="o">=</span> <span class="n">ab_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ab_df</span><span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;USGS&#39;</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wsc_ab</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">usgs_ab</span><span class="p">)</span><span class="si">}</span><span class="s1"> WSC/USGS artificial bounds flags &#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>269/139 WSC/USGS artificial bounds flags 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="check-for-updated-wsc-polygons">
+<h3>Check for updated WSC polygons<a class="headerlink" href="#check-for-updated-wsc-polygons" title="Link to this heading">#</a></h3>
+<p>The updated WSC catchments can be accessed at the Environment and Climate Change Canada (ECCC) <a class="reference external" href="https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/HydrometricNetworkBasinPolygons/">hydrometrics page</a>.  We only need to download the region files associated with the study region, corresponding to the first two digits of the station identifier (official id).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wsc_stn_df</span> <span class="o">=</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;HYDAT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">wsc_stns</span> <span class="o">=</span> <span class="n">wsc_stn_df</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+<span class="n">prefixes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">e</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wsc_stns</span><span class="p">]))</span>
+<span class="n">prefixes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;09&#39;, &#39;08&#39;, &#39;10&#39;, &#39;05&#39;, &#39;07&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Download the above files <code class="docutils literal notranslate"><span class="pre">&lt;2-digit</span> <span class="pre">identifier&gt;.zip</span></code> and extract them in the <code class="docutils literal notranslate"><span class="pre">data</span></code> folder.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># find updated catchment polygons</span>
+<span class="k">def</span> <span class="nf">retrieve_and_update_WSC_polygon</span><span class="p">(</span><span class="n">stn_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an updated WSC polygon if it exists or returns an empty (geo)dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+    <span class="n">stn_prefix</span> <span class="o">=</span> <span class="n">stn_id</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">catchment_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/catchment_polygons/</span><span class="si">{</span><span class="n">stn_prefix</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">_DrainageBasin_BassinDeDrainage.shp&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">catchment_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated polygon found for </span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">updated_polygon</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">catchment_path</span><span class="p">)</span>
+        <span class="n">updated_polygon</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">updated_polygon</span>
+    <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">retrieve_and_update_WSC_station_location</span><span class="p">(</span><span class="n">stn_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an updated WSC station location if it exists or returns an empty (geo)dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+    <span class="n">stn_prefix</span> <span class="o">=</span> <span class="n">stn_id</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/catchment_polygons/</span><span class="si">{</span><span class="n">stn_prefix</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">_Station.shp&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated station location found for </span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">updated_pt</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">updated_pt</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">updated_pt</span>
+    <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="check-for-updated-usgs-polygons">
+<h3>Check for updated USGS polygons<a class="headerlink" href="#check-for-updated-usgs-polygons" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># api url for nwis sites</span>
+<span class="n">usgs_api_url</span> <span class="o">=</span> <span class="s1">&#39;https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">retrieve_usgs_stn_data</span><span class="p">(</span><span class="n">stn</span><span class="p">):</span>
+    <span class="c1"># query the NWIS with the station number to get the station coordinates    </span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">query_url</span> <span class="o">=</span> <span class="n">usgs_api_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;USGS-</span><span class="si">{</span><span class="n">stn</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">usgs_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">query_url</span><span class="p">)</span>
+        <span class="n">usgs_stn_loc</span> <span class="o">=</span> <span class="n">usgs_data</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">]</span>
+        <span class="n">stn_pt</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="o">*</span><span class="n">usgs_stn_loc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">stn_pt</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;USGS station query failed for </span><span class="si">{</span><span class="n">stn</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">usgs_basin_polygon_query</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;USGS polygons are in EPSG:4326 crs&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">json_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">retrieve_usgs_basin_data</span><span class="p">(</span><span class="n">stn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the USGS basin polygon and station location from the NLDI API. </span>
+<span class="sd">    If there is no basin for the station, use the NLDI to retrieve upstream </span>
+<span class="sd">    and downstream boundaries.  </span>
+<span class="sd">    Pick the one closest in (HYSETS published) area to the station location.&quot;&quot;&quot;</span>    
+    
+    <span class="c1"># query the basin polygon from USGS</span>
+    <span class="n">basin_query</span> <span class="o">=</span> <span class="n">usgs_api_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;USGS-</span><span class="si">{</span><span class="n">stn</span><span class="si">}</span><span class="s1">/basin?simplified=false&amp;splitCatchment=false&#39;</span>    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">usgs_basin_df</span> <span class="o">=</span> <span class="n">usgs_basin_polygon_query</span><span class="p">(</span><span class="n">basin_query</span><span class="p">)</span>
+        <span class="c1"># dissolve the basin polygons</span>
+        <span class="n">usgs_basin_df</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="o">.</span><span class="n">dissolve</span><span class="p">()</span>
+        <span class="n">usgs_basin_df</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">)</span>
+        <span class="c1"># check if geometry is multipolygon</span>
+        <span class="k">if</span> <span class="n">usgs_basin_df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;MultiPolygon&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...MultiPolygon detected, attemping to make geometry valid.&#39;</span><span class="p">)</span>
+            <span class="n">usgs_basin_df</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
+            <span class="n">usgs_basin_df</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="mf">1E6</span>
+            <span class="n">usgs_basin_df</span><span class="p">[</span><span class="s1">&#39;area_pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">usgs_basin_df</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">usgs_basin_df</span> <span class="o">=</span> <span class="n">usgs_basin_df</span><span class="p">[</span><span class="n">usgs_basin_df</span><span class="p">[</span><span class="s1">&#39;area_pct&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.95</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">usgs_basin_df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;USGS basin polygon query returned multiple polygons.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">usgs_basin_df</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;USGS basin polygon query failed for </span><span class="si">{</span><span class="n">stn</span><span class="si">}</span><span class="s1">.  </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;geometry_updated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># set a variable to prevent jupyter book from processing</span>
+<span class="c1"># during book building step</span>
+<span class="n">process_step</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="n">process_step</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Source&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;HYDAT&#39;</span><span class="p">:</span>
+            <span class="c1"># pt = retrieve_and_update_WSC_station_location(stn_id)</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">retrieve_and_update_WSC_polygon</span><span class="p">(</span><span class="n">stn_id</span><span class="p">)</span>            
+        <span class="k">elif</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;USGS&#39;</span><span class="p">:</span>
+            <span class="c1"># pt = retrieve_usgs_stn_data(stn_id)</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">retrieve_usgs_basin_data</span><span class="p">(</span><span class="n">stn_id</span><span class="p">)</span>    
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">polygon</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">polygon</span><span class="o">.</span><span class="n">crs</span> <span class="o">==</span> <span class="s1">&#39;EPSG:3005&#39;</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+            <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lat_deg_N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lat</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lon_deg_E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lon</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;geometry_updated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Flag_Artificial_Boundaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>    
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">hs_polygons</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">hs_polygons</span><span class="p">[</span><span class="s1">&#39;OfficialID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ab_df_remaining</span> <span class="o">=</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Flag_Artificial_Boundaries&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bcub_gdf</span><span class="p">)</span><span class="si">}</span><span class="s1"> catchment geometries remain flagged &quot;artificial bounds&quot; (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">)</span><span class="si">}</span><span class="s1"> updated.)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>408/1618 catchment geometries remain flagged &quot;artificial bounds&quot; (0 updated.)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="for-the-remaining-artificial-bounds-catchments-derive-them-from-usgs-3dep-dem">
+<h3>For the remaining ‘artificial bounds’ catchments, derive them from USGS 3DEP DEM.<a class="headerlink" href="#for-the-remaining-artificial-bounds-catchments-derive-them-from-usgs-3dep-dem" title="Link to this heading">#</a></h3>
+<p>For all of the remaining rows labeled “FLAG_Artificial_Boundaries”, follow the methodology in the <a class="reference external" href="https://dankovacek.github.io/bcub_demo/notebooks/2_DEM_Preprocessing.html">BCUB dataset demo</a> and reprocess the catchment bounds.</p>
+<p>First, find which regions have flagged geometries:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check to ensure all geometries are polygon type</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s1">&#39;Polygon&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="s1">&#39;index_right&#39;</span> <span class="ow">in</span> <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;index_right&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">process_step</span><span class="p">:</span>
+    <span class="n">ab_df_remaining</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="c1"># region_polygon = region_gdf.loc[i, &#39;geometry&#39;]</span>
+        <span class="n">listed_da</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Drainage_Area_km2&#39;</span><span class="p">]</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+            
+        <span class="c1"># get the intersecting region</span>
+        <span class="n">intersecting_region</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">sjoin</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">region_gdf</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s1">&#39;intersects&#39;</span><span class="p">)</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">intersecting_region</span><span class="p">[</span><span class="s1">&#39;region_code_left&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">foo</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">([</span><span class="n">stn_id</span><span class="p">],</span> <span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">centroid</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="s1">&#39;EPSG:3005&#39;</span><span class="p">)</span>
+            <span class="n">foo</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data/catchment_polygons/</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1">_centroid.geojson&#39;</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;GeoJSON&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;region search failed&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;bcub_region_code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersecting_region</span><span class="p">[</span><span class="s1">&#39;region_code_left&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="set-dem-folder-need-processed-stream-raster">
+<h3>Set DEM folder – need processed stream raster<a class="headerlink" href="#set-dem-folder-need-processed-stream-raster" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dem_folder</span> <span class="o">=</span> <span class="s1">&#39;/home/danbot2/code_5820/large_sample_hydrology/bcub/processed_data/processed_dem/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span> <span class="k">as</span> <span class="nn">rio</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span> <span class="k">as</span> <span class="nn">rxr</span>
+<span class="kn">from</span> <span class="nn">rasterio.features</span> <span class="kn">import</span> <span class="n">dataset_features</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">cKDTree</span>
+
+<span class="k">def</span> <span class="nf">retrieve_raster</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take in a file name and return the raster data, </span>
+<span class="sd">    the coordinate reference system, and the affine transform.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raster</span> <span class="o">=</span> <span class="n">rxr</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mask_and_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">crs</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span>
+    <span class="n">affine</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">recalc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">raster</span><span class="p">,</span> <span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">(),</span> <span class="n">affine</span>
+
+<span class="k">def</span> <span class="nf">nearest_stream_pixel</span><span class="p">(</span><span class="n">dem_filepath</span><span class="p">,</span> <span class="n">points_gdf</span><span class="p">):</span>
+    <span class="c1"># Read the DEM raster</span>
+    <span class="k">with</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dem_filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dem_data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Read the first band</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
+        <span class="n">no_data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span>
+        
+        <span class="c1"># Get the coordinates of the stream pixels (assuming stream pixels are not no_data)</span>
+        <span class="n">stream_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dem_data</span> <span class="o">!=</span> <span class="n">no_data</span><span class="p">))</span>
+        
+        <span class="c1"># Convert raster indices to centroids of the pixels</span>
+        <span class="n">stream_coords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">stream_indices</span><span class="p">:</span>
+            <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span> <span class="o">=</span> <span class="n">rio</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">xy</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+            <span class="n">stream_coords</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">))</span>
+
+        <span class="c1"># Build a KDTree for fast nearest-neighbor lookup</span>
+        <span class="n">stream_tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">stream_coords</span><span class="p">)</span>
+    
+    <span class="c1"># Function to find nearest stream pixel for a given point</span>
+    <span class="k">def</span> <span class="nf">find_nearest_stream</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
+        <span class="n">point_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">distance</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">stream_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">point_coords</span><span class="p">)</span>
+        <span class="n">nearest_stream_coord</span> <span class="o">=</span> <span class="n">stream_coords</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">nearest_stream_coord</span><span class="p">,</span> <span class="n">distance</span>
+    
+    <span class="c1"># Apply the function to each point in the GeoDataFrame</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">points_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">find_nearest_stream</span><span class="p">)</span>
+    
+    <span class="c1"># Create a new GeoDataFrame with the results</span>
+    <span class="n">nearest_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+    <span class="n">nearest_points_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">({</span>
+        <span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">nearest_coords</span><span class="p">],</span>
+        <span class="s1">&#39;distance_to_stream&#39;</span><span class="p">:</span> <span class="n">distances</span><span class="p">,</span>
+        <span class="s1">&#39;Official_ID&#39;</span><span class="p">:</span> <span class="n">points_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span>
+    <span class="p">},</span> <span class="n">crs</span><span class="o">=</span><span class="n">points_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">nearest_points_gdf</span>    
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="find-the-nearest-pixel-in-the-stream-raster-corresponding-to-the-point-geometry">
+<h3>Find the nearest pixel in the stream raster corresponding to the point geometry<a class="headerlink" href="#find-the-nearest-pixel-in-the-stream-raster-corresponding-to-the-point-geometry" title="Link to this heading">#</a></h3>
+<p>Note that where the catchment geometry is missing in HYSETS, the centroid point is just the station location, and the geometry is simply a square centred at the station location and with an area equal to the drainage area reported by the official source <span id="id2">[<a class="reference internal" href="#id6" title="Richard Arsenault, François Brissette, Jean-Luc Martel, Magali Troin, Guillaume Lévesque, Jonathan Davidson-Chaput, Mariana Castañeda Gonzalez, Ali Ameli, and Annie Poulin. A comprehensive, multisource database for hydrometeorological modeling of 14,425 north american watersheds. Scientific Data, 7(1):243, 2020.">Arsenault <em>et al.</em>, 2020</a>]</span>.  We then find the nearest stream pixel to the “centroid” which is not actually the centroid but the reported station location.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ab_df_remaining</span> <span class="o">=</span> <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">])</span>
+
+<span class="n">pour_pt_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">rc</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">])):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Processing </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">to_check</span> <span class="o">=</span> <span class="n">ab_df_remaining</span><span class="p">[</span><span class="n">ab_df_remaining</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">rc</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()[[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lat_deg_N&#39;</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lon_deg_E&#39;</span><span class="p">]]</span>
+    <span class="n">to_check</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_check</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;Centroid_Lon_deg_E&#39;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;Centroid_Lat_deg_N&#39;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">check_pts</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">to_check</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="s1">&#39;4326&#39;</span><span class="p">)</span>
+    <span class="n">check_pts</span> <span class="o">=</span> <span class="n">check_pts</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3005</span><span class="p">)</span>
+    <span class="c1"># load the stream raster</span>
+    <span class="n">stream_dem_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dem_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_USGS_3DEP_3005_stream.tif&#39;</span><span class="p">)</span>
+    <span class="n">temp_fpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/catchment_polygons/updated_polygon_set/</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_pour_points.shp&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_fpath</span><span class="p">):</span>
+        <span class="n">nearest_px</span> <span class="o">=</span> <span class="n">nearest_stream_pixel</span><span class="p">(</span><span class="n">stream_dem_path</span><span class="p">,</span> <span class="n">check_pts</span><span class="p">)</span>
+        <span class="n">nearest_px</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">temp_fpath</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...processed </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">pour_pt_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_fpath</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipykernel_380655/2682100807.py</span> in <span class="ni">?</span><span class="nt">()</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">ab_df_remaining</span> <span class="o">=</span> <span class="n">ab_df_remaining</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">pour_pt_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="k">for</span> <span class="n">rc</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">[</span><span class="s1">&#39;bcub_region_code&#39;</span><span class="p">])):</span>
+
+<span class="nn">~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py</span> in <span class="ni">?</span><span class="nt">(self, by, axis, ascending, inplace, kind, na_position, ignore_index, key)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6754</span>         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">by</span><span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">6755</span>             <span class="c1"># len(by) == 1</span>
+<span class="g g-Whitespace">   </span><span class="mi">6756</span> 
+<span class="g g-Whitespace">   </span><span class="mi">6757</span>             <span class="n">by</span> <span class="o">=</span> <span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="ne">-&gt; </span><span class="mi">6758</span>             <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_or_level_values</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6759</span> 
+<span class="g g-Whitespace">   </span><span class="mi">6760</span>             <span class="c1"># need to rewrap column in Series to apply key function</span>
+<span class="g g-Whitespace">   </span><span class="mi">6761</span>             <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="nn">~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py</span> in <span class="ni">?</span><span class="nt">(self, key, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1774</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">other_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">_values</span>
+<span class="g g-Whitespace">   </span><span class="mi">1775</span>         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_level_reference</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">1776</span>             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">_values</span>
+<span class="g g-Whitespace">   </span><span class="mi">1777</span>         <span class="k">else</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1778</span>             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1779</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1780</span>         <span class="c1"># Check for duplicates</span>
+<span class="g g-Whitespace">   </span><span class="mi">1781</span>         <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+<span class="ne">KeyError</span>: &#39;bcub_region_code&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="delineate-catchments-with-whiteboxtools">
+<h3>Delineate catchments with Whiteboxtools<a class="headerlink" href="#delineate-catchments-with-whiteboxtools" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">whitebox</span> 
+<span class="n">wbt</span> <span class="o">=</span> <span class="n">whitebox</span><span class="o">.</span><span class="n">WhiteboxTools</span><span class="p">()</span>
+<span class="n">wbt</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">process_step</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pour_pt_filenames</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...processing </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1"> pour points&#39;</span><span class="p">)</span>
+        <span class="n">d8_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/home/danbot2/code_5820/large_sample_hydrology/bcub/processed_data/processed_dem/</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_USGS_3DEP_3005_fdir.tif&#39;</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">d8_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">output_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_pour_points.shp&#39;</span><span class="p">,</span> <span class="s1">&#39;_basins.tif&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_fpath</span><span class="p">):</span>
+            <span class="n">wbt</span><span class="o">.</span><span class="n">unnest_basins</span><span class="p">(</span>
+                <span class="n">d8_path</span><span class="p">,</span> 
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">f</span><span class="p">),</span> 
+                <span class="n">output_fpath</span><span class="p">,</span> 
+                <span class="n">esri_pntr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+            <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...completed processing of </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="convert-raster-to-vector-polygons">
+<h3>Convert raster to vector polygons<a class="headerlink" href="#convert-raster-to-vector-polygons" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">filter_and_explode_geoms</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">min_area</span><span class="p">):</span>
+    <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">make_valid</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span> <span class="k">else</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>    
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">index_parts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gdf</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="mf">1E6</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_area</span> <span class="o">*</span> <span class="mf">0.95</span><span class="p">]</span>    
+    <span class="k">return</span> <span class="n">gdf</span>
+
+    
+<span class="k">def</span> <span class="nf">raster_to_vector_batch</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">raster_fname</span><span class="p">,</span> <span class="n">raster_crs</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">min_area</span><span class="p">,</span> <span class="n">temp_folder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If we send too many pour points per batch to the Whitebox &quot;unnest&quot; function, </span>
+<span class="sd">    we generate a huge number of temporary raster files that could easily </span>
+<span class="sd">    exceed current SSD disk capacities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raster_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="n">raster_fname</span><span class="p">)</span>
+    <span class="n">raster_no</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raster_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">polygon_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_temp_polygons_</span><span class="si">{</span><span class="n">raster_no</span><span class="si">:</span><span class="s1">05</span><span class="si">}</span><span class="s1">.shp&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">polygon_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.shp&#39;</span><span class="p">,</span> <span class="s1">&#39;.geojson&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">output_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> exists&#39;</span><span class="p">)</span>
+        <span class="n">existing_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">existing_df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># this function creates rasters of ordered </span>
+        <span class="c1"># sets of non-overlapping basins</span>
+        <span class="n">wbt</span><span class="o">.</span><span class="n">raster_to_vector_polygons</span><span class="p">(</span>
+            <span class="n">raster_path</span><span class="p">,</span>
+            <span class="n">polygon_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">polygon_path</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">raster_crs</span><span class="p">)</span>
+    
+        <span class="c1"># simplify the polygon geometry to avoid self-intersecting polygons</span>
+        <span class="n">simplify_dim</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">simplify_dim</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">buffer_dim</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">buffer_dim</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">simplify_dim</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">buffer_dim</span><span class="p">)</span>
+        
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">filter_and_explode_geoms</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">min_area</span><span class="p">)</span>
+    
+        <span class="k">assert</span> <span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s1">&#39;Polygon&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            
+        <span class="n">gdf</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>    
+        <span class="k">return</span> <span class="n">gdf</span>
+    
+
+<span class="k">def</span> <span class="nf">format_batch_geometries</span><span class="p">(</span><span class="n">all_polygons</span><span class="p">,</span> <span class="n">ppt_batch</span><span class="p">,</span> <span class="n">region_raster_crs</span><span class="p">):</span>
+    
+    <span class="n">ppt_batch</span><span class="p">[</span><span class="s1">&#39;ppt_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ppt_batch</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ppt_batch</span><span class="p">[</span><span class="s1">&#39;ppt_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ppt_batch</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ppt_batch</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># concatenate the polygon batches</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_polygons</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+    <span class="n">batch_polygons</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_polygons</span><span class="p">),</span> <span class="n">crs</span><span class="o">=</span><span class="n">region_raster_crs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_polygons</span><span class="p">))</span>
+    <span class="n">batch_polygons</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;VALUE&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">batch_polygons</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># print(batch_polygons)</span>
+    <span class="c1"># print(asdf)</span>
+    
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">batch_polygons</span><span class="p">,</span> <span class="n">ppt_batch</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">crs</span><span class="o">=</span><span class="n">region_raster_crs</span><span class="p">)</span>
+    <span class="c1"># print(batch)</span>
+    <span class="c1"># print(asdf)</span>
+    <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;centroid_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;centroid_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">batch</span>  
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_area</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># km^2</span>
+
+<span class="k">if</span> <span class="n">process_step</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pour_pt_filenames</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">output_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;data/catchment_polygons/</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_basins_BCUB.geojson&#39;</span><span class="p">)</span>
+        <span class="n">catchment_folder</span> <span class="o">=</span> <span class="s1">&#39;data/catchment_polygons/updated_polygon_set&#39;</span>
+        <span class="n">temp_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">catchment_folder</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+        <span class="c1"># batch_output_fpath = output_fpath.replace(&#39;.geojson&#39;, f&#39;_final.geojson&#39;)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">)</span>
+    
+        <span class="n">ppt_batch</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ppt_batch</span><span class="p">)</span><span class="si">}</span><span class="s1"> ppts in pour point batch&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            
+        <span class="n">basin_raster_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">catchment_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1">_basins&#39;</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...processing </span><span class="si">{</span><span class="n">rc</span><span class="si">}</span><span class="s1"> basin rasters to vector.&#39;</span><span class="p">)</span>
+        <span class="n">catchment_batch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">basin_raster_files</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;processing </span><span class="si">{</span><span class="n">bf</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">raster_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">catchment_folder</span><span class="p">,</span> <span class="n">bf</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">raster_fpath</span><span class="p">)</span>
+            <span class="n">raster</span><span class="p">,</span> <span class="n">raster_crs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">retrieve_raster</span><span class="p">(</span><span class="n">raster_fpath</span><span class="p">)</span>
+            <span class="n">resolution</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">resolution</span><span class="p">()</span>
+            
+            <span class="n">cdf</span> <span class="o">=</span> <span class="n">raster_to_vector_batch</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">raster_fpath</span><span class="p">,</span> <span class="n">raster_crs</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">min_area</span><span class="p">,</span> <span class="n">temp_folder</span><span class="p">)</span>
+            
+            <span class="n">catchment_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cdf</span><span class="p">)</span>
+    
+        <span class="n">batch_df</span> <span class="o">=</span> <span class="n">format_batch_geometries</span><span class="p">(</span><span class="n">catchment_batch</span><span class="p">,</span> <span class="n">ppt_batch</span><span class="p">,</span> <span class="n">raster_crs</span><span class="p">)</span>
+        <span class="n">batch_df</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">output_fpath</span><span class="p">)</span>
+        
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">updated_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;data/catchment_polygons&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;basins_BCUB.geojson&#39;</span><span class="p">)])</span>
+<span class="n">all_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="n">process_step</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">updated_files</span><span class="p">:</span>
+        <span class="n">udf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data/catchment_polygons&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+        <span class="n">udf</span><span class="p">[</span><span class="s1">&#39;region_code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">udf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">geom</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+            
+            <span class="n">stn_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Official_I&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">stn_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   ...</span><span class="si">{</span><span class="n">stn_id</span><span class="si">}</span><span class="s1"> not found in hysets set&#39;</span><span class="p">)</span>
+            <span class="c1"># update the geometries</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geom</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">centroid</span>
+            <span class="n">pt_reproj</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">pt</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="mi">3005</span><span class="p">)</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+            <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">pt_reproj</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt_reproj</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lat_deg_N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lat</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;Centroid_Lon_deg_E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lon</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geom</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;geometry_updated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Official_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stn_id</span><span class="p">,</span> <span class="s1">&#39;Flag_Artificial_Boundaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">ab_df_remaining</span> <span class="o">=</span> <span class="n">bcub_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bcub_gdf</span><span class="p">[</span><span class="s1">&#39;Flag_Artificial_Boundaries&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bcub_gdf</span><span class="p">)</span><span class="si">}</span><span class="s1"> catchment geometries remain flagged &quot;artificial bounds&quot; (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">ab_df_remaining</span><span class="p">)</span><span class="si">}</span><span class="s1"> updated.)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># save updated_fpath</span>
+<span class="c1"># bcub_gdf.to_file(updated_fpath)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saved updated polygon geometries to </span><span class="si">{</span><span class="n">updated_fpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="citations">
+<h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>ABM+20<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>Richard Arsenault, François Brissette, Jean-Luc Martel, Magali Troin, Guillaume Lévesque, Jonathan Davidson-Chaput, Mariana Castañeda Gonzalez, Ali Ameli, and Annie Poulin. A comprehensive, multisource database for hydrometeorological modeling of 14,425 north american watersheds. <em>Scientific Data</em>, 7(1):243, 2020.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="1c_Process_Target_Variables.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Process Target Variables</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-data">Import Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-hysets-data">Import HYSETS data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-bcub-study-region-bounds">Import (BCUB) study region bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-original-hysets-polygons">Load the original HYSETS polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-updated-wsc-polygons">Check for updated WSC polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-updated-usgs-polygons">Check for updated USGS polygons</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-remaining-artificial-bounds-catchments-derive-them-from-usgs-3dep-dem">For the remaining ‘artificial bounds’ catchments, derive them from USGS 3DEP DEM.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-dem-folder-need-processed-stream-raster">Set DEM folder – need processed stream raster</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#find-the-nearest-pixel-in-the-stream-raster-corresponding-to-the-point-geometry">Find the nearest pixel in the stream raster corresponding to the point geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delineate-catchments-with-whiteboxtools">Delineate catchments with Whiteboxtools</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convert-raster-to-vector-polygons">Convert raster to vector polygons</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dan Kovacek
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -32,9 +32,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -57,11 +57,11 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/4_Predictability_of_KL_divergence';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/2c_Predictability_of_KL_divergence';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Predictability of Total Variation Distance (TVD)" href="5_Predictability_of_TVD.html" />
-    <link rel="prev" title="Predictability of (Shannon) Entropy" href="3_Predictability_of_entropy.html" />
+    <link rel="next" title="Predictability of Total Variation Distance (TVD)" href="2d_Predictability_of_TVD.html" />
+    <link rel="prev" title="Predictability of (Shannon) Entropy" href="2b_Predictability_of_entropy.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -180,13 +180,17 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="1_data.html">Data</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="1a_Methods.html">Methods</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="2_Predictability_of_Mean_Runoff.html">Predictability of Mean Runoff</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="1_data.html">Data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="1a_Update_Catchment_Bounds.html">Update HYSETS Catchment Polygons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1b_Update_Catchment_Attributes.html">Update HYSETS Catchment Attributes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="2_Methods.html">Methods</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2a_Predictability_of_Mean_Runoff.html">Predictability of Mean Runoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2b_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Predictability of Kullback-Leibler (KL) Divergence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="5_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="6_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2d_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2e_Predictability_of_WD.html">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="Discussion.html">Discussion</a></li>
@@ -261,7 +265,7 @@
       
       
       
-      <li><a href="https://github.com/dankovacek/divergence_measures/issues/new?title=Issue%20on%20page%20%2Fnotebooks/4_Predictability_of_KL_divergence.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/dankovacek/divergence_measures/issues/new?title=Issue%20on%20page%20%2Fnotebooks/2c_Predictability_of_KL_divergence.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -291,7 +295,7 @@
       
       
       
-      <li><a href="../_sources/notebooks/4_Predictability_of_KL_divergence.ipynb" target="_blank"
+      <li><a href="../_sources/notebooks/2c_Predictability_of_KL_divergence.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -454,7 +458,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d">Loading BokehJS ...</span>
+        <span id="f77efaf6-cb44-491b-a184-06482b700881">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -619,7 +623,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d");
+    const el = document.getElementById("f77efaf6-cb44-491b-a184-06482b700881");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -727,7 +731,7 @@ const JS_MIME_TYPE = 'application/javascript';
     document.body.appendChild(element);
   }
 
-  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.5.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.5.0.min.js"];
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.4.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.4.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.4.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.4.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.4.1.min.js"];
   const css_urls = [];
 
   const inline_js = [    function(Bokeh) {
@@ -753,7 +757,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("efc26dc8-dd1d-42d7-ba69-0d2548ad4d1d")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("f77efaf6-cb44-491b-a184-06482b700881")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -799,6 +803,21 @@ function(Bokeh) {
 <span class="p">)</span>
 <span class="n">pairs_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">)</span>
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">,</span> <span class="n">pairs_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">5</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># open an example pairwise results file</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">pairs_results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">BASE_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;divergence_test_results&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">pairs_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pairs_results_folder</span><span class="p">,</span> <span class="n">pairs_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;/home/danbot2/code_5820/24/divergence_measures/docs/notebooks/data/divergence_test_results&#39;
 </pre></div>
 </div>
 </div>
@@ -970,14 +989,6 @@ function(Bokeh) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-    <span class="k">for</span> <span class="n">prior</span> <span class="ow">in</span> <span class="n">priors_to_test</span><span class="p">;</span>
-                               <span class="o">^</span>
-<span class="ne">SyntaxError</span>: invalid syntax
-</pre></div>
-</div>
-</div>
 </div>
 </section>
 <section id="citations">
@@ -1016,7 +1027,7 @@ function(Bokeh) {
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="3_Predictability_of_entropy.html"
+       href="2b_Predictability_of_entropy.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
@@ -1025,7 +1036,7 @@ function(Bokeh) {
       </div>
     </a>
     <a class="right-next"
-       href="5_Predictability_of_TVD.html"
+       href="2d_Predictability_of_TVD.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
