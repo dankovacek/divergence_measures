@@ -17,14 +17,8 @@ import multiprocessing as mp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-STREAMFLOW_DIR = os.path.join(DATA_DIR, "hysets_streamflow_timeseries")
 
-hs_properties_path = os.path.join(DATA_DIR, "BCUB_HYSETS_properties_with_climate.csv")
-hs_df = pd.read_csv(hs_properties_path)
-hs_df["geometry"] = hs_df.apply(
-    lambda x: Point(x["centroid_lon_deg_e"], x["centroid_lat_deg_n"]), axis=1
-)
-
+STREAMFLOW_DIR = '/media/danbot2/Samsung_T5/geospatial_data/HYSETS_data/hysets_series'
 
 class Station:
     """
@@ -34,7 +28,7 @@ class Station:
     Each key-value pair in the dictionary is unpacked and set as an attribute of the Station object.
 
     Attributes
-    ----------
+    ----------f
     id : str
         The official ID of the station, derived from the 'Official_ID' key in the provided dictionary.
 
@@ -924,7 +918,7 @@ def compute_mean_runoff(row):
     return month_means.mean()
 
 
-def process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size):
+def process_pairwise_comparisons(inputs, bitrate):
     """
     Processes pairwise comparisons in batches, saving results to CSV files and handling already processed batches.
 
@@ -961,63 +955,17 @@ def process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size):
     >>> print(batch_files)
     ['path/to/results_batch_0.csv', 'path/to/results_batch_1.csv']
     """
-    t0 = time()
-    if len(inputs) == 0:
-        print("    No new pairs to process")
-        return None
+    
 
-    n_batches = max(len(inputs) // batch_size, 1)
-    batches = np.array_split(np.array(inputs, dtype=object), n_batches)
+    with mp.Pool() as pool:
+       results = pool.map(process_batch, inputs)
+       results = [r for r in results if r is not None]
 
-    print(
-        f"    Processing {len(inputs)} pairs in {n_batches} batches at {bitrate} bits"
-    )
-    batch_no = 0
-    batch_files = []
+    if len(results) == 0:
+        return pd.DataFrame()
 
-    for batch in batches:
-        batch_output_fname = out_fname.replace(".csv", f"_batch_{batch_no}.csv")
-        batch_output_path = os.path.join(DATA_DIR, "temp_batches", batch_output_fname)
-        if os.path.exists(batch_output_path):
-            print(f"    Batch {batch_no} already processed.")
-            batch_no += 1
-            batch_files.append(batch_output_path)
-            continue
-
-        # results = []
-        # for batch_inputs in batch[:2]:
-        #     result = process_batch(batch_inputs)
-        #     results.append(result)
-
-        with mp.Pool(4) as pool:
-           results = pool.map(process_batch, batch)
-           results = [r for r in results if r is not None]
-
-        if len(results) == 0:
-            print("    No new results in current batch to save")
-            continue
-
-        t1 = time()
-        progress_msg = (
-            f"    Processed batch {batch_no}/{len(batch_inputs)} -- {batch_size} pairs"
-        )
-        progress_msg += f" ({len(results)} good results) in {t1 - t0:.1f} seconds"
-        print(progress_msg)
-
-        new_results_df = pd.DataFrame(results)
-        new_results_df["target"] = new_results_df["target"].astype(str)
-        new_results_df["proxy"] = new_results_df["proxy"].astype(str)
-
-        if len(new_results_df) == 0:
-            print("    No new results in current batch to save")
-            continue
-        else:
-            pass
-            new_results_df.to_csv(batch_output_path, index=False)
-            print(f"    Saved {len(new_results_df)} new results to file.")
-            batch_files.append(batch_output_path)
-        batch_no += 1
-    return batch_files
+    new_results_df = pd.DataFrame(results)
+    return new_results_df
 
 
 def check_if_nested(proxy_data, target_data):
@@ -1030,8 +978,7 @@ def check_if_nested(proxy_data, target_data):
         2: The donor/proxy station is upstream of the target.
     """
     proxy, target = proxy_data["geometry"], target_data["geometry"]
-    print(proxy, target)
-    print(asdf)
+    
     pid = proxy_data["official_id"]
     tid = target_data["official_id"]
     nested = 0
@@ -1644,7 +1591,7 @@ def process_batch(inputs):
         pseudo_counts,
     ) = inputs
 
-    proxy_id, target_id = str(proxy), str(target)
+    proxy_id, target_id = proxy['official_id'], target['official_id']
     bitrate = int(bitrate)
     completeness_threshold = float(completeness_threshold)
     min_years = int(min_years)
@@ -1652,20 +1599,13 @@ def process_batch(inputs):
 
     # create a result dict object for tracking results of the batch comparison
     result = {
-        "proxy": str(proxy_id),
-        "target": str(target_id),
+        "proxy": proxy_id,
+        "target": target_id,
         "bitrate": bitrate,
         "completeness_threshold": completeness_threshold,
     }
 
-    station_info = {
-        "proxy": hs_df[hs_df["official_id"] == proxy_id]
-        .copy()
-        .to_dict(orient="records")[0],
-        "target": hs_df[hs_df["official_id"] == target_id]
-        .copy()
-        .to_dict(orient="records")[0],
-    }
+    station_info = {"proxy": proxy, "target": target}
 
     # check if the polygons are nested
     result["nested_catchments"] = check_if_nested(

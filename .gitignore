@@ -6,7 +6,13 @@ docs/notebooks/data/entropy_prediction_results/*
 docs/notebooks/data/emd_prediction_results/*
 docs/notebooks/data/tvd_prediction_results/*
 docs/notebooks/data/kld_prediction_results/*
+docs/notebooks/data/geospatial_layers/
+docs/notebooks/data/catchment_polygons/*
 .ipynb_checkpoints/
 docs/_build
 docs/.ipynb_checkpoints
-*/superseded/
+superseded/
+__pycache__/
+temp/
+docs/notebooks/data/*.geojson
+DKL_results_*.csv

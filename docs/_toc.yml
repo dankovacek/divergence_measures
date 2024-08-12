@@ -5,12 +5,16 @@ format: jb-book
 root: intro
 chapters:
 - file: notebooks/1_data
-- file: notebooks/1a_Methods
   sections:
-  - file: notebooks/2_Predictability_of_Mean_Runoff
-  - file: notebooks/3_Predictability_of_entropy
-  - file: notebooks/4_Predictability_of_KL_divergence
-  - file: notebooks/5_Predictability_of_TVD
-  - file: notebooks/6_Predictability_of_WD
+  - file: notebooks/1a_Update_Catchment_Bounds
+  - file: notebooks/1b_Update_Catchment_Attributes
+  - file: notebooks/1c_Process_Target_Variables
+- file: notebooks/2_Methods
+  sections:
+  - file: notebooks/2a_Predictability_of_Mean_Runoff
+  - file: notebooks/2b_Predictability_of_entropy
+  - file: notebooks/2c_Predictability_of_KL_divergence
+  - file: notebooks/2d_Predictability_of_TVD
+  - file: notebooks/2e_Predictability_of_WD
 - file: notebooks/Discussion
 
