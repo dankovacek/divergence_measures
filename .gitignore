@@ -7,7 +7,7 @@ docs/notebooks/data/emd_prediction_results/*
 docs/notebooks/data/tvd_prediction_results/*
 docs/notebooks/data/kld_prediction_results/*
 docs/notebooks/data/geospatial_layers/
-docs/notebooks/data/catchment_polygons/*
+docs/notebooks/data/catchment_polygons
 .ipynb_checkpoints/
 docs/_build
 docs/.ipynb_checkpoints
