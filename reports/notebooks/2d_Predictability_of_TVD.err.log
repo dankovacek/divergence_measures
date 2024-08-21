@@ -15,24 +15,84 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# open an example pairwise results file
-pairs_results_folder = os.path.join(
-    BASE_DIR, "data", "divergence_test_results",
-)
-pairs_files = os.listdir(pairs_results_folder)
-test_df = pd.read_csv(os.path.join(pairs_results_folder, pairs_files[0]), nrows=1000)
+target_col = f'tvd_{concurrent}'
+
+test_results_fname = f'{target_col}_results.npy'
+test_results_fpath = os.path.join(results_folder, test_results_fname)
+if os.path.exists(test_results_fpath):
+    all_test_results = np.load(test_results_fpath, allow_pickle=True).item()
+else:
+    all_test_results = predict_TVD_from_attributes(target_col, holdout_pct, station_ids, nfolds, results_folder)
+    np.save(test_results_fpath, all_test_results)
 ------------------
 
+----- stdout -----
+bitrate = 4
+----- stdout -----
+    11.93s to load input data
+  Processing climate attribute set.
+------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mFileNotFoundError[0m                         Traceback (most recent call last)
-Cell [0;32mIn[3], line 5[0m
-[1;32m      1[0m [38;5;66;03m# open an example pairwise results file[39;00m
-[1;32m      2[0m pairs_results_folder [38;5;241m=[39m os[38;5;241m.[39mpath[38;5;241m.[39mjoin(
-[1;32m      3[0m     BASE_DIR, [38;5;124m"[39m[38;5;124mdata[39m[38;5;124m"[39m, [38;5;124m"[39m[38;5;124mdivergence_test_results[39m[38;5;124m"[39m,
-[1;32m      4[0m )
-[0;32m----> 5[0m pairs_files [38;5;241m=[39m [43mos[49m[38;5;241;43m.[39;49m[43mlistdir[49m[43m([49m[43mpairs_results_folder[49m[43m)[49m
-[1;32m      6[0m test_df [38;5;241m=[39m pd[38;5;241m.[39mread_csv(os[38;5;241m.[39mpath[38;5;241m.[39mjoin(pairs_results_folder, pairs_files[[38;5;241m0[39m]), nrows[38;5;241m=[39m[38;5;241m1000[39m)
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+Cell [0;32mIn[8], line 8[0m
+[1;32m      6[0m     all_test_results [38;5;241m=[39m np[38;5;241m.[39mload(test_results_fpath, allow_pickle[38;5;241m=[39m[38;5;28;01mTrue[39;00m)[38;5;241m.[39mitem()
+[1;32m      7[0m [38;5;28;01melse[39;00m:
+[0;32m----> 8[0m     all_test_results [38;5;241m=[39m [43mpredict_TVD_from_attributes[49m[43m([49m[43mtarget_col[49m[43m,[49m[43m [49m[43mholdout_pct[49m[43m,[49m[43m [49m[43mstation_ids[49m[43m,[49m[43m [49m[43mnfolds[49m[43m,[49m[43m [49m[43mresults_folder[49m[43m)[49m
+[1;32m      9[0m     np[38;5;241m.[39msave(test_results_fpath, all_test_results)
 
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: '/home/danbot2/code_5820/24/divergence_measures/docs/notebooks/data/divergence_test_results'
+Cell [0;32mIn[7], line 28[0m, in [0;36mpredict_TVD_from_attributes[0;34m(target_col, holdout_pct, stations, nfolds, results_folder, partial_counts)[0m
+[1;32m     24[0m input_attributes [38;5;241m+[39m[38;5;241m=[39m attribute_set 
+[1;32m     26[0m features [38;5;241m=[39m dpf[38;5;241m.[39mformat_features(input_attributes)
+[0;32m---> 28[0m trial_df, test_df [38;5;241m=[39m [43mdpf[49m[38;5;241;43m.[39;49m[43mrun_xgb_trials_custom_CV[49m[43m([49m
+[1;32m     29[0m [43m    [49m[43mbitrate[49m[43m,[49m[43m [49m[43mset_name[49m[43m,[49m[43m [49m[43mfeatures[49m[43m,[49m[43m [49m[43mtarget_col[49m[43m,[49m[43m [49m[43mdf[49m[43m,[49m[43m [49m
+[1;32m     30[0m [43m    [49m[43mtraining_stn_cv_sets[49m[43m,[49m[43m [49m[43mtest_stn_sets[49m[43m,[49m[43m [49m[43mn_optimization_rounds[49m[43m,[49m[43m [49m
+[1;32m     31[0m [43m    [49m[43mnfolds[49m[43m,[49m[43m [49m[43mn_boost_rounds[49m[43m,[49m[43m [49m[43mresults_folder[49m
+[1;32m     32[0m [43m[49m[43m)[49m
+[1;32m     34[0m test_rmse [38;5;241m=[39m root_mean_squared_error(test_df[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m], test_df[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m])
+[1;32m     35[0m test_mae [38;5;241m=[39m mean_absolute_error(test_df[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m], test_df[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m])
+
+File [0;32m~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:745[0m, in [0;36mrun_xgb_trials_custom_CV[0;34m(bitrate, set_name, attributes, target, input_data, train_stn_cv_sets, test_stations, n_optimization_rounds, nfolds, num_boost_rounds, results_folder)[0m
+[1;32m    741[0m train_stns [38;5;241m=[39m [e [38;5;28;01mfor[39;00m e [38;5;129;01min[39;00m all_training_stations [38;5;28;01mif[39;00m e [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m cv_test_stns]
+[1;32m    743[0m [38;5;28;01massert[39;00m [38;5;28mlen[39m(np[38;5;241m.[39mintersect1d(train_stns, cv_test_stns)) [38;5;241m==[39m [38;5;241m0[39m
+[0;32m--> 745[0m cv_model, rmse, mae, cv_test [38;5;241m=[39m [43mtrain_xgb_model[49m[43m([49m
+[1;32m    746[0m [43m    [49m[43minput_data[49m[43m,[49m
+[1;32m    747[0m [43m    [49m[43mtrain_stns[49m[43m,[49m
+[1;32m    748[0m [43m    [49m[43mcv_test_stns[49m[43m,[49m
+[1;32m    749[0m [43m    [49m[43mattributes[49m[43m,[49m
+[1;32m    750[0m [43m    [49m[43mtarget[49m[43m,[49m
+[1;32m    751[0m [43m    [49m[43mparams[49m[43m,[49m
+[1;32m    752[0m [43m    [49m[43mnum_boost_rounds[49m[43m,[49m
+[1;32m    753[0m [43m[49m[43m)[49m
+[1;32m    755[0m cv_rmses[38;5;241m.[39mappend(rmse)
+[1;32m    756[0m cv_maes[38;5;241m.[39mappend(mae)
+
+File [0;32m~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:510[0m, in [0;36mtrain_xgb_model[0;34m(input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds)[0m
+[1;32m    507[0m train_data [38;5;241m=[39m filter_input_data_by_official_id(input_data, train_stns)
+[1;32m    508[0m test_data [38;5;241m=[39m filter_input_data_by_official_id(input_data, test_stns)
+[0;32m--> 510[0m X_train [38;5;241m=[39m [43mtrain_data[49m[43m[[49m[43mattributes[49m[43m][49m[38;5;241m.[39mvalues
+[1;32m    511[0m Y_train [38;5;241m=[39m train_data[target][38;5;241m.[39mvalues
+[1;32m    512[0m X_test [38;5;241m=[39m test_data[attributes][38;5;241m.[39mvalues
+
+File [0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:3767[0m, in [0;36mDataFrame.__getitem__[0;34m(self, key)[0m
+[1;32m   3765[0m     [38;5;28;01mif[39;00m is_iterator(key):
+[1;32m   3766[0m         key [38;5;241m=[39m [38;5;28mlist[39m(key)
+[0;32m-> 3767[0m     indexer [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mcolumns[49m[38;5;241;43m.[39;49m[43m_get_indexer_strict[49m[43m([49m[43mkey[49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43mcolumns[39;49m[38;5;124;43m"[39;49m[43m)[49m[[38;5;241m1[39m]
+[1;32m   3769[0m [38;5;66;03m# take() does not accept boolean indexers[39;00m
+[1;32m   3770[0m [38;5;28;01mif[39;00m [38;5;28mgetattr[39m(indexer, [38;5;124m"[39m[38;5;124mdtype[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m) [38;5;241m==[39m [38;5;28mbool[39m:
+
+File [0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/indexes/base.py:5877[0m, in [0;36mIndex._get_indexer_strict[0;34m(self, key, axis_name)[0m
+[1;32m   5874[0m [38;5;28;01melse[39;00m:
+[1;32m   5875[0m     keyarr, indexer, new_indexer [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39m_reindex_non_unique(keyarr)
+[0;32m-> 5877[0m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_raise_if_missing[49m[43m([49m[43mkeyarr[49m[43m,[49m[43m [49m[43mindexer[49m[43m,[49m[43m [49m[43maxis_name[49m[43m)[49m
+[1;32m   5879[0m keyarr [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mtake(indexer)
+[1;32m   5880[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(key, Index):
+[1;32m   5881[0m     [38;5;66;03m# GH 42790 - Preserve name from an Index[39;00m
+
+File [0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/indexes/base.py:5941[0m, in [0;36mIndex._raise_if_missing[0;34m(self, key, indexer, axis_name)[0m
+[1;32m   5938[0m     [38;5;28;01mraise[39;00m [38;5;167;01mKeyError[39;00m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mNone of [[39m[38;5;132;01m{[39;00mkey[38;5;132;01m}[39;00m[38;5;124m] are in the [[39m[38;5;132;01m{[39;00maxis_name[38;5;132;01m}[39;00m[38;5;124m][39m[38;5;124m"[39m)
+[1;32m   5940[0m not_found [38;5;241m=[39m [38;5;28mlist[39m(ensure_index(key)[missing_mask[38;5;241m.[39mnonzero()[[38;5;241m0[39m]][38;5;241m.[39munique())
+[0;32m-> 5941[0m [38;5;28;01mraise[39;00m [38;5;167;01mKeyError[39;00m([38;5;124mf[39m[38;5;124m"[39m[38;5;132;01m{[39;00mnot_found[38;5;132;01m}[39;00m[38;5;124m not in index[39m[38;5;124m"[39m)
+
+[0;31mKeyError[0m: "['proxy_land_use_forest_frac_2010', 'target_land_use_forest_frac_2010', 'proxy_land_use_grass_frac_2010', 'target_land_use_grass_frac_2010', 'proxy_land_use_wetland_frac_2010', 'target_land_use_wetland_frac_2010', 'proxy_land_use_water_frac_2010', 'target_land_use_water_frac_2010', 'proxy_land_use_urban_frac_2010', 'target_land_use_urban_frac_2010', 'proxy_land_use_shrubs_frac_2010', 'target_land_use_shrubs_frac_2010', 'proxy_land_use_crops_frac_2010', 'target_land_use_crops_frac_2010', 'proxy_land_use_snow_ice_frac_2010', 'target_land_use_snow_ice_frac_2010'] not in index"
 

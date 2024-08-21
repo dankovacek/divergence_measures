@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+updated_catchment_attribute_path = os.path.join(os.getcwd(), 'data/BCUB_watershed_attributes_updated.geojson')
+attributes_fpath = updated_catchment_attribute_path.replace('.geojson', '.csv')
+
+if os.path.exists(attributes_fpath):
+    attributes_df = pd.read_csv(attributes_fpath)
+    attributes_df.head()    
+else:
+    results_df = gpd.read_file(updated_catchment_attribute_path)
+    attributes_df = results_df[[c for c in results_df.columns if c != 'geometry']].copy()
+    attributes_df.to_csv(attributes_fpath, index=False)
+
+attributes_df.set_index('Official_ID', inplace=True)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+[0;32m/tmp/ipykernel_2349723/317161912.py[0m in [0;36m?[0;34m()[0m
+[1;32m      8[0m     [0mresults_df[0m [0;34m=[0m [0mgpd[0m[0;34m.[0m[0mread_file[0m[0;34m([0m[0mupdated_catchment_attribute_path[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      9[0m     [0mattributes_df[0m [0;34m=[0m [0mresults_df[0m[0;34m[[0m[0;34m[[0m[0mc[0m [0;32mfor[0m [0mc[0m [0;32min[0m [0mresults_df[0m[0;34m.[0m[0mcolumns[0m [0;32mif[0m [0mc[0m [0;34m!=[0m [0;34m'geometry'[0m[0;34m][0m[0;34m][0m[0;34m.[0m[0mcopy[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     10[0m     [0mattributes_df[0m[0;34m.[0m[0mto_csv[0m[0;34m([0m[0mattributes_fpath[0m[0;34m,[0m [0mindex[0m[0;34m=[0m[0;32mFalse[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     11[0m [0;34m[0m[0m
+[0;32m---> 12[0;31m [0mattributes_df[0m[0;34m.[0m[0mset_index[0m[0;34m([0m[0;34m'Official_ID'[0m[0;34m,[0m [0minplace[0m[0;34m=[0m[0;32mTrue[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py[0m in [0;36m?[0;34m(self, keys, drop, append, inplace, verify_integrity)[0m
+[1;32m   5855[0m                     [0;32mif[0m [0;32mnot[0m [0mfound[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   5856[0m                         [0mmissing[0m[0;34m.[0m[0mappend[0m[0;34m([0m[0mcol[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   5857[0m [0;34m[0m[0m
+[1;32m   5858[0m         [0;32mif[0m [0mmissing[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 5859[0;31m             [0;32mraise[0m [0mKeyError[0m[0;34m([0m[0;34mf"None of {missing} are in the columns"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   5860[0m [0;34m[0m[0m
+[1;32m   5861[0m         [0;32mif[0m [0minplace[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   5862[0m             [0mframe[0m [0;34m=[0m [0mself[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mKeyError[0m: "None of ['Official_ID'] are in the columns"
+
