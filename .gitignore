@@ -1,4 +1,5 @@
 docs/notebooks/data/hysets_streamflow_timeseries/
+docs/notebooks/data/processed_divergence_inputs/
 docs/notebooks/data/divergence_test_results/
 docs/notebooks/data/temp_batches/*
 docs/notebooks/data/runoff_prediction_results/*

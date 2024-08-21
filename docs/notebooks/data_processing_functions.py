@@ -502,9 +502,8 @@ def filter_input_data_by_official_id(df, stations):
 
 
 def train_xgb_model(
-    input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds
+    input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds,
 ):
-
     train_data = filter_input_data_by_official_id(input_data, train_stns)
     test_data = filter_input_data_by_official_id(input_data, test_stns)
 
@@ -687,6 +686,12 @@ def run_xgb_trials_custom_CV(
     num_boost_rounds,
     results_folder,
 ):
+    """
+    Custom CV refers to cross validation.  Custom cross validation means the 
+    held-out set must be determined in a more robust way to avoid "data leakage".
+    That is, the pairs making up the training, validation, and test sets must 
+    be made up of pairings from unique sets of stations.
+    """
 
     # select random hyperparameters for n_optimization_rounds
     sample_choices = np.arange(0.5, 0.9, 0.02)  # subsample and colsample percentages
@@ -694,7 +699,9 @@ def run_xgb_trials_custom_CV(
     learning_rates = np.random.choice(lr_choices, n_optimization_rounds)
     subsamples = np.random.choice(sample_choices, n_optimization_rounds)
     colsamples = np.random.choice(sample_choices, n_optimization_rounds)
-    num_boost_rounds = 2500
+    num_boost_rounds = num_boost_rounds
+
+    all_training_stations = np.array([item for sublist in train_stn_cv_sets for item in sublist])
 
     all_results = []
     for trial in range(n_optimization_rounds):
@@ -719,21 +726,18 @@ def run_xgb_trials_custom_CV(
         results_fname = (
             f"{set_name}_{bitrate}_bits_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
         )
+
         results_fpath = os.path.join(results_folder, results_fname)
 
         # we need to manually do CV because we're separating by stations
         # to prevent data leakage across training rounds
         cv_mses, cv_rmses, best_mae_rounds, best_rmse_rounds = [], [], None, None
 
-        all_training_stations = np.array(
-            [np.array(e) for e in train_stn_cv_sets]
-        ).flatten()
-
         n_cv = 0
         cv_df = pd.DataFrame()
         cv_rmses, cv_maes = [], []
         for cv_test_stns in train_stn_cv_sets:
-
+            
             train_stns = [e for e in all_training_stations if e not in cv_test_stns]
 
             assert len(np.intersect1d(train_stns, cv_test_stns)) == 0
@@ -1613,11 +1617,10 @@ def process_batch(inputs):
     )
 
     # we don't need to add the attributes, these can be retrieved later.
-    # HOWEVER, sacrificing a bit of disk space now
-    # saves substantial computation time later
-    for l in ["proxy", "target"]:
-        for c in attr_cols + climate_cols:
-            result[f"{l}_{c.lower()}"] = station_info[l][c.lower()]
+    # alternatively, sacrifice compute and disk space now for compute later.
+    # for l in ["proxy", "target"]:
+    #     for c in attr_cols + climate_cols:
+    #         result[f"{l}_{c.lower()}"] = station_info[l][c.lower()]
 
     # for stn in pair:
     proxy = Station(station_info["proxy"], bitrate)
