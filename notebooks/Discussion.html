@@ -57,6 +57,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/Discussion';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -389,6 +391,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-setup">Experimental setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-classification">Binary Classification</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
             </nav>
@@ -409,9 +413,38 @@ document.write(`
 <li><p>shortcomings of methods</p></li>
 <li><p>going forward</p></li>
 </ul>
+<section id="experimental-setup">
+<h2>Experimental setup<a class="headerlink" href="#experimental-setup" title="Link to this heading">#</a></h2>
+<p>The decision of where to place sensors to optimize the monitoring of a random field relies on estimating a function <span class="math notranslate nohighlight">\(\gamma\)</span> that maps a d-dimensional covariate vector <span class="math notranslate nohighlight">\(X\)</span> to some label or value <span class="math notranslate nohighlight">\(Y\)</span> that must be consistently predictable in order to make decisions.  Estimating the discriminant function <span class="math notranslate nohighlight">\(\gamma\)</span> that predicts <span class="math notranslate nohighlight">\(Y\)</span> is one part of the problem.  The other part of the problem is to determine a suitable (convex) loss function such that empirical risk minimization procedures such as support vector machines and gradient boosting can be applied.  <span id="id1">[<a class="reference internal" href="#id15">Nguyen <em>et al.</em>, 2009</a>]</span> describes the relationship between surrogate loss functions and another class of functions called f-divergences.</p>
+<p>In the case of the streamflow monitoring network, the goal is to maximize the information that the total monitoring network captures about the total unmonitored space. Stated differently, the aim is to determine the set of streamflow monitoring locations that yields the greatest reduction in uncertainty over the total space.  The total space is defined as any location in a river network that can be monitored, and we represent this space by the set of confluences of a river network over a regional/continental scale.  The baseline for estimating the reduction in uncertainty is, maximum uncertainty, the uniform distribution.  Examples of discriminant-loss function pairs <span class="math notranslate nohighlight">\(\gamma \rightarrow \ell\)</span> include:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> predict streamflow at unmonitored locations using a parameterized rainfall runoff model with:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\ell\)</span>: SSE, MAE, MSE, NSE, KGE, etc.</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span></p></li>
+</ul>
+<p>The discriminant function is the mapping of inputs to scalar valued outputs such that a loss can be computed.  In the optimial sensor network problem, each possible monitoring location is evaluated for its potential to reduce uncertainty at all other unmonitored locations.  A (proxy) location is evaluated for its utility in reducing uncertainty at another (target) location by a model which takes in a d-dimensional covariate vector of catchment attributes <span class="math notranslate nohighlight">\(\mathbb{X}\)</span> describing both the proxy and target locations, and a .</p>
+</section>
+<section id="binary-classification">
+<h2>Binary Classification<a class="headerlink" href="#binary-classification" title="Link to this heading">#</a></h2>
+<p><span id="id2">[<a class="reference internal" href="#id15">Nguyen <em>et al.</em>, 2009</a>]</span> describes the general binary classification problem as finding a discriminant function to predict <span class="math notranslate nohighlight">\(\mathcal{Y} = \{ -1, +1 \}\)</span> from a covariate vector <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given a sample of observations <span class="math notranslate nohighlight">\(\{(X_1, Y_1), \dots, (X_n, Y_n)\}\)</span>, <span class="math notranslate nohighlight">\((X, Y) \in (\mathcal{X}, \mathcal{Y})\)</span>. The aim of the binary classification problem is to minimize the expectation of the 0-1 loss <span class="math notranslate nohighlight">\(\mathbb{P}(Y \neq \text{sign}(\gamma (X)))\)</span> where the notation <span class="math notranslate nohighlight">\(\text{sign}(\alpha) = 1 \text{ if } \alpha &gt; 0 \text{ else } -1\)</span> follows <span id="id3">[<a class="reference internal" href="#id15">Nguyen <em>et al.</em>, 2009</a>]</span>.</p>
+<p>The goal is to minimize the risk of bad predictions, and the problem is to simultaneously determine both the mapping <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> of continous streamflow <span class="math notranslate nohighlight">\(\mathbf{S}\)</span> to a discrete set of state symbols <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span></p>
+<p>The goal is to miminize the (Bayes) error <span class="math notranslate nohighlight">\(R_{\textbf{Bayes}}(\gamma, C) := \mathbb{P} \left(Y \neq \text{sign}(D_{KL}(\mathbf{P}||\mathbb{U}) - D_{KL}(\mathbf{P}||\mathbf{Q}) \right)\)</span></p>
+</section>
 <section id="citations">
 <h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
-<span class="target" id="id1"></span></section>
+<div class="docutils container" id="id4">
+<div role="list" class="citation-list">
+<div class="citation" id="id15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>NWJ09<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>)</span>
+<p><strong>missing journal in nguyen2009surrogate</strong></p>
+</div>
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -469,6 +502,8 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experimental-setup">Experimental setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-classification">Binary Classification</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
   </nav></div>
