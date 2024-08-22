@@ -581,6 +581,7 @@ def run_xgb_CV_trials(
     nfolds,
     num_boost_rounds,
     results_folder,
+    loss='reg:squarederror'
 ):
 
     # randomly select 5% of the stations to leave out for a hold-out test set
@@ -607,7 +608,7 @@ def run_xgb_CV_trials(
 
         params = {
             # "objective": "reg:absoluteerror",
-            "objective": "reg:squarederror",
+            "objective": loss,
             "eval_metric": "rmse",
             "eta": lr,
             # "max_depth": 6,  # use default max_depth
@@ -619,13 +620,19 @@ def run_xgb_CV_trials(
             "sampling_method": "gradient_based",
             "tree_method": "hist",
         }
-
+        
+        dtrain = xgb.DMatrix(X_train, label=Y_train)
+        if loss == 'reg:quantileerror':
+            params['eval_metric'] = None
+            params['quantile_alpha'] = np.array([0.05, 0.5, 0.95])
+            dtrain = xgb.QuantileDMatrix(X_train, label=Y_train)        
+        
         results_fname = f"{set_name}_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
         results_fpath = os.path.join(results_folder, results_fname)
-
+        
         model_results = xgb.cv(
             params=params,
-            dtrain=xgb.DMatrix(X_train, label=Y_train),
+            dtrain=dtrain,
             num_boost_round=num_boost_rounds,
             nfold=nfolds,
             metrics=["mae", "rmse"],
@@ -662,7 +669,7 @@ def run_xgb_CV_trials(
     # print(trial_results.sort_values('min_test_mae'))
 
     print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set (N={len(trial_results)})"
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set ({len(trial_results)} hyperparameter optimization rounds.)"
     )
 
     param_cols = list(params.keys())
@@ -712,6 +719,7 @@ def run_xgb_trials_custom_CV(
     nfolds,
     num_boost_rounds,
     results_folder,
+    loss='reg:squarederror',
 ):
     """
     Custom CV refers to cross validation.  Custom cross validation means the 
@@ -736,7 +744,7 @@ def run_xgb_trials_custom_CV(
         lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
 
         params = {
-            "objective": "reg:squarederror",
+            "objective": loss,
             "eval_metric": "rmse",
             "eta": lr,
             # "n_estimators": num_boost_rounds,
@@ -748,7 +756,7 @@ def run_xgb_trials_custom_CV(
             "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
             "sampling_method": "gradient_based",
             "tree_method": "hist",
-        }
+        } 
 
         results_fname = (
             f"{set_name}_{bitrate}_bits_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
@@ -805,7 +813,7 @@ def run_xgb_trials_custom_CV(
     trial_stdev = trial_results["rmse_stdev"].mean()
 
     print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set (N={len(trial_results)})"
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set  ({len(trial_results)} hyperparameter optimization rounds.)"
     )
 
     param_cols = list(params.keys())
