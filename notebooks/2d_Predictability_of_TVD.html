@@ -462,7 +462,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="d5998792-efc7-4cd9-91e9-908070ed7c59">Loading BokehJS ...</span>
+        <span id="dd18a18b-7cc6-4c44-8f81-ea79a7b17eed">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -627,7 +627,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("d5998792-efc7-4cd9-91e9-908070ed7c59");
+    const el = document.getElementById("dd18a18b-7cc6-4c44-8f81-ea79a7b17eed");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -761,7 +761,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("d5998792-efc7-4cd9-91e9-908070ed7c59")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("dd18a18b-7cc6-4c44-8f81-ea79a7b17eed")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -951,7 +951,7 @@ function(Bokeh) {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bitrate = 4
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    14.63s to load input data
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    15.31s to load input data
   Processing climate attribute set.
 </pre></div>
 </div>
@@ -1013,23 +1013,35 @@ function(Bokeh) {
 <span class="g g-Whitespace">    </span><span class="mi">725</span>     <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
 <span class="ne">--&gt; </span><span class="mi">726</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/training.py:181,</span> in <span class="ni">train</span><span class="nt">(params, dtrain, num_boost_round, evals, obj, feval, maximize, early_stopping_rounds, evals_result, verbose_eval, xgb_model, callbacks, custom_metric)</span>
-<span class="g g-Whitespace">    </span><span class="mi">179</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">before_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">180</span>     <span class="k">break</span>
-<span class="ne">--&gt; </span><span class="mi">181</span> <span class="n">bst</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">fobj</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">182</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">after_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">183</span>     <span class="k">break</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/training.py:182,</span> in <span class="ni">train</span><span class="nt">(params, dtrain, num_boost_round, evals, obj, feval, maximize, early_stopping_rounds, evals_result, verbose_eval, xgb_model, callbacks, custom_metric)</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span>         <span class="k">break</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span>     <span class="n">bst</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">fobj</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">182</span>     <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">after_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span>         <span class="k">break</span>
+<span class="g g-Whitespace">    </span><span class="mi">185</span> <span class="n">bst</span> <span class="o">=</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">after_training</span><span class="p">(</span><span class="n">bst</span><span class="p">)</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/core.py:2101,</span> in <span class="ni">Booster.update</span><span class="nt">(self, dtrain, iteration, fobj)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2097</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_dmatrix_features</span><span class="p">(</span><span class="n">dtrain</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2099</span> <span class="k">if</span> <span class="n">fobj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">2100</span>     <span class="n">_check_call</span><span class="p">(</span>
-<span class="ne">-&gt; </span><span class="mi">2101</span>         <span class="n">_LIB</span><span class="o">.</span><span class="n">XGBoosterUpdateOneIter</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">2102</span>             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span> <span class="n">dtrain</span><span class="o">.</span><span class="n">handle</span>
-<span class="g g-Whitespace">   </span><span class="mi">2103</span>         <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2104</span>     <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2105</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">2106</span>     <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">output_margin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/callback.py:258,</span> in <span class="ni">CallbackContainer.after_iteration</span><span class="nt">(self, model, epoch, dtrain, evals)</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">evals</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span>     <span class="k">assert</span> <span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Dataset name should not contain `-`&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">258</span> <span class="n">score</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">eval_set</span><span class="p">(</span><span class="n">evals</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_margin</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">259</span> <span class="n">metric_score</span> <span class="o">=</span> <span class="n">_parse_eval_str</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">260</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_history</span><span class="p">(</span><span class="n">metric_score</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/core.py:2212,</span> in <span class="ni">Booster.eval_set</span><span class="nt">(self, evals, iteration, feval, output_margin)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2209</span> <span class="n">evnames</span> <span class="o">=</span> <span class="n">c_array</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">,</span> <span class="p">[</span><span class="n">c_str</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">evals</span><span class="p">])</span>
+<span class="g g-Whitespace">   </span><span class="mi">2210</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">2211</span> <span class="n">_check_call</span><span class="p">(</span>
+<span class="ne">-&gt; </span><span class="mi">2212</span>     <span class="n">_LIB</span><span class="o">.</span><span class="n">XGBoosterEvalOneIter</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2213</span>         <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2214</span>         <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">2215</span>         <span class="n">dmats</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2216</span>         <span class="n">evnames</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2217</span>         <span class="n">c_bst_ulong</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evals</span><span class="p">)),</span>
+<span class="g g-Whitespace">   </span><span class="mi">2218</span>         <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">2219</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2220</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2221</span> <span class="k">assert</span> <span class="n">msg</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">2222</span> <span class="n">res</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>  <span class="c1"># pylint: disable=no-member</span>
 
 <span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
