@@ -107,6 +107,33 @@ def check_processed_results(out_fpath):
         return pd.DataFrame()
 
 
+def add_attributes(attr_df, df_relations, attribute_cols):
+    """
+    Adds attributes from the df_attributes to the df_relations based on the 'proxy' and 'target' columns
+    using map for efficient lookups.
+
+    Parameters:
+    df_attributes (pd.DataFrame): DataFrame with 'id' and attribute columns.
+    df_relations (pd.DataFrame): DataFrame with 'proxy' and 'target' columns.
+    attribute_cols (list of str): List of attribute columns to add to df_relations.
+
+    Returns:
+    pd.DataFrame: Updated df_relations with added attribute columns.
+    """
+    # Create dictionaries for each attribute for quick lookup
+    attr_dicts = {col: attr_df.set_index('official_id')[col].to_dict() for col in attribute_cols}
+
+    # Add target attributes
+    for col in attribute_cols:
+        df_relations[f'target_{col}'] = df_relations['target'].map(attr_dicts[col])
+
+    # Add proxy attributes
+    for col in attribute_cols:
+        df_relations[f'proxy_{col}'] = df_relations['proxy'].map(attr_dicts[col])
+
+    return df_relations
+
+
 def filter_processed_pairs(results_df, id_pairs):
     """
     Filters out pairs of IDs that have already been processed, based on a DataFrame of existing results.
