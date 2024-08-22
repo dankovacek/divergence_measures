@@ -462,7 +462,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="cf77786c-cec7-4086-898f-a54e48d2f62b">Loading BokehJS ...</span>
+        <span id="d5998792-efc7-4cd9-91e9-908070ed7c59">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -627,7 +627,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("cf77786c-cec7-4086-898f-a54e48d2f62b");
+    const el = document.getElementById("d5998792-efc7-4cd9-91e9-908070ed7c59");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -761,7 +761,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("cf77786c-cec7-4086-898f-a54e48d2f62b")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("d5998792-efc7-4cd9-91e9-908070ed7c59")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -784,9 +784,9 @@ function(Bokeh) {
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the catchment characteristics</span>
 <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;BCUB_watershed_attributes_updated.csv&#39;</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
-<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-<span class="n">station_ids</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;official_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">attr_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+<span class="n">attr_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">attr_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">station_ids</span> <span class="o">=</span> <span class="n">attr_df</span><span class="p">[</span><span class="s1">&#39;official_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">station_ids</span><span class="p">)</span><span class="si">}</span><span class="s1"> monitored basins in the attribute set.&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -833,7 +833,7 @@ function(Bokeh) {
 <h3>Define attribute groupings<a class="headerlink" href="#define-attribute-groupings" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;gravelius&#39;</span><span class="p">,</span> <span class="s1">&#39;perimeter&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">terrain</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="s1">&#39;slope_deg&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_deg&#39;</span><span class="p">]</span> <span class="c1"># &#39;gravelius&#39;, &#39;perimeter&#39;,</span>
 <span class="n">land_cover</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;land_use_forest_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_grass_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_wetland_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_water_frac_2010&#39;</span><span class="p">,</span> 
     <span class="s1">&#39;land_use_urban_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_shrubs_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_crops_frac_2010&#39;</span><span class="p">,</span> <span class="s1">&#39;land_use_snow_ice_frac_2010&#39;</span><span class="p">]</span>
@@ -845,7 +845,7 @@ function(Bokeh) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>26
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>24
 </pre></div>
 </div>
 </div>
@@ -880,7 +880,7 @@ function(Bokeh) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">stations</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">,</span> <span class="n">partial_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">attr_df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">stations</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">,</span> <span class="n">partial_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
     <span class="n">training_stn_cv_sets</span><span class="p">,</span> <span class="n">test_stn_sets</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">train_test_split_by_official_id</span><span class="p">(</span><span class="n">holdout_pct</span><span class="p">,</span> <span class="n">stations</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">)</span>
     <span class="n">all_test_results</span> <span class="o">=</span> <span class="p">{}</span>
@@ -894,12 +894,15 @@ function(Bokeh) {
         <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_folder</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">target_col</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># add the attributes into the input dataset</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span><span class="n">attr_df</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">all_attributes</span><span class="p">)</span>
+        
         <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">t1</span><span class="o">-</span><span class="n">t0</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">s to load input data&#39;</span><span class="p">)</span>
-        
-        <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">input_attributes</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">input_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_test_results</span><span class="p">[</span><span class="n">bitrate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># add attribute groups successively</span>
         <span class="k">for</span> <span class="n">attribute_set</span><span class="p">,</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">land_cover</span><span class="p">,</span> <span class="n">terrain</span><span class="p">,</span> <span class="n">soil</span><span class="p">,</span> <span class="n">climate</span><span class="p">],</span> <span class="n">attribute_set_names</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Processing </span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1"> attribute set.&#39;</span><span class="p">)</span>
@@ -939,7 +942,7 @@ function(Bokeh) {
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">):</span>
     <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">station_ids</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
+    <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">attr_df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">station_ids</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">all_test_results</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -948,72 +951,87 @@ function(Bokeh) {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bitrate = 4
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    11.93s to load input data
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    14.63s to load input data
   Processing climate attribute set.
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">8</span>
 <span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 <span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">----&gt; </span><span class="mi">8</span>     <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">station_ids</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">8</span>     <span class="n">all_test_results</span> <span class="o">=</span> <span class="n">predict_TVD_from_attributes</span><span class="p">(</span><span class="n">attr_df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">holdout_pct</span><span class="p">,</span> <span class="n">station_ids</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">,</span> <span class="n">results_folder</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">test_results_fpath</span><span class="p">,</span> <span class="n">all_test_results</span><span class="p">)</span>
 
-<span class="nn">Cell In[7], line 28,</span> in <span class="ni">predict_TVD_from_attributes</span><span class="nt">(target_col, holdout_pct, stations, nfolds, results_folder, partial_counts)</span>
-<span class="g g-Whitespace">     </span><span class="mi">24</span> <span class="n">input_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span> 
-<span class="g g-Whitespace">     </span><span class="mi">26</span> <span class="n">features</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">format_features</span><span class="p">(</span><span class="n">input_attributes</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">28</span> <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">run_xgb_trials_custom_CV</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span>     <span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> 
-<span class="g g-Whitespace">     </span><span class="mi">30</span>     <span class="n">training_stn_cv_sets</span><span class="p">,</span> <span class="n">test_stn_sets</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> 
-<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">,</span> <span class="n">results_folder</span>
-<span class="g g-Whitespace">     </span><span class="mi">32</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">34</span> <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+<span class="nn">Cell In[7], line 31,</span> in <span class="ni">predict_TVD_from_attributes</span><span class="nt">(attr_df, target_col, holdout_pct, stations, nfolds, results_folder, partial_counts)</span>
+<span class="g g-Whitespace">     </span><span class="mi">27</span> <span class="n">input_attributes</span> <span class="o">+=</span> <span class="n">attribute_set</span> 
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">features</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">format_features</span><span class="p">(</span><span class="n">input_attributes</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">31</span> <span class="n">trial_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">run_xgb_trials_custom_CV</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span>     <span class="n">bitrate</span><span class="p">,</span> <span class="n">set_name</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> 
+<span class="g g-Whitespace">     </span><span class="mi">33</span>     <span class="n">training_stn_cv_sets</span><span class="p">,</span> <span class="n">test_stn_sets</span><span class="p">,</span> <span class="n">n_optimization_rounds</span><span class="p">,</span> 
+<span class="g g-Whitespace">     </span><span class="mi">34</span>     <span class="n">nfolds</span><span class="p">,</span> <span class="n">n_boost_rounds</span><span class="p">,</span> <span class="n">results_folder</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span> <span class="n">test_rmse</span> <span class="o">=</span> <span class="n">root_mean_squared_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">38</span> <span class="n">test_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">],</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">])</span>
 
-<span class="nn">File ~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:745,</span> in <span class="ni">run_xgb_trials_custom_CV</span><span class="nt">(bitrate, set_name, attributes, target, input_data, train_stn_cv_sets, test_stations, n_optimization_rounds, nfolds, num_boost_rounds, results_folder)</span>
-<span class="g g-Whitespace">    </span><span class="mi">741</span> <span class="n">train_stns</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_training_stations</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cv_test_stns</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">743</span> <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_stns</span><span class="p">,</span> <span class="n">cv_test_stns</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="ne">--&gt; </span><span class="mi">745</span> <span class="n">cv_model</span><span class="p">,</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">cv_test</span> <span class="o">=</span> <span class="n">train_xgb_model</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">746</span>     <span class="n">input_data</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">747</span>     <span class="n">train_stns</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">748</span>     <span class="n">cv_test_stns</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">749</span>     <span class="n">attributes</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">750</span>     <span class="n">target</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">751</span>     <span class="n">params</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">752</span>     <span class="n">num_boost_rounds</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">753</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">755</span> <span class="n">cv_rmses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">756</span> <span class="n">cv_maes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mae</span><span class="p">)</span>
+<span class="nn">File ~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:772,</span> in <span class="ni">run_xgb_trials_custom_CV</span><span class="nt">(bitrate, set_name, attributes, target, input_data, train_stn_cv_sets, test_stations, n_optimization_rounds, nfolds, num_boost_rounds, results_folder)</span>
+<span class="g g-Whitespace">    </span><span class="mi">768</span> <span class="n">train_stns</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_training_stations</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cv_test_stns</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">770</span> <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">train_stns</span><span class="p">,</span> <span class="n">cv_test_stns</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="ne">--&gt; </span><span class="mi">772</span> <span class="n">cv_model</span><span class="p">,</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">cv_test</span> <span class="o">=</span> <span class="n">train_xgb_model</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">773</span>     <span class="n">input_data</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">774</span>     <span class="n">train_stns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">775</span>     <span class="n">cv_test_stns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">776</span>     <span class="n">attributes</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">777</span>     <span class="n">target</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">778</span>     <span class="n">params</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">779</span>     <span class="n">num_boost_rounds</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">780</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">782</span> <span class="n">cv_rmses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">783</span> <span class="n">cv_maes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mae</span><span class="p">)</span>
 
-<span class="nn">File ~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:510,</span> in <span class="ni">train_xgb_model</span><span class="nt">(input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">507</span> <span class="n">train_data</span> <span class="o">=</span> <span class="n">filter_input_data_by_official_id</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">train_stns</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">508</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">filter_input_data_by_official_id</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">test_stns</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">510</span> <span class="n">X_train</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">[</span><span class="n">attributes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="g g-Whitespace">    </span><span class="mi">511</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="g g-Whitespace">    </span><span class="mi">512</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">attributes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="nn">File ~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:549,</span> in <span class="ni">train_xgb_model</span><span class="nt">(input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">545</span> <span class="n">dtest</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">Y_test</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">547</span> <span class="n">eval_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dtrain</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">dtest</span><span class="p">,</span> <span class="s2">&quot;eval&quot;</span><span class="p">)]</span>
+<span class="ne">--&gt; </span><span class="mi">549</span> <span class="n">bst</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">550</span>     <span class="n">params</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">551</span>     <span class="n">dtrain</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">552</span>     <span class="n">num_boost_rounds</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">553</span>     <span class="n">evals</span><span class="o">=</span><span class="n">eval_list</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">554</span>     <span class="n">verbose_eval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">555</span>     <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">556</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">558</span> <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">bst</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">dtest</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">560</span> <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">561</span>     <span class="p">{</span>
+<span class="g g-Whitespace">    </span><span class="mi">562</span>         <span class="s2">&quot;predicted&quot;</span><span class="p">:</span> <span class="n">predicted_y</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">563</span>         <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">Y_test</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">564</span>     <span class="p">}</span>
+<span class="g g-Whitespace">    </span><span class="mi">565</span> <span class="p">)</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:3767,</span> in <span class="ni">DataFrame.__getitem__</span><span class="nt">(self, key)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3765</span>     <span class="k">if</span> <span class="n">is_iterator</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">3766</span>         <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">3767</span>     <span class="n">indexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">_get_indexer_strict</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;columns&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-<span class="g g-Whitespace">   </span><span class="mi">3769</span> <span class="c1"># take() does not accept boolean indexers</span>
-<span class="g g-Whitespace">   </span><span class="mi">3770</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">indexer</span><span class="p">,</span> <span class="s2">&quot;dtype&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/core.py:726,</span> in <span class="ni">require_keyword_args.&lt;locals&gt;.throw_if.&lt;locals&gt;.inner_f</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">724</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">725</span>     <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+<span class="ne">--&gt; </span><span class="mi">726</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/indexes/base.py:5877,</span> in <span class="ni">Index._get_indexer_strict</span><span class="nt">(self, key, axis_name)</span>
-<span class="g g-Whitespace">   </span><span class="mi">5874</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">5875</span>     <span class="n">keyarr</span><span class="p">,</span> <span class="n">indexer</span><span class="p">,</span> <span class="n">new_indexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex_non_unique</span><span class="p">(</span><span class="n">keyarr</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">5877</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_missing</span><span class="p">(</span><span class="n">keyarr</span><span class="p">,</span> <span class="n">indexer</span><span class="p">,</span> <span class="n">axis_name</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">5879</span> <span class="n">keyarr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">indexer</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">5880</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Index</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">5881</span>     <span class="c1"># GH 42790 - Preserve name from an Index</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/training.py:181,</span> in <span class="ni">train</span><span class="nt">(params, dtrain, num_boost_round, evals, obj, feval, maximize, early_stopping_rounds, evals_result, verbose_eval, xgb_model, callbacks, custom_metric)</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">before_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span>     <span class="k">break</span>
+<span class="ne">--&gt; </span><span class="mi">181</span> <span class="n">bst</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">fobj</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span> <span class="k">if</span> <span class="n">cb_container</span><span class="o">.</span><span class="n">after_iteration</span><span class="p">(</span><span class="n">bst</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">evals</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span>     <span class="k">break</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/indexes/base.py:5941,</span> in <span class="ni">Index._raise_if_missing</span><span class="nt">(self, key, indexer, axis_name)</span>
-<span class="g g-Whitespace">   </span><span class="mi">5938</span>     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;None of [</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">] are in the [</span><span class="si">{</span><span class="n">axis_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">5940</span> <span class="n">not_found</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ensure_index</span><span class="p">(</span><span class="n">key</span><span class="p">)[</span><span class="n">missing_mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="ne">-&gt; </span><span class="mi">5941</span> <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2"> not in index&quot;</span><span class="p">)</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/xgboost/core.py:2101,</span> in <span class="ni">Booster.update</span><span class="nt">(self, dtrain, iteration, fobj)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2097</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_dmatrix_features</span><span class="p">(</span><span class="n">dtrain</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2099</span> <span class="k">if</span> <span class="n">fobj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">2100</span>     <span class="n">_check_call</span><span class="p">(</span>
+<span class="ne">-&gt; </span><span class="mi">2101</span>         <span class="n">_LIB</span><span class="o">.</span><span class="n">XGBoosterUpdateOneIter</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2102</span>             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span> <span class="n">dtrain</span><span class="o">.</span><span class="n">handle</span>
+<span class="g g-Whitespace">   </span><span class="mi">2103</span>         <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2104</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2105</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">2106</span>     <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="n">output_margin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="ne">KeyError</span>: &quot;[&#39;proxy_land_use_forest_frac_2010&#39;, &#39;target_land_use_forest_frac_2010&#39;, &#39;proxy_land_use_grass_frac_2010&#39;, &#39;target_land_use_grass_frac_2010&#39;, &#39;proxy_land_use_wetland_frac_2010&#39;, &#39;target_land_use_wetland_frac_2010&#39;, &#39;proxy_land_use_water_frac_2010&#39;, &#39;target_land_use_water_frac_2010&#39;, &#39;proxy_land_use_urban_frac_2010&#39;, &#39;target_land_use_urban_frac_2010&#39;, &#39;proxy_land_use_shrubs_frac_2010&#39;, &#39;target_land_use_shrubs_frac_2010&#39;, &#39;proxy_land_use_crops_frac_2010&#39;, &#39;target_land_use_crops_frac_2010&#39;, &#39;proxy_land_use_snow_ice_frac_2010&#39;, &#39;target_land_use_snow_ice_frac_2010&#39;] not in index&quot;
+<span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
 </div>
 </div>

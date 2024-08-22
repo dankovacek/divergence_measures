@@ -32,7 +32,7 @@ attributes_df.set_index('Official_ID', inplace=True)
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mKeyError[0m                                  Traceback (most recent call last)
-[0;32m/tmp/ipykernel_2349723/317161912.py[0m in [0;36m?[0;34m()[0m
+[0;32m/tmp/ipykernel_48527/317161912.py[0m in [0;36m?[0;34m()[0m
 [1;32m      8[0m     [0mresults_df[0m [0;34m=[0m [0mgpd[0m[0;34m.[0m[0mread_file[0m[0;34m([0m[0mupdated_catchment_attribute_path[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 [1;32m      9[0m     [0mattributes_df[0m [0;34m=[0m [0mresults_df[0m[0;34m[[0m[0;34m[[0m[0mc[0m [0;32mfor[0m [0mc[0m [0;32min[0m [0mresults_df[0m[0;34m.[0m[0mcolumns[0m [0;32mif[0m [0mc[0m [0;34m!=[0m [0;34m'geometry'[0m[0;34m][0m[0;34m][0m[0;34m.[0m[0mcopy[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 [1;32m     10[0m     [0mattributes_df[0m[0;34m.[0m[0mto_csv[0m[0;34m([0m[0mattributes_fpath[0m[0;34m,[0m [0mindex[0m[0;34m=[0m[0;32mFalse[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
