@@ -15,23 +15,35 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# load the catchment characteristics
-fname = 'BCUB_watershed_attributes_updated.csv'
-attr_df = pd.read_csv(os.path.join('data', fname))
-attr_df.columns = [c.lower() for c in df.columns]
-station_ids = attr_df['official_id'].values
-print(f'There are {len(station_ids)} monitored basins in the attribute set.')
+layout_dict = {}
+c = 0
+bin_plots = []
+for prior in priors_to_test:
+    result = load_result_by_prior(prior, binary=True)
+    title = f'10^{prior} Prior: Binary Test Results '
+    fig = figure(title=title, x_range=list(set_dict.keys()), toolbar_location='above')
+    fig.yaxis.axis_label = 'Accuracy score (tp+tn)/(N)'
+    fig.xaxis.axis_label = 'Attribute Group (additive)'
+    balance_dict[prior] = [(b, ]
+    for b, set_dict in result.items():
+        
+        y = [set_dict[e]['test_accuracy'] for e in attribute_sets]
+        source = ColumnDataSource({'x': list(set_dict.keys()), 'y': y})
+            
+        fig.line('x', 'y', legend_label=f'{b}bits', 
+                 color=Category20[10][c], source=source, line_width=3)
+        fig.legend.background_fill_alpha = 0.6
+        
+        result_df = pd.DataFrame({'set': attribute_sets, 'accuracy': y})
+        c += 1
+    bin_plots.append(fig)
+    c = 0
 ------------------
 
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[2], line 4[0m
-[1;32m      2[0m fname [38;5;241m=[39m [38;5;124m'[39m[38;5;124mBCUB_watershed_attributes_updated.csv[39m[38;5;124m'[39m
-[1;32m      3[0m attr_df [38;5;241m=[39m pd[38;5;241m.[39mread_csv(os[38;5;241m.[39mpath[38;5;241m.[39mjoin([38;5;124m'[39m[38;5;124mdata[39m[38;5;124m'[39m, fname))
-[0;32m----> 4[0m attr_df[38;5;241m.[39mcolumns [38;5;241m=[39m [c[38;5;241m.[39mlower() [38;5;28;01mfor[39;00m c [38;5;129;01min[39;00m [43mdf[49m[38;5;241m.[39mcolumns]
-[1;32m      5[0m station_ids [38;5;241m=[39m attr_df[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m][38;5;241m.[39mvalues
-[1;32m      6[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124mThere are [39m[38;5;132;01m{[39;00m[38;5;28mlen[39m(station_ids)[38;5;132;01m}[39;00m[38;5;124m monitored basins in the attribute set.[39m[38;5;124m'[39m)
+[0;36m  Cell [0;32mIn[15], line 10[0;36m[0m
+[0;31m    balance_dict[prior] = [(b, ][0m
+[0m                               ^[0m
+[0;31mSyntaxError[0m[0;31m:[0m closing parenthesis ']' does not match opening parenthesis '('
 
-[0;31mNameError[0m: name 'df' is not defined
 
