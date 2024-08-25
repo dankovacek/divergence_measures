@@ -7,6 +7,7 @@ from scipy.stats import entropy, wasserstein_distance, linregress
 from sklearn.metrics import (
     root_mean_squared_error,
     mean_absolute_error,
+    f1_score, d2_log_loss_score, confusion_matrix, fbeta_score
 )
 
 from shapely.geometry import Point
@@ -570,6 +571,47 @@ def train_xgb_model(
     return bst, rmse, mae, test_results
 
 
+def train_binary_xgb_model(
+    input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds,
+):
+    train_data = filter_input_data_by_official_id(input_data, train_stns)
+    test_data = filter_input_data_by_official_id(input_data, test_stns)
+
+    X_train = train_data[attributes].values
+    Y_train = train_data[target].values
+    X_test = test_data[attributes].values
+    Y_test = test_data[target].values
+
+    model = xgb.XGBClassifier(**params)
+
+    dtrain = xgb.DMatrix(X_train, label=Y_train)
+    dtest = xgb.DMatrix(X_test, label=Y_test)
+
+    eval_list = [(dtrain, "train"), (dtest, "eval")]
+
+    bst = xgb.train(
+        params,
+        dtrain,
+        num_boost_rounds,
+        evals=eval_list,
+        verbose_eval=0,
+        early_stopping_rounds=20,
+    )
+
+    predicted_y = bst.predict(dtest)
+
+    test_results = pd.DataFrame(
+        {
+            "predicted": predicted_y,
+            "actual": Y_test,
+        }
+    )
+    test_results['predicted'] = test_results['predicted'].astype(int)
+    test_results['actual'] = test_results['actual'].astype(int)
+
+    return bst, test_results
+
+
 def run_xgb_CV_trials(
     set_name,
     features,
@@ -720,6 +762,7 @@ def run_xgb_trials_custom_CV(
     num_boost_rounds,
     results_folder,
     loss='reg:squarederror',
+    eval_metric="rmse",
 ):
     """
     Custom CV refers to cross validation.  Custom cross validation means the 
@@ -745,7 +788,7 @@ def run_xgb_trials_custom_CV(
 
         params = {
             "objective": loss,
-            "eval_metric": "rmse",
+            "eval_metric": eval_metric,
             "eta": lr,
             # "n_estimators": num_boost_rounds,
             # "max_depth": 6,  # use default max_depth
@@ -766,9 +809,6 @@ def run_xgb_trials_custom_CV(
 
         # we need to manually do CV because we're separating by stations
         # to prevent data leakage across training rounds
-        cv_mses, cv_rmses, best_mae_rounds, best_rmse_rounds = [], [], None, None
-
-        n_cv = 0
         cv_df = pd.DataFrame()
         cv_rmses, cv_maes = [], []
         for cv_test_stns in train_stn_cv_sets:
@@ -794,6 +834,7 @@ def run_xgb_trials_custom_CV(
         cv_mean_mae, cv_std_mae = np.mean(cv_maes), np.std(cv_maes)
 
         results_dict = {
+            "trial_num": trial,
             "test_mae": cv_mean_mae,
             "test_rmse": cv_mean_rmse,
             "mae_stdev": cv_std_mae,
@@ -813,7 +854,7 @@ def run_xgb_trials_custom_CV(
     trial_stdev = trial_results["rmse_stdev"].mean()
 
     print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set  ({len(trial_results)} hyperparameter optimization rounds.)"
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the (held-out) test set ({len(trial_results)} hyperparameter optimization rounds.)"
     )
 
     param_cols = list(params.keys())
@@ -834,6 +875,133 @@ def run_xgb_trials_custom_CV(
         best_rmse_params,
         2 * num_boost_rounds,
     )
+
+    return trial_results, test_results
+
+
+def run_binary_xgb_trials_custom_CV(
+    bitrate,
+    set_name,
+    attributes,
+    target,
+    input_data,
+    train_stn_cv_sets,
+    test_stations,
+    n_optimization_rounds,
+    nfolds,
+    num_boost_rounds,
+    results_folder,
+    loss='binary:hinge',
+    eval_metric="error",
+):
+    """
+    Custom CV refers to cross validation.  Custom cross validation means the 
+    held-out set must be determined in a more robust way to avoid "data leakage".
+    That is, the pairs making up the training, validation, and test sets must 
+    be made up of pairings from unique sets of stations.
+    """
+
+    # select random hyperparameters for n_optimization_rounds
+    sample_choices = np.arange(0.5, 0.9, 0.02)  # subsample and colsample percentages
+    lr_choices = np.arange(0.001, 0.1, 0.0005)  # learning rates
+    learning_rates = np.random.choice(lr_choices, n_optimization_rounds)
+    subsamples = np.random.choice(sample_choices, n_optimization_rounds)
+    colsamples = np.random.choice(sample_choices, n_optimization_rounds)
+    num_boost_rounds = num_boost_rounds
+
+    all_training_stations = np.array([item for sublist in train_stn_cv_sets for item in sublist])
+
+    all_results = []
+    for trial in range(n_optimization_rounds):
+
+        lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
+
+        params = {
+            "objective": loss,
+            "eval_metric": eval_metric,
+            "eta": lr,
+            # "n_estimators": num_boost_rounds,
+            # "max_depth": 6,  # use default max_depth
+            # "min_child_weight": 1, # use colsample and subsample instead of min_child_weight
+            "subsample": ss,
+            "colsample_bytree": cs,
+            "seed": 42,
+            "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
+            "sampling_method": "gradient_based",
+            "tree_method": "hist",
+        } 
+
+        # we need to manually do CV because we're separating by stations
+        # to prevent data leakage across training rounds
+        cv_df = pd.DataFrame()
+        cv_accuracies = []
+        for cv_test_stns in train_stn_cv_sets:
+            
+            train_stns = [e for e in all_training_stations if e not in cv_test_stns]
+
+            assert len(np.intersect1d(train_stns, cv_test_stns)) == 0
+
+            cv_model, cv_test = train_binary_xgb_model(
+                input_data,
+                train_stns,
+                cv_test_stns,
+                attributes,
+                target,
+                params,
+                num_boost_rounds,
+            )
+            obs, pred = cv_test['actual'].values, cv_test['predicted'].values
+            tn, fp, fn, tp = confusion_matrix(obs, pred).ravel()
+            accuracy = (tp + tn) / (tp + fp + fn + tn) 
+            # error = fbeta_score(obs, pred, 1)
+            # print(f'Accuracy: {accuracy:.2f}')#, F1 beta: {error:.2f}')
+            cv_accuracies.append(accuracy)
+
+        cv_mean, cv_std = np.mean(cv_accuracies), np.std(cv_accuracies)
+
+        results_dict = {
+            "trian_num": trial,
+            "trial_accuracy": cv_mean,
+            "trial_accuracy_stdev": cv_std,
+        }
+        results_cols = list(results_dict.keys())
+        results_dict.update(params)
+
+        all_results.append(results_dict)
+        if (trial > 0) & (trial % 20 == 0):
+            print(f"   completed {trial}/{n_optimization_rounds}")
+
+    # save the trial results
+    trial_results = pd.DataFrame(all_results)
+    # trial_results.to_csv(results_fpath)
+    trial_mean = trial_results["trial_accuracy"].mean()
+    trial_stdev = trial_results["trial_accuracy_stdev"].mean()
+
+    print(
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} mean accuracy over ({len(trial_results)}x{nfolds}-fold CV hyperparameter optimization rounds.)"
+    )
+
+    param_cols = list(params.keys())
+
+    # get the optimal hyperparameters
+    # for accuracy, we want the maximum value
+    optimal_accuracy_idx = trial_results["trial_accuracy"].idxmax()
+    best_params = trial_results.loc[optimal_accuracy_idx, param_cols].to_dict()
+
+    final_model, test_results = train_binary_xgb_model(
+                input_data,
+                all_training_stations,
+                test_stations,
+                attributes,
+                target,
+                best_params,
+                2 * num_boost_rounds,
+            )
+
+    lr_final, ss_final, cs_final = best_params['eta'], best_params['subsample'], best_params['colsample_bytree']
+    results_fname = f"{set_name}_{bitrate}_bits_{lr_final:.3f}_lr_{ss_final:.3f}_sub_{cs_final:.3f}_col.json"
+    results_fpath = os.path.join(results_folder, results_fname)
+    test_results.to_csv(results_fpath)
 
     return trial_results, test_results
 
