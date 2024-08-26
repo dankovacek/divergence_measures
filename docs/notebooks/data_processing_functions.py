@@ -951,8 +951,13 @@ def run_binary_xgb_trials_custom_CV(
                 num_boost_rounds,
             )
             obs, pred = cv_test['actual'].values, cv_test['predicted'].values
-            tn, fp, fn, tp = confusion_matrix(obs, pred).ravel()
-            accuracy = (tp + tn) / (tp + fp + fn + tn) 
+            obs_set, obs_counts = np.unique(obs, return_counts=True)
+            if (obs == pred).all() & (len(obs_set) == 1):
+                # print('    All observations have the same class.')
+                accuracy = 1.0
+            else:
+                tn, fp, fn, tp = confusion_matrix(obs, pred).ravel()
+                accuracy = (tp + tn) / (tp + fp + fn + tn) 
             # error = fbeta_score(obs, pred, 1)
             # print(f'Accuracy: {accuracy:.2f}')#, F1 beta: {error:.2f}')
             cv_accuracies.append(accuracy)
