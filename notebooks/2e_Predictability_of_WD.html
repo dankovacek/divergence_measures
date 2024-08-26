@@ -57,6 +57,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/2e_Predictability_of_WD';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -424,7 +426,7 @@ document.write(`
 <h1>Predictability of Earth Mover’s (Wasserstein) Distance (EMD)<a class="headerlink" href="#predictability-of-earth-mover-s-wasserstein-distance-emd" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>Here we make yet another comparison of runoff between two locations and ask if the <strong>Wasserstein Distance</strong> (WD) of the distributions of unit area runoff between two locations can be predicted from the attributes of both catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
+<p>Here we make yet another comparison of runoff between two locations and ask if the <strong>Earth Mover’s Distance</strong> (EMD), also known as the Wasserstein distance, between UAR distributions  can be predicted from the attributes of the two catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -469,7 +471,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="e404b972-b94b-41b7-bc42-32a6558573de">Loading BokehJS ...</span>
+        <span id="fd95a94a-631d-4d9b-bed3-c71051b5f0a7">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -634,7 +636,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("e404b972-b94b-41b7-bc42-32a6558573de");
+    const el = document.getElementById("fd95a94a-631d-4d9b-bed3-c71051b5f0a7");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -768,7 +770,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("e404b972-b94b-41b7-bc42-32a6558573de")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("fd95a94a-631d-4d9b-bed3-c71051b5f0a7")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -862,10 +864,11 @@ function(Bokeh) {
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the amount of data to set aside for final testing</span>
-<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span>
-<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2500</span>
-<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">holdout_pct</span> <span class="o">=</span> <span class="mf">0.10</span> <span class="c1"># holdout for final test set</span>
+<span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># for cross validation</span>
+<span class="n">n_boost_rounds</span> <span class="o">=</span> <span class="mi">2500</span> 
+<span class="c1"># for xgboost hyperparameter optimization</span>
+<span class="n">n_optimization_rounds</span> <span class="o">=</span> <span class="mi">20</span>  
 
 <span class="c1">#define if testing concurrent or nonconcurrent data</span>
 <span class="n">concurrent</span> <span class="o">=</span> <span class="s1">&#39;concurrent&#39;</span>
@@ -1171,6 +1174,7 @@ function(Bokeh) {
   }
 })(window);</script></div>
 </div>
+<p>From above, the dictionary size has very little effect on the binary target variable classification balance.  The binary classification is <span class="math notranslate nohighlight">\(D_{EMD}(P||Q) &lt; D_{EMD}(P||\mathbb{U})\)</span>.</p>
 </section>
 <section id="id2">
 <h3>Regression Model<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
