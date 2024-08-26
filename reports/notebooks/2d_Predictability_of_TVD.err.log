@@ -30,14 +30,8 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-target_col = f'tvd_{concurrent}'
-
-test_results_fname = f'{target_col}_results.npy'
-test_results_fpath = os.path.join(results_folder, test_results_fname)
-if os.path.exists(test_results_fpath):
-    all_test_results = np.load(test_results_fpath, allow_pickle=True).item()
-else:
-    all_test_results = predict_TVD_from_attributes(attr_df, target_col, holdout_pct, station_ids, nfolds, results_folder)
-    np.save(test_results_fpath, all_test_results)
+['balances, bitrates = [], []', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    # print(f'bitrate = {bitrate}')"]
+...
+["    df['binary_target'] = df[f'tvd_{concurrent}'] < df[f'tvd_{concurrent}_max']", "    ut, ct = np.unique(df['binary_target'].values, return_counts=True)", '    pct_false = ct[0] / len(df)', '    balances.append(1-pct_false)', '    bitrates.append(bitrate)']
 -------------------
 

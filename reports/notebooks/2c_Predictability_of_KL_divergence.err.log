@@ -1,4 +1,15 @@
 Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 778, in _async_poll_for_reply
+    msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 182, in ensure_async
+    result = await obj
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_client/channels.py", line 315, in get_msg
+    raise Empty
+_queue.Empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
@@ -9,41 +20,18 @@ Traceback (most recent call last):
     return future.result()
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
     await self.async_execute_cell(
-  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
-    await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
-    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
-nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
-------------------
-layout_dict = {}
-c = 0
-bin_plots = []
-for prior in priors_to_test:
-    result = load_result_by_prior(prior, binary=True)
-    title = f'10^{prior} Prior: Binary Test Results '
-    fig = figure(title=title, x_range=list(set_dict.keys()), toolbar_location='above')
-    fig.yaxis.axis_label = 'Accuracy score (tp+tn)/(N)'
-    fig.xaxis.axis_label = 'Attribute Group (additive)'
-    balance_dict[prior] = [(b, ]
-    for b, set_dict in result.items():
-        
-        y = [set_dict[e]['test_accuracy'] for e in attribute_sets]
-        source = ColumnDataSource({'x': list(set_dict.keys()), 'y': y})
-            
-        fig.line('x', 'y', legend_label=f'{b}bits', 
-                 color=Category20[10][c], source=source, line_width=3)
-        fig.legend.background_fill_alpha = 0.6
-        
-        result_df = pd.DataFrame({'set': attribute_sets, 'accuracy': y})
-        c += 1
-    bin_plots.append(fig)
-    c = 0
-------------------
-
-
-[0;36m  Cell [0;32mIn[15], line 10[0;36m[0m
-[0;31m    balance_dict[prior] = [(b, ][0m
-[0m                               ^[0m
-[0;31mSyntaxError[0m[0;31m:[0m closing parenthesis ']' does not match opening parenthesis '('
-
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1001, in async_execute_cell
+    exec_reply = await self.task_poll_for_reply
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 802, in _async_poll_for_reply
+    error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, cell)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 852, in _async_handle_timeout
+    raise CellTimeoutError.error_from_timeout_and_cell(
+nbclient.exceptions.CellTimeoutError: A cell timed out while it was being executed, after 30 seconds.
+The message was: Cell execution timed out.
+Here is a preview of the cell contents:
+-------------------
+['class_balance_df = pd.DataFrame()', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    # print(f'bitrate = {bitrate}')"]
+...
+['        balances.append(1-pct_false)', '        # change target_col to the new binary target', "        # print(f'The binary target variable balance is {100*pct_false:.0f}% False and {100*(1-pct_false):.0f}% True')", '    class_balance_df[bitrate] = balances', "class_balance_df.index = [10**(int(c.split('_')[-1].split('R')[0])) for c in posterior_columns]"]
+-------------------
 
