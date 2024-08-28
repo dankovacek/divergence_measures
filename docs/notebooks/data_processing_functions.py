@@ -1130,55 +1130,6 @@ def compute_mean_runoff(row):
     return month_means.mean()
 
 
-def process_pairwise_comparisons(inputs, bitrate):
-    """
-    Processes pairwise comparisons in batches, saving results to CSV files and handling already processed batches.
-
-    Parameters
-    ----------
-    inputs : list
-        A list of input pairs to be processed.
-    bitrate : int
-        The bitrate to be used for processing.
-    out_fname : str
-        The base output file name for saving the results.
-    batch_size : int
-        The number of pairs to process in each batch.
-
-    Returns
-    -------
-    list
-        A list of file paths to the processed batch result files.
-
-    Notes
-    -----
-    - If the input list is empty, the function prints a message and returns None.
-    - The function divides the input pairs into batches and processes each batch separately.
-    - Already processed batches are skipped to avoid redundant computation.
-    - Results of each batch are saved to a CSV file, and the paths to these files are returned.
-
-    Example
-    -------
-    >>> inputs = [('A', 'X'), ('B', 'Y'), ('C', 'Z')]
-    >>> bitrate = 4
-    >>> out_fname = 'results.csv'
-    >>> batch_size = 500
-    >>> batch_files = process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size)
-    >>> print(batch_files)
-    ['path/to/results_batch_0.csv', 'path/to/results_batch_1.csv']
-    """
-    
-
-    with mp.Pool() as pool:
-       results = pool.map(process_batch, inputs)
-       results = [r for r in results if r is not None]
-
-    if len(results) == 0:
-        return pd.DataFrame()
-
-    new_results_df = pd.DataFrame(results)
-    return new_results_df
-
 
 def check_if_nested(proxy_data, target_data):
     """
@@ -1746,7 +1697,7 @@ def compute_kge(df, obs, sim):
     gamma = (sim_std / sim_mean) / (obs_std / obs_mean)
     return 1 - np.sqrt((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2)
 
-
+process_probabilities
 def process_batch(inputs):
     """
     Processes a batch of input data to compute various hydrological metrics and store the results.
@@ -1805,6 +1756,7 @@ def process_batch(inputs):
 
     proxy_id, target_id = proxy['official_id'], target['official_id']
     bitrate = int(bitrate)
+    print(f'bitrate = {bitrate}')
     completeness_threshold = float(completeness_threshold)
     min_years = int(min_years)
     min_observations = min_years * completeness_threshold * 365
@@ -1917,8 +1869,56 @@ def process_batch(inputs):
         result = process_divergences(
             result, p_obs, p_sim, bin_edges, bitrate, concurrent_data
         )
-
     return result
+
+
+def process_pairwise_comparisons(inputs, bitrate):
+    """
+    Processes pairwise comparisons in batches, saving results to CSV files and handling already processed batches.
+
+    Parameters
+    ----------
+    inputs : list
+        A list of input pairs to be processed.
+    bitrate : int
+        The bitrate to be used for processing.
+    out_fname : str
+        The base output file name for saving the results.
+    batch_size : int
+        The number of pairs to process in each batch.
+
+    Returns
+    -------
+    list
+        A list of file paths to the processed batch result files.
+
+    Notes
+    -----
+    - If the input list is empty, the function prints a message and returns None.
+    - The function divides the input pairs into batches and processes each batch separately.
+    - Already processed batches are skipped to avoid redundant computation.
+    - Results of each batch are saved to a CSV file, and the paths to these files are returned.
+
+    Example
+    -------
+    >>> inputs = [('A', 'X'), ('B', 'Y'), ('C', 'Z')]
+    >>> bitrate = 4
+    >>> out_fname = 'results.csv'
+    >>> batch_size = 500
+    >>> batch_files = process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size)
+    >>> print(batch_files)
+    ['path/to/results_batch_0.csv', 'path/to/results_batch_1.csv']
+    """
+
+    with mp.Pool() as pool:
+       results = pool.map(process_batch, inputs)
+       results = [r for r in results if r is not None]
+
+    if len(results) == 0:
+        return pd.DataFrame()
+
+    new_results_df = pd.DataFrame(results)
+    return new_results_df
 
 
 def check_distribution(p, q, c):
