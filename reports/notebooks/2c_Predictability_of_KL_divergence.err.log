@@ -30,8 +30,8 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-['class_balance_df = pd.DataFrame()', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    # print(f'bitrate = {bitrate}')"]
+['result_dict = {}', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    # print(f'bitrate = {bitrate}')"]
 ...
-['        balances.append(1-pct_false)', '        # change target_col to the new binary target', "        # print(f'The binary target variable balance is {100*pct_false:.0f}% False and {100*(1-pct_false):.0f}% True')", '    class_balance_df[bitrate] = balances', "class_balance_df.index = [10**(int(c.split('_')[-1].split('R')[0])) for c in posterior_columns]"]
+['', '    input_data_fpath = os.path.join(input_folder, fname)', '    nrows = None', '    df = pd.read_csv(input_data_fpath, nrows=nrows, low_memory=False)', '    result_dict[bitrate] = df']
 -------------------
 

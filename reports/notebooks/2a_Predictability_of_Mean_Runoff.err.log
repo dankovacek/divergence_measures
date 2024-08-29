@@ -30,10 +30,8 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-if 'mean_runoff' not in df.columns:
-    for i, row in df.iterrows():
-        mean_runoff = dpf.compute_mean_runoff(row)
-        df.loc[i, 'mean_runoff'] = mean_runoff
-    df.to_csv(os.path.join('data', attributes_filename), index=False)
+['cm_means, hs_means = [], []', 'for i, row in df.iterrows():', '    mean_runoff = dpf.compute_mean_runoff(row)', "    df.loc[i, 'mean_runoff'] = mean_runoff", '    # check the values against CAMELS']
+...
+["        # print(row['official_id'], round(mean_runoff, 2), round(camels_q_mean, 2))", '        cm_means.append(camels_q_mean)', '        hs_means.append(mean_runoff)', '', "df.to_csv(os.path.join(BASE_DIR, 'data', attributes_filename), index=False)"]
 -------------------
 
