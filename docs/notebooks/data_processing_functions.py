@@ -711,7 +711,7 @@ def run_xgb_CV_trials(
     # print(trial_results.sort_values('min_test_mae'))
 
     print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the test set ({len(trial_results)} hyperparameter optimization rounds.)"
+        f"    {trial_mean:.2f} ± {trial_stdev:.3f} mean RMSE (of {len(trial_results)} hyperparameter optimization rounds.)"
     )
 
     param_cols = list(params.keys())
@@ -850,13 +850,11 @@ def run_xgb_trials_custom_CV(
     # save the trial results
     trial_results = pd.DataFrame(all_results)
     trial_results.to_csv(results_fpath)
-    trial_mean = trial_results["test_rmse"].mean()
-    trial_stdev = trial_results["rmse_stdev"].mean()
-
-    print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} RMSE mean on the (held-out) test set ({len(trial_results)} hyperparameter optimization rounds.)"
-    )
-
+    trial_mean_rmse = trial_results["test_rmse"].mean()
+    trial_stdev_rmse = trial_results["rmse_stdev"].mean()
+    trial_mean_mae = trial_results["test_mae"].mean()
+    trial_stdev_mae = trial_results["mae_stdev"].mean()
+    
     param_cols = list(params.keys())
 
     # get the optimal hyperparameters
@@ -866,13 +864,26 @@ def run_xgb_trials_custom_CV(
     best_rmse_params = trial_results.loc[optimal_rmse_idx, param_cols].to_dict()
     best_mae_params = trial_results.loc[optimal_mae_idx, param_cols].to_dict()
 
+    if loss.endswith('squarederror'):
+        print(
+            f"    {trial_mean_rmse:.2f} ± {trial_stdev_rmse:.3f} mean RMSE on the (held-out) test set ({len(trial_results)} hyperparameter optimization rounds.)"
+        )
+        best_params = best_rmse_params
+    elif loss.endswith('absoluteerror'):
+        print(
+            f"    {trial_mean_mae:.2f} ± {trial_stdev_mae:.3f} mean MAE on the (held-out) test set ({len(trial_results)} hyperparameter optimization rounds.)"
+        )
+        best_params = best_mae_params
+
+    
+
     final_model, rmse, mae, test_results = train_xgb_model(
         input_data,
         all_training_stations,
         test_stations,
         attributes,
         target,
-        best_rmse_params,
+        best_params,
         2 * num_boost_rounds,
     )
 
@@ -1090,7 +1101,9 @@ def compute_mean_runoff(row):
     """
     # get data
     stn_id = row["official_id"]
+    drainage_area = row['drainage_area_km2']
     df = get_timeseries_data(stn_id)
+    df[stn_id] = 86.4 * df[stn_id] / drainage_area # convert to mm/day from m^3/s
     df.dropna(subset=[stn_id], inplace=True)
     df["year"] = df["time"].dt.year
     df["month"] = df["time"].dt.month
@@ -1126,7 +1139,6 @@ def compute_mean_runoff(row):
     # apply the boolean mask to filter incomplete months
     filtered_df = pivot_mean.where(boolean_mask)
     month_means = filtered_df.mean(axis=0)
-
     return month_means.mean()
 
 
