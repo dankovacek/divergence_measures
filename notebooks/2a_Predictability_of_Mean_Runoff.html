@@ -418,7 +418,7 @@ document.write(`
 <h1>Predictability of Mean Runoff<a class="headerlink" href="#predictability-of-mean-runoff" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called gradient boosting using the XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="#id10" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> library to see if runoff can be predicted from catchment attributes as was shown in <span id="id2">[<a class="reference internal" href="#id9" title="Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. Water Resources Research, 54(11):8792–8812, 2018.">Addor <em>et al.</em>, 2018</a>]</span>.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
+<p>In the data preprocessing, we computed the entropy of the distribution of each individual streamflow time series in bits per sample.  We’ll now use an ensemble decision tree method called gradient boosting using the XGBoost (eXtreme Gradient Boosted decision tree) <span id="id1">[<a class="reference internal" href="markdown.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd acm sigkdd international conference on knowledge discovery and data mining, 785–794. 2016.">Chen and Guestrin, 2016</a>]</span> library to see if runoff can be predicted from catchment attributes as was shown in <span id="id2">[<a class="reference internal" href="markdown.html#id8" title="Nans Addor, Grey Nearing, Cristina Prieto, Andrew J Newman, Nataliya Le Vine, and Martyn P Clark. A ranking of hydrological signatures based on their predictability in space. Water Resources Research, 54(11):8792–8812, 2018.">Addor <em>et al.</em>, 2018</a>]</span>.  The model input features are added in successive model tests to compare the contribution of catchment attribute groups related to climate, terrain, land cover, and soil.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -459,7 +459,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="e943fa59-7344-4000-a537-fe4ba2762d1d">Loading BokehJS ...</span>
+        <span id="d9e88265-0f7c-4b59-b31c-2ebced8ae021">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -624,7 +624,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("e943fa59-7344-4000-a537-fe4ba2762d1d");
+    const el = document.getElementById("d9e88265-0f7c-4b59-b31c-2ebced8ae021");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -758,7 +758,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("e943fa59-7344-4000-a537-fe4ba2762d1d")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("d9e88265-0f7c-4b59-b31c-2ebced8ae021")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -830,12 +830,187 @@ function(Bokeh) {
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">7</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># check the values against CAMELS</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">camels_oid</span> <span class="o">=</span> <span class="n">remove_leading_zeros</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;official_id&#39;</span><span class="p">])</span>
-<span class="ne">----&gt; </span><span class="mi">7</span> <span class="k">if</span> <span class="n">camels_oid</span> <span class="ow">in</span> <span class="n">cdf</span><span class="p">[</span><span class="s1">&#39;gauge_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span>     <span class="n">camels_q_mean</span> <span class="o">=</span> <span class="n">cdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cdf</span><span class="p">[</span><span class="s1">&#39;gauge_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">camels_oid</span><span class="p">,</span> <span class="s1">&#39;q_mean&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="c1"># print(row[&#39;official_id&#39;], round(mean_runoff, 2), round(camels_q_mean, 2))</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">cm_means</span><span class="p">,</span> <span class="n">hs_means</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+<span class="ne">----&gt; </span><span class="mi">3</span>     <span class="n">mean_runoff</span> <span class="o">=</span> <span class="n">dpf</span><span class="o">.</span><span class="n">compute_mean_runoff</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;mean_runoff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_runoff</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="c1"># check the values against CAMELS</span>
+
+<span class="nn">File ~/code_5820/24/divergence_measures/docs/notebooks/data_processing_functions.py:1135,</span> in <span class="ni">compute_mean_runoff</span><span class="nt">(row)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1132</span>     <span class="nb">print</span><span class="p">(</span><span class="n">count_pivot_df</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1133</span>     <span class="nb">print</span><span class="p">(</span><span class="n">days_in_month</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1135</span> <span class="n">pivot_mean</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1136</span>     <span class="n">values</span><span class="o">=</span><span class="n">stn_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1137</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1139</span> <span class="c1"># apply the boolean mask to filter incomplete months</span>
+<span class="g g-Whitespace">   </span><span class="mi">1140</span> <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">pivot_mean</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">boolean_mask</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:8579,</span> in <span class="ni">DataFrame.pivot_table</span><span class="nt">(self, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">   </span><span class="mi">8562</span> <span class="nd">@Substitution</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">8563</span> <span class="nd">@Appender</span><span class="p">(</span><span class="n">_shared_docs</span><span class="p">[</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">])</span>
+<span class="g g-Whitespace">   </span><span class="mi">8564</span> <span class="k">def</span> <span class="nf">pivot_table</span><span class="p">(</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">8575</span>     <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8576</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">8577</span>     <span class="kn">from</span> <span class="nn">pandas.core.reshape.pivot</span> <span class="kn">import</span> <span class="n">pivot_table</span>
+<span class="ne">-&gt; </span><span class="mi">8579</span>     <span class="k">return</span> <span class="n">pivot_table</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">8580</span>         <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8581</span>         <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8582</span>         <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8583</span>         <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8584</span>         <span class="n">aggfunc</span><span class="o">=</span><span class="n">aggfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8585</span>         <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8586</span>         <span class="n">margins</span><span class="o">=</span><span class="n">margins</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8587</span>         <span class="n">dropna</span><span class="o">=</span><span class="n">dropna</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8588</span>         <span class="n">margins_name</span><span class="o">=</span><span class="n">margins_name</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8589</span>         <span class="n">observed</span><span class="o">=</span><span class="n">observed</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8590</span>         <span class="n">sort</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">8591</span>     <span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/reshape/pivot.py:97,</span> in <span class="ni">pivot_table</span><span class="nt">(data, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">     </span><span class="mi">94</span>     <span class="n">table</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">95</span>     <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">97</span> <span class="n">table</span> <span class="o">=</span> <span class="n">__internal_pivot_table</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">98</span>     <span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">99</span>     <span class="n">values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">100</span>     <span class="n">index</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">101</span>     <span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">102</span>     <span class="n">aggfunc</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">103</span>     <span class="n">fill_value</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">104</span>     <span class="n">margins</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">105</span>     <span class="n">dropna</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">106</span>     <span class="n">margins_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">107</span>     <span class="n">observed</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">108</span>     <span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">109</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">110</span> <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">__finalize__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pivot_table&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/reshape/pivot.py:170,</span> in <span class="ni">__internal_pivot_table</span><span class="nt">(data, values, index, columns, aggfunc, fill_value, margins, dropna, margins_name, observed, sort)</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span> <span class="n">agged</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">aggfunc</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span> <span class="k">if</span> <span class="n">dropna</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agged</span><span class="p">,</span> <span class="n">ABCDataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">agged</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">170</span>     <span class="n">agged</span> <span class="o">=</span> <span class="n">agged</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>     <span class="c1"># gh-21133</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>     <span class="c1"># we want to down cast if</span>
+<span class="g g-Whitespace">    </span><span class="mi">174</span>     <span class="c1"># the original values are ints</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span>     <span class="c1"># as we grouped with a NaN value</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span>     <span class="c1"># and then dropped, coercing to floats</span>
+<span class="g g-Whitespace">    </span><span class="mi">177</span>     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:6418,</span> in <span class="ni">DataFrame.dropna</span><span class="nt">(self, axis, how, thresh, subset, inplace, ignore_index)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6415</span>     <span class="n">mask</span> <span class="o">=</span> <span class="n">notna</span><span class="p">(</span><span class="n">agg_obj</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">agg_axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6416</span> <span class="k">elif</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">6417</span>     <span class="c1"># faster equivalent to &#39;agg_obj.count(agg_axis) &gt; 0&#39;</span>
+<span class="ne">-&gt; </span><span class="mi">6418</span>     <span class="n">mask</span> <span class="o">=</span> <span class="n">notna</span><span class="p">(</span><span class="n">agg_obj</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">agg_axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6419</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">6420</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid how option: </span><span class="si">{</span><span class="n">how</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:11329,</span> in <span class="ni">NDFrame._add_numeric_operations.&lt;locals&gt;.any</span><span class="nt">(self, axis, bool_only, skipna, **kwargs)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11311</span> <span class="nd">@doc</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11312</span>     <span class="n">_bool_doc</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11313</span>     <span class="n">desc</span><span class="o">=</span><span class="n">_any_desc</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11327</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11328</span> <span class="p">):</span>
+<span class="ne">&gt; </span><span class="mi">11329</span>     <span class="k">return</span> <span class="n">NDFrame</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11330</span>         <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11331</span>         <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11332</span>         <span class="n">bool_only</span><span class="o">=</span><span class="n">bool_only</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11333</span>         <span class="n">skipna</span><span class="o">=</span><span class="n">skipna</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11334</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11335</span>     <span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:11017,</span> in <span class="ni">NDFrame.any</span><span class="nt">(self, axis, bool_only, skipna, **kwargs)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11010</span> <span class="k">def</span> <span class="nf">any</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11011</span>     <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11012</span>     <span class="n">axis</span><span class="p">:</span> <span class="n">Axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">11015</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11016</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span> <span class="o">|</span> <span class="n">Series</span> <span class="o">|</span> <span class="n">bool_t</span><span class="p">:</span>
+<span class="ne">&gt; </span><span class="mi">11017</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logical_func</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11018</span>         <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">nanops</span><span class="o">.</span><span class="n">nanany</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">bool_only</span><span class="p">,</span> <span class="n">skipna</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="g g-Whitespace">  </span><span class="mi">11019</span>     <span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:11001,</span> in <span class="ni">NDFrame._logical_func</span><span class="nt">(self, name, func, axis, bool_only, skipna, **kwargs)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10998</span>         <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bool_data</span><span class="p">()</span>
+<span class="g g-Whitespace">  </span><span class="mi">10999</span>     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">_reduce_axis1</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="n">skipna</span><span class="p">)</span>
+<span class="ne">&gt; </span><span class="mi">11001</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">11002</span>     <span class="n">func</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11003</span>     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11004</span>     <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11005</span>     <span class="n">skipna</span><span class="o">=</span><span class="n">skipna</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11006</span>     <span class="n">numeric_only</span><span class="o">=</span><span class="n">bool_only</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11007</span>     <span class="n">filter_type</span><span class="o">=</span><span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">11008</span> <span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:10515,</span> in <span class="ni">DataFrame._reduce</span><span class="nt">(self, op, name, axis, skipna, numeric_only, filter_type, **kwds)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10513</span>         <span class="n">result</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+<span class="g g-Whitespace">  </span><span class="mi">10514</span>         <span class="k">return</span> <span class="n">result</span>
+<span class="ne">&gt; </span><span class="mi">10515</span>     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+<span class="g g-Whitespace">  </span><span class="mi">10517</span> <span class="c1"># After possibly _get_data and transposing, we are now in the</span>
+<span class="g g-Whitespace">  </span><span class="mi">10518</span> <span class="c1">#  simple case where we can use BlockManager.reduce</span>
+<span class="g g-Whitespace">  </span><span class="mi">10519</span> <span class="n">res</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">blk_func</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:3634,</span> in <span class="ni">DataFrame.T</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3607</span> <span class="nd">@property</span>
+<span class="g g-Whitespace">   </span><span class="mi">3608</span> <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">3609</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">3610</span><span class="sd">     The transpose of the DataFrame.</span>
+<span class="g g-Whitespace">   </span><span class="mi">3611</span><span class="sd"> </span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3632</span><span class="sd">     col2  3  4</span>
+<span class="g g-Whitespace">   </span><span class="mi">3633</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">3634</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/frame.py:3566,</span> in <span class="ni">DataFrame.transpose</span><span class="nt">(self, copy, *args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3563</span> <span class="n">nv</span><span class="o">.</span><span class="n">validate_transpose</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">{})</span>
+<span class="g g-Whitespace">   </span><span class="mi">3564</span> <span class="c1"># construct the args</span>
+<span class="ne">-&gt; </span><span class="mi">3566</span> <span class="n">dtypes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3568</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_fast_transpose</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">3569</span>     <span class="c1"># Note: tests pass without this, but this improves perf quite a bit.</span>
+<span class="g g-Whitespace">   </span><span class="mi">3570</span>     <span class="n">new_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="n">T</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:6159,</span> in <span class="ni">NDFrame.dtypes</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6132</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">6133</span><span class="sd"> Return the dtypes in the DataFrame.</span>
+<span class="g g-Whitespace">   </span><span class="mi">6134</span><span class="sd"> </span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">6156</span><span class="sd"> dtype: object</span>
+<span class="g g-Whitespace">   </span><span class="mi">6157</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">6158</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">get_dtypes</span><span class="p">()</span>
+<span class="ne">-&gt; </span><span class="mi">6159</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constructor_sliced</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object_</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/series.py:428,</span> in <span class="ni">Series.__init__</span><span class="nt">(self, data, index, dtype, name, copy, fastpath)</span>
+<span class="g g-Whitespace">    </span><span class="mi">425</span>     <span class="n">index</span> <span class="o">=</span> <span class="n">ensure_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">427</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">428</span>     <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">430</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">431</span>     <span class="n">index</span> <span class="o">=</span> <span class="n">index</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/generic.py:458,</span> in <span class="ni">NDFrame._validate_dtype</span><span class="nt">(cls, dtype)</span>
+<span class="g g-Whitespace">    </span><span class="mi">456</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;validate the passed dtype&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">457</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">458</span>     <span class="n">dtype</span> <span class="o">=</span> <span class="n">pandas_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">460</span>     <span class="c1"># a compound dtype</span>
+<span class="g g-Whitespace">    </span><span class="mi">461</span>     <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;V&quot;</span><span class="p">:</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/dtypes/common.py:1690,</span> in <span class="ni">pandas_dtype</span><span class="nt">(dtype)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1685</span> <span class="k">try</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1686</span>     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="g g-Whitespace">   </span><span class="mi">1687</span>         <span class="c1"># GH#51523 - Series.astype(np.integer) doesn&#39;t show</span>
+<span class="g g-Whitespace">   </span><span class="mi">1688</span>         <span class="c1"># numpy deprication warning of np.integer</span>
+<span class="g g-Whitespace">   </span><span class="mi">1689</span>         <span class="c1"># Hence enabling DeprecationWarning</span>
+<span class="ne">-&gt; </span><span class="mi">1690</span>         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1691</span>         <span class="n">npdtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1692</span> <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1693</span>     <span class="c1"># np.dtype uses `eval` which can raise SyntaxError</span>
+
+<span class="nn">File /usr/lib/python3.10/warnings.py:179,</span> in <span class="ni">simplefilter</span><span class="nt">(action, category, lineno, append)</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span> <span class="k">assert</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span>                   <span class="s2">&quot;once&quot;</span><span class="p">),</span> <span class="s2">&quot;invalid action: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action</span><span class="p">,)</span>
+<span class="g g-Whitespace">    </span><span class="mi">177</span> <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lineno</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lineno</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> \
+<span class="g g-Whitespace">    </span><span class="mi">178</span>        <span class="s2">&quot;lineno must be an int &gt;= 0&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">179</span> <span class="n">_add_filter</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">)</span>
 
 <span class="ne">KeyboardInterrupt</span>: 
 </pre></div>

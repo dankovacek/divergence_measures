@@ -449,7 +449,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="d6e4b39e-cda1-43e3-96d8-bea9fabf7ba2">Loading BokehJS ...</span>
+        <span id="e55bc573-78d7-4247-ad6b-fc92b2510faa">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -614,7 +614,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("d6e4b39e-cda1-43e3-96d8-bea9fabf7ba2");
+    const el = document.getElementById("e55bc573-78d7-4247-ad6b-fc92b2510faa");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -748,7 +748,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("d6e4b39e-cda1-43e3-96d8-bea9fabf7ba2")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("e55bc573-78d7-4247-ad6b-fc92b2510faa")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -808,7 +808,7 @@ function(Bokeh) {
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
-<span class="nn">/tmp/ipykernel_48527/317161912.py</span> in <span class="ni">?</span><span class="nt">()</span>
+<span class="nn">/tmp/ipykernel_1875054/317161912.py</span> in <span class="ni">?</span><span class="nt">()</span>
 <span class="g g-Whitespace">      </span><span class="mi">8</span>     <span class="n">results_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">updated_catchment_attribute_path</span><span class="p">)</span>
 <span class="nn">      9     attributes_df = results_df[[c for c</span> in <span class="ni">results_df.columns if c != &#39;geometry&#39;]].copy</span><span class="nt">()</span>
 <span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">attributes_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">attributes_fpath</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

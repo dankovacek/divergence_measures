@@ -471,7 +471,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="aad77291-7896-475f-b3e1-bdf6031b2d64">Loading BokehJS ...</span>
+        <span id="bd4df40c-bfff-4f56-bc35-556b474c3e96">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -636,7 +636,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("aad77291-7896-475f-b3e1-bdf6031b2d64");
+    const el = document.getElementById("bd4df40c-bfff-4f56-bc35-556b474c3e96");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -770,7 +770,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("aad77291-7896-475f-b3e1-bdf6031b2d64")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("bd4df40c-bfff-4f56-bc35-556b474c3e96")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
