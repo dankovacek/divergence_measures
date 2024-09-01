@@ -617,17 +617,18 @@ def run_xgb_CV_trials(
     features,
     target,
     input_data,
-    train_indices,
-    test_indices,
+    training_stns,
+    test_stns,
     n_optimization_rounds,
     nfolds,
     num_boost_rounds,
     results_folder,
     loss='reg:squarederror'
 ):
-
     # randomly select 5% of the stations to leave out for a hold-out test set
     # to ensure none of the data are seen in training
+    train_indices = input_data[input_data['official_id'].isin(training_stns)].index
+    test_indices = input_data[input_data['official_id'].isin(test_stns)].index
     X_train, Y_train = (
         input_data.loc[train_indices, features].values,
         input_data.loc[train_indices, target].values,
@@ -636,6 +637,7 @@ def run_xgb_CV_trials(
         input_data.loc[test_indices, features].values,
         input_data.loc[test_indices, target].values,
     )
+    test_stns = input_data.loc[test_indices, 'official_id']
 
     sample_choices = np.arange(0.5, 0.9, 0.02)
     lr_choices = np.arange(0.001, 0.1, 0.0005)
@@ -681,10 +683,10 @@ def run_xgb_CV_trials(
             early_stopping_rounds=20,
             verbose_eval=False,
         )
+        # get round number associated with the lowest error
         best_rmse_round = model_results["test-rmse-mean"].idxmin()
         best_mae_round = model_results["test-mae-mean"].idxmin()
-        # print(lr, best_rmse_round, best_mae_round)
-
+        # track the trial error metrics
         results_dict = {
             "best_rmse_round": best_rmse_round,
             "best_mae_round": best_mae_round,
@@ -705,17 +707,16 @@ def run_xgb_CV_trials(
     # save the trial results
     trial_results = pd.DataFrame(all_results)
     trial_results.to_csv(results_fpath)
+    # get the mean and standard deviation of the error metrics 
+    # over all trials
     trial_mean = trial_results["min_test_mae"].mean()
     trial_stdev = trial_results["min_mae_stdev"].mean()
-
     # print(trial_results.sort_values('min_test_mae'))
-
     print(
         f"    {trial_mean:.2f} ± {trial_stdev:.3f} mean RMSE (of {len(trial_results)} hyperparameter optimization rounds.)"
     )
 
     param_cols = list(params.keys())
-
     # get the optimal hyperparameters
     optimal_rmse_idx = trial_results["min_test_rmse"].idxmin()
     optimal_mae_idx = trial_results["min_test_mae"].idxmin()
@@ -727,7 +728,9 @@ def run_xgb_CV_trials(
     dtest = xgb.DMatrix(X_test, label=Y_test)
 
     eval_list = [(dtrain, "train"), (dtest, "eval")]
-
+    # retrain the model on the training set using hyperparameters
+    # associated with the lowest mean CV error from all trials
+    # but test on the held-out test set
     final_model = xgb.train(
         best_rmse_params,
         dtrain,
@@ -738,13 +741,15 @@ def run_xgb_CV_trials(
     )
 
     predicted_y = final_model.predict(dtest)
-
+    
     test_results = pd.DataFrame(
         {
             "predicted": predicted_y,
             "actual": Y_test,
+            "official_id": test_stns,
         }
     )
+    
 
     return trial_results, test_results
 
@@ -1022,20 +1027,24 @@ def run_binary_xgb_trials_custom_CV(
     return trial_results, test_results
 
 
-def train_test_split(df, holdout_pct):
+def train_test_split(df, holdout_pct, random_seed=42):
     """
     Split the input data into training and test sets.
     The proportion of test data is holdout_pct.
     Return the data as arrays.
     """
     n_holdout = int(holdout_pct * len(df))
+    np.random.seed(random_seed)
     test_idxs = np.random.choice(df.index.values, n_holdout, replace=False)
     train_idxs = [i for i in df.index.values if i not in test_idxs]
 
     common_idxs = np.intersect1d(train_idxs, test_idxs)
     assert len(common_idxs) == 0
 
-    return train_idxs, test_idxs
+    training_stns = df.loc[train_idxs, 'official_id'].values
+    test_stns = df.loc[test_idxs, 'official_id'].values
+
+    return training_stns, test_stns
 
 
 def compute_cdf(data):
