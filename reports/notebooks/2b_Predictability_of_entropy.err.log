@@ -1,0 +1,65 @@
+Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+resid_plots = []
+for b in test_results.keys():
+    print(f' bitrate = {b}')
+    attr_groups = test_results[b].keys()
+    # for group in attr_groups:
+    group = '+soil'
+    rdf = runoff_test_results[group]['test_df']
+    rdf['residuals'] = rdf['predicted'] - rdf['actual']
+    
+    assert (sorted(rdf['official_id']) == sorted(hdf['official_id']))
+    
+    hdf = test_results[b][group]['test_df']
+    hdf['residuals'] = hdf['predicted'] - hdf['actual']
+
+    xx, yy = rdf['residuals'], hdf['residuals']
+    slope, intercept, r, p, se = linregress(xx, yy)
+    
+    sfig = figure(title=f'Runoff & Entropy Prediction Residuals Correlation Test ', width=600, height=400)
+    sfig.scatter(xx, yy, size=3, alpha=0.8)
+    xpred = np.linspace(min(xx), max(xx), 100)
+    ybf = [slope * e + intercept for e in xpred]
+    sfig.line(xpred, ybf, color='red', line_width=3, line_dash='dashed', legend_label=f'R²={r**2:.2f}')
+    # plot a 1:1 line
+    sfig.line([min(yy), max(yy)], [min(yy), max(yy)], color='black', line_dash='dotted', 
+              line_width=2, legend_label='1:1')
+    sfig.xaxis.axis_label = 'Runoff Prediction Residuals [mm/day]'
+    sfig.yaxis.axis_label = 'Entropy Prediction Residuals [bits/sample]'
+    sfig.legend.location = 'top_left'
+    
+    resid_plots.append(sfig)
+
+------------------
+
+----- stdout -----
+ bitrate = 4
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[15], line 10[0m
+[1;32m      7[0m rdf [38;5;241m=[39m runoff_test_results[group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
+[1;32m      8[0m rdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m rdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m rdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
+[0;32m---> 10[0m [38;5;28;01massert[39;00m ([38;5;28msorted[39m(rdf[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]) [38;5;241m==[39m [38;5;28msorted[39m([43mhdf[49m[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]))
+[1;32m     12[0m hdf [38;5;241m=[39m test_results[b][group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
+[1;32m     13[0m hdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m hdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m hdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
+
+[0;31mNameError[0m: name 'hdf' is not defined
+

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Predictability of Earth Mover’s (Wasserstein) Distance (EMD) &#8212; On the predictability of f-divergence measures from catchment attributes</title>
+    <title>Predict Earth Mover’s (Wasserstein) Distance (EMD) &#8212; On the predictability of f-divergence measures from catchment attributes</title>
   
   
   
@@ -63,7 +63,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Discussion" href="Discussion.html" />
-    <link rel="prev" title="Predictability of Total Variation Distance (TVD)" href="2d_Predictability_of_TVD.html" />
+    <link rel="prev" title="Predict Total Variation Distance (TVD)" href="2d_Predictability_of_TVD.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -189,11 +189,11 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="2_Methods.html">Methods</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="2a_Predictability_of_Mean_Runoff.html">Predictability of Mean Runoff</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2b_Predictability_of_entropy.html">Predictability of (Shannon) Entropy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2c_Predictability_of_KL_divergence.html">Predictability of Kullback-Leibler (KL) Divergence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2d_Predictability_of_TVD.html">Predictability of Total Variation Distance (TVD)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2a_Predictability_of_Mean_Runoff.html">Predict Mean Runoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2b_Predictability_of_entropy.html">Predict (Shannon) Entropy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2c_Predictability_of_KL_divergence.html">Predict Kullback-Leibler (KL) Divergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2d_Predictability_of_TVD.html">Predict Total Variation Distance (TVD)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Predict Earth Mover’s (Wasserstein) Distance (EMD)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="Discussion.html">Discussion</a></li>
@@ -382,7 +382,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Predictability of Earth Mover’s (Wasserstein) Distance (EMD)</h1>
+    <h1>Predict Earth Mover’s (Wasserstein) Distance (EMD)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -422,8 +422,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="predictability-of-earth-mover-s-wasserstein-distance-emd">
-<h1>Predictability of Earth Mover’s (Wasserstein) Distance (EMD)<a class="headerlink" href="#predictability-of-earth-mover-s-wasserstein-distance-emd" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="predict-earth-mover-s-wasserstein-distance-emd">
+<h1>Predict Earth Mover’s (Wasserstein) Distance (EMD)<a class="headerlink" href="#predict-earth-mover-s-wasserstein-distance-emd" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
 <p>Here we make yet another comparison of runoff between two locations and ask if the <strong>Earth Mover’s Distance</strong> (EMD), also known as the Wasserstein distance, between UAR distributions  can be predicted from the attributes of the two catchments (and their differences). We will again use the gradient boosted decision tree method.</p>
@@ -471,7 +471,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="dfa7f487-614d-4886-a79a-98ee812f2681">Loading BokehJS ...</span>
+        <span id="ffd41ae8-2622-4565-9e55-97eecbdcab0c">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">'use strict';
 (function(root) {
@@ -636,7 +636,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded(error = null) {
-    const el = document.getElementById("dfa7f487-614d-4886-a79a-98ee812f2681");
+    const el = document.getElementById("ffd41ae8-2622-4565-9e55-97eecbdcab0c");
     if (el != null) {
       const html = (() => {
         if (typeof root.Bokeh === "undefined") {
@@ -770,7 +770,7 @@ function(Bokeh) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("dfa7f487-614d-4886-a79a-98ee812f2681")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("ffd41ae8-2622-4565-9e55-97eecbdcab0c")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -1109,7 +1109,11 @@ function(Bokeh) {
 
 <span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/_libs/parsers.pyx:891,</span> in <span class="ni">pandas._libs.parsers.TextReader._read_rows</span><span class="nt">()</span>
 
-<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/_libs/parsers.pyx:1049,</span> in <span class="ni">pandas._libs.parsers.TextReader._convert_column_data</span><span class="nt">()</span>
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/_libs/parsers.pyx:1036,</span> in <span class="ni">pandas._libs.parsers.TextReader._convert_column_data</span><span class="nt">()</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/_libs/parsers.pyx:1090,</span> in <span class="ni">pandas._libs.parsers.TextReader._convert_tokens</span><span class="nt">()</span>
+
+<span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/_libs/parsers.pyx:1165,</span> in <span class="ni">pandas._libs.parsers.TextReader._convert_with_dtype</span><span class="nt">()</span>
 
 <span class="nn">File ~/code_5820/data_analysis/lib/python3.10/site-packages/pandas/core/dtypes/common.py:1335,</span> in <span class="ni">is_extension_array_dtype</span><span class="nt">(arr_or_dtype)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1326</span>     <span class="c1"># Note: if other EA dtypes are ever held in HybridBlock, exclude those</span>
@@ -1311,7 +1315,7 @@ function(Bokeh) {
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Predictability of Total Variation Distance (TVD)</p>
+        <p class="prev-next-title">Predict Total Variation Distance (TVD)</p>
       </div>
     </a>
     <a class="right-next"

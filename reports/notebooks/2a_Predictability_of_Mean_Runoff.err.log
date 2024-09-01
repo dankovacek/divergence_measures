@@ -30,8 +30,8 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-['cm_means, hs_means = [], []', 'for i, row in df.iterrows():', '    mean_runoff = dpf.compute_mean_runoff(row)', "    df.loc[i, 'mean_runoff'] = mean_runoff", '    # check the values against CAMELS']
+["if 'mean_runoff' not in df.columns:", '    cm_means, hs_means = [], []', '    for i, row in df.iterrows():', '        mean_runoff = dpf.compute_mean_runoff(row)', "        df.loc[i, 'mean_runoff'] = mean_runoff"]
 ...
-["        # print(row['official_id'], round(mean_runoff, 2), round(camels_q_mean, 2))", '        cm_means.append(camels_q_mean)', '        hs_means.append(mean_runoff)', '', "df.to_csv(os.path.join(BASE_DIR, 'data', attributes_filename), index=False)"]
+["    cm_fig = figure(title='Camels vs. Hysets mean runoff', width=400, height=300)", '    cm_fig.scatter(cm_means, hs_means, size=3, alpha=0.6)', "    cm_fig.xaxis.axis_label = r'$$\\text{Camels mean runoff } [mm/d]$$'", "    cm_fig.yaxis.axis_label = r'$$\\text{HYSETS mean runoff } [mm/d]$$'", '    show(cm_fig)']
 -------------------
 
