@@ -15,6 +15,6 @@ chapters:
   - file: notebooks/2b_Predictability_of_entropy
   - file: notebooks/2c_Predictability_of_KL_divergence
   - file: notebooks/2d_Predictability_of_TVD
-  - file: notebooks/2e_Predictability_of_WD
+  - file: notebooks/2e_Predictability_of_EMD
 - file: notebooks/Discussion
 

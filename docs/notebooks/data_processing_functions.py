@@ -974,6 +974,7 @@ def run_binary_xgb_trials_custom_CV(
             else:
                 tn, fp, fn, tp = confusion_matrix(obs, pred).ravel()
                 accuracy = (tp + tn) / (tp + fp + fn + tn) 
+            
             # error = fbeta_score(obs, pred, 1)
             # print(f'Accuracy: {accuracy:.2f}')#, F1 beta: {error:.2f}')
             cv_accuracies.append(accuracy)
