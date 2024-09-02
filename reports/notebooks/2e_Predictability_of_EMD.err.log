@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# binary_results_folder = os.path.join(BASE_DIR, 'data', 'emd_prediction_results_binary')
+if not os.path.exists(binary_results_folder):
+    os.makedirs(binary_results_folder)
+
+loss_function = 'binary:hinge'
+target_col = f'wasserstein_{concurrent}'
+test_results_fname = f'{target_col}_results_mae.npy'
+test_results_fpath = os.path.join(binary_results_folder, test_results_fname)
+if os.path.exists(test_results_fpath):
+    binary_test_results = np.load(test_results_fpath, allow_pickle=True).item()
+else:
+    binary_test_results = predict_EMD_from_attributes(attr_df, target_col, holdout_pct, station_ids, nfolds, binary_results_folder, loss_function, binary_test=True)
+    np.save(test_results_fpath, binary_test_results)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[8], line 2[0m
+[1;32m      1[0m [38;5;66;03m# binary_results_folder = os.path.join(BASE_DIR, 'data', 'emd_prediction_results_binary')[39;00m
+[0;32m----> 2[0m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m os[38;5;241m.[39mpath[38;5;241m.[39mexists([43mbinary_results_folder[49m):
+[1;32m      3[0m     os[38;5;241m.[39mmakedirs(binary_results_folder)
+[1;32m      5[0m loss_function [38;5;241m=[39m [38;5;124m'[39m[38;5;124mbinary:hinge[39m[38;5;124m'[39m
+
+[0;31mNameError[0m: name 'binary_results_folder' is not defined
+
