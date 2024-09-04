@@ -16,6 +16,7 @@ Traceback (most recent call last):
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
 resid_plots = []
+
 for b in test_results.keys():
     print(f' bitrate = {b}')
     attr_groups = test_results[b].keys()
@@ -54,12 +55,12 @@ for b in test_results.keys():
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[15], line 10[0m
-[1;32m      7[0m rdf [38;5;241m=[39m runoff_test_results[group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
-[1;32m      8[0m rdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m rdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m rdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
-[0;32m---> 10[0m [38;5;28;01massert[39;00m ([38;5;28msorted[39m(rdf[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]) [38;5;241m==[39m [38;5;28msorted[39m([43mhdf[49m[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]))
-[1;32m     12[0m hdf [38;5;241m=[39m test_results[b][group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
-[1;32m     13[0m hdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m hdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m hdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
+Cell [0;32mIn[16], line 11[0m
+[1;32m      8[0m rdf [38;5;241m=[39m runoff_test_results[group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
+[1;32m      9[0m rdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m rdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m rdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
+[0;32m---> 11[0m [38;5;28;01massert[39;00m ([38;5;28msorted[39m(rdf[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]) [38;5;241m==[39m [38;5;28msorted[39m([43mhdf[49m[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]))
+[1;32m     13[0m hdf [38;5;241m=[39m test_results[b][group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
+[1;32m     14[0m hdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m hdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m hdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
 
 [0;31mNameError[0m: name 'hdf' is not defined
 

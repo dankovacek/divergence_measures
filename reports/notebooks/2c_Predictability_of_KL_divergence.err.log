@@ -30,7 +30,7 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-['result_dict = {}', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    # print(f'bitrate = {bitrate}')"]
+['result_dict = {}', 'for bitrate in range(4,13):', '    if bitrate in [5, 7]:', '        continue', "    print(f'bitrate = {bitrate}')"]
 ...
 ['', '    input_data_fpath = os.path.join(input_folder, fname)', '    nrows = None', '    df = pd.read_csv(input_data_fpath, nrows=nrows, low_memory=False)', '    result_dict[bitrate] = df']
 -------------------
