@@ -9,11 +9,11 @@ from sklearn.metrics import (
     mean_absolute_error,
     f1_score, d2_log_loss_score, confusion_matrix, fbeta_score
 )
+from sklearn.model_selection import StratifiedKFold
 
 from shapely.geometry import Point
 
 import xgboost as xgb
-
 import multiprocessing as mp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -39,7 +39,7 @@ class Station:
         Initializes the Station object by unpacking a dictionary of station information into attributes.
     """
 
-    def __init__(self, station_info, bitrate) -> None:
+    def __init__(self, station_info) -> None:
         """
         Initializes the Station object.
 
@@ -57,16 +57,65 @@ class Station:
 
         self.id = self.official_id
         self.sim_label = f"{self.id}_sim"
+        self.sim_label_parametric = f"{self.id}_sim_parametric"
         self.obs_label = f"{self.id}"
         self.sim_log_label = f"{self.id}_sim_log10"
         self.obs_log_label = f"{self.id}_log10"
         # self.UR_label = f'{self.id}_UR'
         # self.logUR_label = f'{self.id}_logUR'
         # self.log_sim_label = f'{self.id}_sim_log10'
-        self.sim_quantized_label = f"sim_quantized_{self.id}_{bitrate}b"
-        self.obs_quantized_label = f"obs_quantized_{self.id}_{bitrate}b"
+        # self.sim_quantized_label = f"sim_quantized_{self.id}_{bitrate}b"
+        # self.obs_quantized_label = f"obs_quantized_{self.id}_{bitrate}b"
         # self.quantized_label_ = f'quantized_{self.id}_sim_{bitrate}b'
 
+
+# Add custom CSS for styling (optional)
+table_style = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: Roboto, sans-serif;
+    width: 100%;
+    text-align: left;
+}
+.styled-table th {
+    background-color: white;
+    color: black;
+    padding: 12px 15px;
+}
+.styled-table td {
+    padding: 12px 15px;
+}
+.styled-table tr {
+    border-bottom: 1px solid #dddddd;
+}
+.styled-table tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+.styled-table tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+</style>
+"""
+
+def format_fig_fonts(fig, font_size=20, font='Bitstream Charter', legend=True):
+    fig.xaxis.axis_label_text_font_size = f'{font_size}pt'
+    fig.yaxis.axis_label_text_font_size = f'{font_size}pt'
+    fig.xaxis.major_label_text_font_size = f'{font_size-2}pt'
+    fig.yaxis.major_label_text_font_size = f'{font_size-2}pt'
+    fig.yaxis.axis_label_text_font = font
+    fig.xaxis.axis_label_text_font = font
+    fig.xaxis.major_label_text_font = font
+    fig.yaxis.major_label_text_font = font
+    if legend == True:
+        fig.legend.label_text_font_size = f'{font_size-2}pt'
+        fig.legend.label_text_font = font
+    return fig
+    
 
 def check_processed_results(out_fpath):
     """
@@ -184,7 +233,49 @@ def filter_processed_pairs(results_df, id_pairs):
     return remaining_pairs
 
 
-def get_timeseries_data(official_id, min_flow=1e-4):
+def count_complete_years(df, date_column, value_column):
+    # Ensure the date column is a datetime
+    df[date_column] = pd.to_datetime(df[date_column])
+
+    # Set the date column as the index for easier grouping
+    df.set_index(date_column, inplace=True)
+
+    # Group the data by year and month
+    monthly_data = df.groupby([df.index.year, df.index.month])[value_column]
+
+    # Function to check if a month is complete (no more than 10% missing)
+    def is_complete_month(group):
+        total_days = group.size
+        missing_days = group.isna().sum()
+        return missing_days / total_days <= 0.10
+
+    # Create a DataFrame indicating which months are complete
+    monthly_completeness = monthly_data.apply(is_complete_month).unstack()
+
+    # Find complete years (where all 12 months are complete)
+    complete_years = monthly_completeness[monthly_completeness.sum(axis=1) == 12].index
+
+    # Return the number of complete years
+    return len(complete_years)
+
+
+def check_if_seasonal(df, date_column, value_column):
+    # Ensure the date column is in datetime format
+    df[date_column] = pd.to_datetime(df[date_column])
+
+    # Set the date column as the index
+    df.dropna(subset=[value_column], inplace=True)
+    df.set_index(date_column, inplace=True)
+
+    # Extract the months and check if all months (1 to 12) are present in the record
+    months_present = df.index.month.unique()
+    df.reset_index(inplace=True)
+
+    # Check if all months 1 to 12 are present
+    return len(list(set(months_present))) < 12
+
+
+def get_timeseries_data(official_id, min_flow=1e-4, try_counter=0):
     """
     Imports streamflow data for a given station ID, processes it to handle low flow values,
     and returns the processed DataFrame.
@@ -223,13 +314,20 @@ def get_timeseries_data(official_id, min_flow=1e-4):
     4  2020-01-05  0.0001                      True
     """
     fpath = os.path.join(STREAMFLOW_DIR, f"{official_id}.csv")
+    if not os.path.exists(fpath):
+        new_fpath = os.path.join(STREAMFLOW_DIR, f"0{official_id}.csv")
+        try_counter += 1
+        if try_counter > 3:
+            raise FileNotFoundError(f"Check station number {official_id}, file not found after {try_counter} attempts")
+        else:
+            return get_timeseries_data(f"0{official_id}", try_counter=try_counter)
+            
     df = pd.read_csv(fpath, parse_dates=["time"])
-    df[f"{official_id}_low_flow_flag"] = df["discharge"] < min_flow
+    df[f"{official_id}_low_flow_flag"] = (df["discharge"] < min_flow).astype(bool)
     # assign a small flow value instead of zero
     df["discharge"] = df["discharge"].clip(lower=min_flow)
     # rename the discharge column to the station id
     df.rename(columns={"discharge": official_id}, inplace=True)
-
     return df
 
 
@@ -419,6 +517,8 @@ def compute_observed_series_entropy(row, bitrate):
     stn_id = row["official_id"]
     df = get_timeseries_data(stn_id)
     df.dropna(subset=[stn_id], inplace=True)
+    if df.empty:
+        raise Exception(f'{stn_id} is empty')
     min_q, max_q = df[stn_id].min() - 1e-6, df[stn_id].max() + 1e-6
     assert min_q > 0
     # use equal width bins in log10 space
@@ -440,7 +540,6 @@ def format_features(input_attributes):
     for a in input_attributes:
         features.append(f"proxy_{a}".lower())
         features.append(f"target_{a}".lower())
-
     # add the distance feature
     features.append("centroid_distance")
     return features
@@ -532,8 +631,7 @@ def filter_input_data_by_official_id(df, stations):
 def train_xgb_model(
     input_data, train_stns, test_stns, attributes, target, params, num_boost_rounds,
 ):
-    train_data = filter_input_data_by_official_id(input_data, train_stns)
-    test_data = filter_input_data_by_official_id(input_data, test_stns)
+    
 
     X_train = train_data[attributes].values
     Y_train = train_data[target].values
@@ -612,147 +710,182 @@ def train_binary_xgb_model(
     return bst, test_results
 
 
+def compute_empirical_cdf(data):
+    sorted_data = np.sort(data)
+    cdf = np.arange(1, len(sorted_data) + 1) / len(sorted_data)
+    return sorted_data, cdf
+
+
 def run_xgb_CV_trials(
     set_name,
     features,
     target,
     input_data,
-    training_stns,
-    test_stns,
     n_optimization_rounds,
     nfolds,
     num_boost_rounds,
     results_folder,
-    loss='reg:squarederror'
+    loss='reg:squarederror',
+    random_seed=42
 ):
-    # randomly select 5% of the stations to leave out for a hold-out test set
-    # to ensure none of the data are seen in training
-    train_indices = input_data[input_data['official_id'].isin(training_stns)].index
-    test_indices = input_data[input_data['official_id'].isin(test_stns)].index
-    X_train, Y_train = (
-        input_data.loc[train_indices, features].values,
-        input_data.loc[train_indices, target].values,
-    )
-    X_test, Y_test = (
-        input_data.loc[test_indices, features].values,
-        input_data.loc[test_indices, target].values,
-    )
-    test_stns = input_data.loc[test_indices, 'official_id']
+    input_data['group'] = input_data[['proxy','target']].astype(str).agg('_'.join, axis=1)
+    groups = input_data['group'].unique()
+    y_grouped = input_data.groupby('group')[target].first().values
 
-    sample_choices = np.arange(0.5, 0.9, 0.02)
-    lr_choices = np.arange(0.001, 0.1, 0.0005)
+    # Step 3: Create stratified KFold object
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_seed)
+    
+    X_input, Y_input = (
+        input_data.loc[:, features].values,
+        input_data.loc[:, target].values,
+    )
+    # Bin the continuous target variable into quantiles
+    # y_binned = pd.qcut(Y_input, q=20, labels=False)  # Quantile-based discretization
+
+    # split the data into folds such that the target
+    # distribution is similar across each fold
+    skf = StratifiedKFold(n_splits=nfolds, shuffle=True, random_state=int(random_seed))
+
+    sample_choices = np.arange(0.1, 0.9, 0.02)
+    lr_choices = np.arange(0.001, 0.12, 0.0005)
     learning_rates = np.random.choice(lr_choices, n_optimization_rounds)
     subsamples = np.random.choice(sample_choices, n_optimization_rounds)
     colsamples = np.random.choice(sample_choices, n_optimization_rounds)
 
     all_results = []
+    best_result = (None, np.inf, None)
+    best_params = None
+    best_mean_test_perf = np.inf
+    best_convergence_df = pd.DataFrame()
+    best_trial_test_predictions = None
+    output_target_cdfs = None
     for trial in range(n_optimization_rounds):
-
         lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
-
+        results_fname = f"{set_name}_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
+        results_fpath = os.path.join(results_folder, results_fname)
         params = {
-            # "objective": "reg:absoluteerror",
             "objective": loss,
-            "eval_metric": "rmse",
             "eta": lr,
-            # "max_depth": 6,  # use default max_depth
-            # "min_child_weight": 1, # use colsample and subsample instead of min_child_weight
+            "max_depth": 6,  # use default max_depth
             "subsample": ss,
             "colsample_bytree": cs,
-            "seed": 42,
+            "seed": random_seed,
             "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
             "sampling_method": "gradient_based",
             "tree_method": "hist",
+            "validate_parameters": True,
         }
+
+        # Split into N equal segments
+        fold_scores = []
+        n_samples = len(X_input)
+        fold_no = 0
+        best_train_fold_perf, best_test_fold_perf, best_test_rounds = [], [], []
+        all_fold_results = []
+        fold_scores, fold_arrays = [], []
+        target_cdfs = []
+        for train_index, test_index in skf.split(np.zeros(n_samples), y_binned):
+    
+            X_train, X_test = X_input[train_index], X_input[test_index]
+            Y_train, Y_test = Y_input[train_index], Y_input[test_index]
+            train_ids = input_data.iloc[train_index]['official_id'].copy()
+            test_ids = input_data.iloc[test_index]['official_id'].copy()
+            assert len(np.intersect1d(train_ids, test_ids)) == 0
+
+            ordered_data, fold_cdf = compute_empirical_cdf(Y_test)
+            target_cdfs += [(ordered_data, fold_cdf)]
+            
+            if loss == 'reg:quantileerror':
+                params['eval_metric'] = None
+                params['quantile_alpha'] = np.array([0.05, 0.5, 0.95])
+                # dtrain = xgb.QuantileDMatrix(X_train, label=Y_train)   
+                dtrain = xgb.QuantileDMatrix(X_train, label=Y_train)   
+                dtest = xgb.QuantileDMatrix(X_test, label=Y_test)
+            else:
+                dtrain = xgb.DMatrix(X_train, label=Y_train)
+                dtest = xgb.DMatrix(X_test, label=Y_test)
+            
+            # Initialize evals_result as a DataFrame
+            evals_result = {}
+            eval_list = [(dtrain, "train"), (dtest, "eval")]
+            model = xgb.train(
+                params,
+                dtrain,
+                num_boost_rounds,
+                evals=eval_list,
+                evals_result=evals_result,
+                verbose_eval=0,
+                # early_stopping_rounds=20,
+            )
+            eval_keys = list(evals_result['train'].keys())
+            if len(eval_keys) > 1:
+                print(f' setting eval key to {eval_keys[0]} from {eval_keys}')
+            eval_key = eval_keys[0]
+            # Convert the lists to NumPy arrays with dtype=object
+            train_perf = np.array(evals_result['train'][eval_key], dtype=object)
+            test_perf = np.array(evals_result['eval'][eval_key], dtype=object)  
+                        
+            fold_progress = pd.DataFrame({
+                'train': evals_result['train'][eval_key],#train_rmse,
+                'test': evals_result['eval'][eval_key],#test_rmse,
+                'fold': [fold_no]*len(evals_result['train'][eval_key]),
+            })
+            fold_arrays.append(fold_progress)
+            predicted_y = model.predict(dtest)
+            test_results = pd.DataFrame(
+                {"predicted": predicted_y, "actual": Y_test, "official_id": test_ids}
+            )
+            
+            # Get the round with the best validation score (out-of-sample performance)
+            best_perf_round_train, best_perf_round_test = np.argmin(train_perf), np.argmin(test_perf)
+            
+            # Store the metrics at the best round
+            train_perf_best = train_perf[best_perf_round_train]
+            test_perf_best = test_perf[best_perf_round_test]
+
+            best_train_fold_perf.append(train_perf_best)
+            best_test_fold_perf.append(test_perf_best)
+            best_test_rounds.append(best_perf_round_test)
+            all_fold_results.append(test_results)            
+            fold_no += 1
+
+        all_test_predictions_df = pd.concat(all_fold_results)
+        convergence_df = pd.concat(fold_arrays)    
         
-        dtrain = xgb.DMatrix(X_train, label=Y_train)
-        if loss == 'reg:quantileerror':
-            params['eval_metric'] = None
-            params['quantile_alpha'] = np.array([0.05, 0.5, 0.95])
-            dtrain = xgb.QuantileDMatrix(X_train, label=Y_train)        
-        
-        results_fname = f"{set_name}_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
-        results_fpath = os.path.join(results_folder, results_fname)
-        
-        model_results = xgb.cv(
-            params=params,
-            dtrain=dtrain,
-            num_boost_round=num_boost_rounds,
-            nfold=nfolds,
-            metrics=["mae", "rmse"],
-            early_stopping_rounds=20,
-            verbose_eval=False,
-        )
-        # get round number associated with the lowest error
-        best_rmse_round = model_results["test-rmse-mean"].idxmin()
-        best_mae_round = model_results["test-mae-mean"].idxmin()
-        # track the trial error metrics
+        mean_test_perf = np.mean(best_test_fold_perf)
+        stdev_test_perf = np.std(best_test_fold_perf)
+        # # track the trial error metrics
         results_dict = {
-            "best_rmse_round": best_rmse_round,
-            "best_mae_round": best_mae_round,
-            "min_test_mae": model_results.loc[best_mae_round, "test-mae-mean"],
-            "min_test_rmse": model_results.loc[best_rmse_round, "test-rmse-mean"],
-            "min_mae_stdev": model_results.loc[best_mae_round, "test-mae-std"],
-            "min_rmse_stdev": model_results.loc[best_rmse_round, "test-rmse-std"],
-            "min_train_mae": model_results.loc[best_mae_round, "train-mae-mean"],
-            "min_train_rmse": model_results.loc[best_rmse_round, "train-rmse-mean"],
+            'trial': trial,
+            f'test_{eval_key}_mean': mean_test_perf,
+            f'test_{eval_key}_stdev': stdev_test_perf,
         }
+        
         results_cols = list(results_dict.keys())
         results_dict.update(params)
-
         all_results.append(results_dict)
-        if (trial > 0) & (trial % 20 == 0):
+        if (trial > 0) & (trial % 10 == 0):
             print(f"   completed {trial}/{n_optimization_rounds}")
+            
+        if mean_test_perf < best_mean_test_perf:
+            best_params = params
+            best_mean_test_perf = mean_test_perf
+            best_convergence_df = convergence_df
+            best_trial_test_predictions = all_test_predictions_df
+            output_target_cdfs = target_cdfs
+            print(f'    New best result: {eval_key}={mean_test_perf:.2f} (trial {trial})')
 
-    # save the trial results
-    trial_results = pd.DataFrame(all_results)
-    trial_results.to_csv(results_fpath)
-    # get the mean and standard deviation of the error metrics 
-    # over all trials
-    trial_mean = trial_results["min_test_mae"].mean()
-    trial_stdev = trial_results["min_mae_stdev"].mean()
-    # print(trial_results.sort_values('min_test_mae'))
+    # save the best trial results
+    best_trial_test_predictions.to_csv(results_fpath)
+    results_all_trials = pd.DataFrame(all_results)
+    # get the mean and standard deviation of the error metrics over all trials
+    all_trials_mean = results_all_trials[f"test_{eval_key}_mean"].mean()
+    all_trials_stdev = results_all_trials[f"test_{eval_key}_mean"].std()
     print(
-        f"    {trial_mean:.2f} ± {trial_stdev:.3f} mean RMSE (of {len(trial_results)} hyperparameter optimization rounds.)"
+        f"    {all_trials_mean:.2f} ± {all_trials_stdev:.3f} mean {eval_key} (of {len(results_all_trials)} hyperparameter optimization rounds.)"
     )
-
-    param_cols = list(params.keys())
-    # get the optimal hyperparameters
-    optimal_rmse_idx = trial_results["min_test_rmse"].idxmin()
-    optimal_mae_idx = trial_results["min_test_mae"].idxmin()
-
-    best_rmse_params = trial_results.loc[optimal_rmse_idx, param_cols].to_dict()
-    best_mae_params = trial_results.loc[optimal_mae_idx, param_cols].to_dict()
-
-    dtrain = xgb.DMatrix(X_train, label=Y_train)
-    dtest = xgb.DMatrix(X_test, label=Y_test)
-
-    eval_list = [(dtrain, "train"), (dtest, "eval")]
-    # retrain the model on the training set using hyperparameters
-    # associated with the lowest mean CV error from all trials
-    # but test on the held-out test set
-    final_model = xgb.train(
-        best_rmse_params,
-        dtrain,
-        2 * num_boost_rounds,
-        evals=eval_list,
-        verbose_eval=0,
-        early_stopping_rounds=20,
-    )
-
-    predicted_y = final_model.predict(dtest)
+    return best_params, best_mean_test_perf, best_convergence_df, best_trial_test_predictions, results_all_trials, output_target_cdfs
     
-    test_results = pd.DataFrame(
-        {
-            "predicted": predicted_y,
-            "actual": Y_test,
-            "official_id": test_stns,
-        }
-    )
-    
-
-    return trial_results, test_results
-
 
 def run_xgb_trials_custom_CV(
     bitrate,
@@ -760,14 +893,12 @@ def run_xgb_trials_custom_CV(
     attributes,
     target,
     input_data,
-    train_stn_cv_sets,
-    test_stations,
+    fold_dict, 
     n_optimization_rounds,
-    nfolds,
     num_boost_rounds,
     results_folder,
     loss='reg:squarederror',
-    eval_metric="rmse",
+    random_seed=42
 ):
     """
     Custom CV refers to cross validation.  Custom cross validation means the 
@@ -775,7 +906,6 @@ def run_xgb_trials_custom_CV(
     That is, the pairs making up the training, validation, and test sets must 
     be made up of pairings from unique sets of stations.
     """
-
     # select random hyperparameters for n_optimization_rounds
     sample_choices = np.arange(0.5, 0.9, 0.02)  # subsample and colsample percentages
     lr_choices = np.arange(0.001, 0.1, 0.0005)  # learning rates
@@ -784,23 +914,23 @@ def run_xgb_trials_custom_CV(
     colsamples = np.random.choice(sample_choices, n_optimization_rounds)
     num_boost_rounds = num_boost_rounds
 
-    all_training_stations = np.array([item for sublist in train_stn_cv_sets for item in sublist])
-
     all_results = []
+    best_result = (None, np.inf, None)
+    best_params = None
+    best_mean_test_perf = np.inf
+    best_convergence_df = pd.DataFrame()
+    best_trial_test_predictions = None
+    output_target_cdfs = None
     for trial in range(n_optimization_rounds):
-
         lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
-
         params = {
             "objective": loss,
-            "eval_metric": eval_metric,
             "eta": lr,
-            # "n_estimators": num_boost_rounds,
             # "max_depth": 6,  # use default max_depth
             # "min_child_weight": 1, # use colsample and subsample instead of min_child_weight
             "subsample": ss,
             "colsample_bytree": cs,
-            "seed": 42,
+            "seed": random_seed,
             "device": "cuda",  # note, change this to 'cpu' if your system doesn't have a CUDA GPU
             "sampling_method": "gradient_based",
             "tree_method": "hist",
@@ -809,29 +939,19 @@ def run_xgb_trials_custom_CV(
         results_fname = (
             f"{set_name}_{bitrate}_bits_{lr:.3f}_lr_{ss:.3f}_sub_{cs:.3f}_col.csv"
         )
-
         results_fpath = os.path.join(results_folder, results_fname)
-
-        # we need to manually do CV because we're separating by stations
-        # to prevent data leakage across training rounds
-        cv_df = pd.DataFrame()
-        cv_rmses, cv_maes = [], []
-        for cv_test_stns in train_stn_cv_sets:
+        
+        for fold_no, cv_test_indices in fold_dict.items():
             
-            train_stns = [e for e in all_training_stations if e not in cv_test_stns]
-
-            assert len(np.intersect1d(train_stns, cv_test_stns)) == 0
-
             cv_model, rmse, mae, cv_test = train_xgb_model(
                 input_data,
                 train_stns,
-                cv_test_stns,
+                cv_test_indices,
                 attributes,
                 target,
                 params,
                 num_boost_rounds,
             )
-
             cv_rmses.append(rmse)
             cv_maes.append(mae)
 
@@ -880,8 +1000,6 @@ def run_xgb_trials_custom_CV(
         )
         best_params = best_mae_params
 
-    
-
     final_model, rmse, mae, test_results = train_xgb_model(
         input_data,
         all_training_stations,
@@ -901,8 +1019,6 @@ def run_binary_xgb_trials_custom_CV(
     attributes,
     target,
     input_data,
-    train_stn_cv_sets,
-    test_stations,
     n_optimization_rounds,
     nfolds,
     num_boost_rounds,
@@ -914,9 +1030,9 @@ def run_binary_xgb_trials_custom_CV(
     Custom CV refers to cross validation.  Custom cross validation means the 
     held-out set must be determined in a more robust way to avoid "data leakage".
     That is, the pairs making up the training, validation, and test sets must 
-    be made up of pairings from unique sets of stations.
+    be made up of pairings from unique sets of stations.  In addition, the distribution
+    of the target variable should be similar between training and test sets.
     """
-
     # select random hyperparameters for n_optimization_rounds
     sample_choices = np.arange(0.5, 0.9, 0.02)  # subsample and colsample percentages
     lr_choices = np.arange(0.001, 0.1, 0.0005)  # learning rates
@@ -927,9 +1043,26 @@ def run_binary_xgb_trials_custom_CV(
 
     all_training_stations = np.array([item for sublist in train_stn_cv_sets for item in sublist])
 
-    all_results = []
-    for trial in range(n_optimization_rounds):
+    # compute train-test split before optimization rounds to keep sets constant across trials
+    X_input, Y_input = (
+        input_data.loc[:, features].values,
+        input_data.loc[:, target].values,
+    )
+    # Bin the continuous target variable into quantiles
+    y_binned = pd.qcut(Y_input, q=20, labels=False)  # Quantile-based discretization
 
+    # split the data into folds such that the target
+    # distribution is similar across each fold
+    skf = StratifiedKFold(n_splits=nfolds, shuffle=True, random_state=int(random_seed))
+    
+    all_results = []
+    best_result = (None, np.inf, None)
+    best_params = None
+    best_mean_test_perf = np.inf
+    best_convergence_df = pd.DataFrame()
+    best_trial_test_predictions = None
+    output_target_cdfs = None
+    for trial in range(n_optimization_rounds):
         lr, ss, cs = learning_rates[trial], subsamples[trial], colsamples[trial]
 
         params = {
@@ -949,9 +1082,14 @@ def run_binary_xgb_trials_custom_CV(
 
         # we need to manually do CV because we're separating by stations
         # to prevent data leakage across training rounds
-        cv_df = pd.DataFrame()
-        cv_accuracies = []
-        for cv_test_stns in train_stn_cv_sets:
+        fold_scores = []
+        n_samples = len(X_input)
+        fold_no = 0
+        best_train_fold_perf, best_test_fold_perf, best_test_rounds = [], [], []
+        all_fold_results = []
+        fold_scores, fold_arrays = [], []
+        target_cdfs = []
+        for train_index, test_index in skf.split(np.zeros(n_samples), y_binned):
             
             train_stns = [e for e in all_training_stations if e not in cv_test_stns]
 
@@ -1084,73 +1222,49 @@ def compute_cdf(data):
 
 def compute_mean_runoff(row):
     """
-    Retrieves daily average flow time series and computes mean runoff for complete months
-    based on 90% of days in month.
+    Retrieves daily average flow time series and computes mean runoff for months
+    with fewer than 5 missing days.
 
     Parameters
     ----------
     row : pd.Series
-        A pandas Series containing information about the station. It must include the key 'official_id' which specifies the station ID.
+        A pandas Series containing information about the station, including 'official_id'.
 
     Returns
     -------
     float
         The mean unit runoff.
 
-    Notes
-    -----
-    - The function retrieves the time series data for the specified station ID.
-    - It drops incomplete years such that the mean estimate is not skewed by missing seasonal trends.
-    - The mean unit area runoff is returned.
-
-    Example
-    -------
-    >>> row = pd.Series({'official_id': 'station123'})
-    >>> mean_runoff = compute_mean_runoff(row)
-    >>> print(f'Mean Runoff: {mean_runoff:.4f}')
     """
-    # get data
+    # Retrieve necessary data
     stn_id = row["official_id"]
     drainage_area = row['drainage_area_km2']
     df = get_timeseries_data(stn_id)
-    df[stn_id] = 86.4 * df[stn_id] / drainage_area # convert to mm/day from m^3/s
+    
+    # Convert flow to mm/day from m³/s based on drainage area
+    df[stn_id] = (86.4 / drainage_area) * df[stn_id]
+    
+    # Resample the time series to daily frequency, filling missing dates
+    df = df.set_index('time').resample('D').asfreq()
+    
+    # Add year and month columns
+    df['year'] = df.index.year
+    df['month'] = df.index.month
+    
+    # Drop rows where the target column is NaN
     df.dropna(subset=[stn_id], inplace=True)
-    df["year"] = df["time"].dt.year
-    df["month"] = df["time"].dt.month
-    years = sorted(np.unique(df["year"].values))
-    months = sorted(np.unique(df["month"].values))
-    counts = df.groupby(["year", "month"]).count()
-
-    count_pivot_df = df.pivot_table(
-        values=stn_id, index="year", columns="month", aggfunc="count"
-    )
-
-    days_in_month = pd.DataFrame(
-        [
-            [pd.Period(f"{year}-{month}").days_in_month for month in months]
-            for year in years
-        ],
-        index=years,
-        columns=months,
-    )
-    days_90_percent = days_in_month * 0.9
-
-    # Generate the boolean mask
-    try:
-        boolean_mask = count_pivot_df > days_90_percent.values
-    except Exception as ex:
-        print(count_pivot_df)
-        print(days_in_month)
-
-    pivot_mean = df.pivot_table(
-        values=stn_id, index="year", columns="month", aggfunc="mean"
-    )
-
-    # apply the boolean mask to filter incomplete months
-    filtered_df = pivot_mean.where(boolean_mask)
-    month_means = filtered_df.mean(axis=0)
-    return month_means.mean()
-
+    
+    # Group by year and month and check for months with fewer than 5 missing days
+    monthly_data = df.groupby(['year', 'month'])[stn_id].agg(['count', 'mean'])
+    days_in_month = df.groupby(['year', 'month']).size()
+    
+    # Boolean mask: check for months with fewer than 5 missing days
+    complete_months = (days_in_month - monthly_data['count']) < 5
+    
+    # Filter the months and compute the mean runoff
+    filtered_mean = monthly_data.loc[complete_months, 'mean']
+    
+    return filtered_mean.mean()
 
 
 def check_if_nested(proxy_data, target_data):
@@ -1190,7 +1304,7 @@ def check_if_nested(proxy_data, target_data):
     return nested
 
 
-def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
+def uniform_log_bins(data, station, bitrate, epsilon=1e-9):
     """
     Creates uniform bins in log space for quantizing time series data.
 
@@ -1198,8 +1312,8 @@ def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
     ----------
     data : pd.DataFrame
         The DataFrame containing the time series data.
-    proxy : object
-        An object representing the proxy station, with an attribute `obs_label` that specifies the observed data column name.
+    station : object
+        An object representing the station, with an attribute `obs_label` that specifies the observed data column name.
     bitrate : int
         The number of bits used for quantizing the observed series.
     epsilon : float, optional
@@ -1221,7 +1335,7 @@ def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
     Example
     -------
     >>> data = pd.DataFrame({'proxy_obs': np.random.rand(100)})
-    >>> proxy = lambda: None
+    >>> station = lambda: None
     >>> setattr(proxy, 'obs_label', 'proxy_obs')
     >>> bin_edges = uniform_log_bins(data, proxy, 8)
     >>> print(bin_edges)
@@ -1234,8 +1348,8 @@ def uniform_log_bins(data, proxy, bitrate, epsilon=1e-9):
     """
     # reserve two bins for out of range values at left and right
     n_bins = 2**bitrate - 2
-    min_log_val = np.log10(data[proxy.obs_label].min())
-    max_log_val = np.log10(data[proxy.obs_label].max())
+    min_log_val = np.log10(data[station.obs_label].min())
+    max_log_val = np.log10(data[station.obs_label].max())
 
     if min_log_val == max_log_val:
         raise Exception("Min. and max. log values should not be equal.")
@@ -1471,21 +1585,18 @@ def compute_posterior_Q_probabilities(
     >>> print(p_obs)
     >>> print(q_df)
     """
-
     n_obs = np.nansum(count_df[target.obs_label])
     n_sim = np.nansum(count_df[target.sim_label])
 
     if concurrent_data:
         assert round(n_obs, 0) == round(n_sim, 0), f"Number of observations and simulations do not match. n_obs={n_obs}, n_sim={n_sim}"
-    # else:
-    #     print("non-concurrent")
-    #     print(n_obs, n_sim)
 
     # normalize p_obs and p_sim
     p_obs = count_df[target.obs_label].values / n_obs
     p_sim = count_df[target.sim_label].values / n_sim
     assert round(np.sum(p_sim), 2) == 1.0, "p_sim does not sum to 1.0"
 
+    # create a dataframe to store the posterior Q after assuming different priors
     q_df = pd.DataFrame()
     q_df["q_sim_no_prior"] = p_sim
 
@@ -1499,7 +1610,7 @@ def compute_posterior_Q_probabilities(
         tot_adjusted_counts = np.nansum(adjusted_counts)
         q_df[f"q_post_{pseudo_counts}R"] = adjusted_counts / tot_adjusted_counts
         assert (
-            np.round(q_df[f"q_post_{pseudo_counts}R"].sum(), 2) == 1
+            np.round(q_df[f"q_post_{pseudo_counts}R"].sum(), 5) == 1
         ), "Posterior probabilities do not sum to 1."
 
     return p_obs, q_df
@@ -1556,36 +1667,50 @@ def process_probabilities(
     # compute the bin edges based on equal width in log space
     bin_edges = uniform_log_bins(df, proxy, bitrate)
 
-    if partial_counts == False:
+    # if partial_counts == False:
         # computes the observed P and simulation Q distribution probabilities
         # as dicts by bin number, probability key-value pairs
         # test a wide range of uniform priors via pseudo counts
-        count_df = compute_unadjusted_counts(
-            df, target, bin_edges, bitrate, concurrent_data
-        )
-    else:
-        # add a uniformly distributed error to the observed data
-        # and compute probabilities from partial observation counts
-        # where counts are divided based on the proportion of the bin
-        # that the measurement error falls within
-        fractional_obs_counts = error_adjusted_fractional_bin_counts(
-            df[target.obs_label], np.array(bin_edges), bitrate, error_factor=0.1
-        )
-        fractional_sim_counts = error_adjusted_fractional_bin_counts(
-            df[target.sim_label], np.array(bin_edges), bitrate, error_factor=0.1
-        )
+    count_df = compute_unadjusted_counts(
+        df, target, bin_edges, bitrate, concurrent_data
+    )
+    # else:
+    # add a uniformly distributed error to the observed data
+    # and compute probabilities from partial observation counts
+    # where counts are divided based on the proportion of the bin
+    # that the measurement error falls within
+    fractional_obs_counts = error_adjusted_fractional_bin_counts(
+        df[target.obs_label], np.array(bin_edges), bitrate, error_factor=0.1
+    )
+    fractional_sim_counts = error_adjusted_fractional_bin_counts(
+        df[target.sim_label], np.array(bin_edges), bitrate, error_factor=0.1
+    )
 
-        count_df = pd.DataFrame(index=range(2**bitrate))
-        count_df[target.obs_label] = 0
-        count_df[target.sim_label] = 0
-        count_df[target.obs_label] += fractional_obs_counts
-        count_df[target.sim_label] += fractional_sim_counts
-        count_df.fillna(0, inplace=True)
+    count_df = pd.DataFrame(index=range(2**bitrate))
+    count_df[target.obs_label] = 0
+    count_df[target.sim_label] = 0
+    count_df[target.obs_label] += fractional_obs_counts
+    count_df[target.sim_label] += fractional_sim_counts
+    count_df.fillna(0, inplace=True)
 
+    # compute posteriors for a rang of priors (pseudo-counts)
     p_obs, p_sim = compute_posterior_Q_probabilities(
         count_df, target, bitrate, pseudo_counts, concurrent_data, bin_edges
     )
-    return p_obs, p_sim, bin_edges
+    # the prior adds some amount of noise to the distribution
+    # we should compute this noise (via the KL divergence 
+    # between the model q and the posterior r
+    
+    # set a flag where the simulation counts zero in any state
+    # where the a posteriori observation counts are > 0.
+    # it's these cases where the prior should have the greatest 
+    # influence on the KL divergence.
+    underspecified_flag = (
+        (count_df[f'{target.official_id}_sim'] == 0) &   # the simulated series can be out of range of the target,
+        (count_df[target.official_id] > 0)
+    ).any()
+    
+    return p_obs, p_sim, bin_edges, underspecified_flag
 
 
 def compute_cod(df, obs, sim):
@@ -1719,7 +1844,7 @@ def compute_kge(df, obs, sim):
     gamma = (sim_std / sim_mean) / (obs_std / obs_mean)
     return 1 - np.sqrt((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2)
 
-process_probabilities
+
 def process_batch(inputs):
     """
     Processes a batch of input data to compute various hydrological metrics and store the results.
@@ -1768,8 +1893,8 @@ def process_batch(inputs):
         proxy,
         target,
         bitrate,
-        completeness_threshold,
-        min_years,
+        error_df,
+        min_concurrent_years,
         partial_counts,
         attr_cols,
         climate_cols,
@@ -1778,31 +1903,21 @@ def process_batch(inputs):
 
     proxy_id, target_id = proxy['official_id'], target['official_id']
     bitrate = int(bitrate)
-    print(f'bitrate = {bitrate}')
-    completeness_threshold = float(completeness_threshold)
-    min_years = int(min_years)
-    min_observations = min_years * completeness_threshold * 365
 
     # create a result dict object for tracking results of the batch comparison
     result = {
         "proxy": proxy_id,
         "target": target_id,
         "bitrate": bitrate,
-        "completeness_threshold": completeness_threshold,
+        "min_concurrent_years": min_concurrent_years,
     }
 
     station_info = {"proxy": proxy, "target": target}
 
     # check if the polygons are nested
     result["nested_catchments"] = check_if_nested(
-        station_info["proxy"], station_info["target"]
+        proxy, target
     )
-
-    # we don't need to add the attributes, these can be retrieved later.
-    # alternatively, sacrifice compute and disk space now for compute later.
-    # for l in ["proxy", "target"]:
-    #     for c in attr_cols + climate_cols:
-    #         result[f"{l}_{c.lower()}"] = station_info[l][c.lower()]
 
     # for stn in pair:
     proxy = Station(station_info["proxy"], bitrate)
@@ -1828,6 +1943,8 @@ def process_batch(inputs):
     # this is all data, including non-concurrent
     adf = retrieve_nonconcurrent_data(proxy_id, target_id)
 
+    assert ~adf.empty, "No data returned."
+
     for stn in [proxy, target]:
         adf = transform_and_jitter(adf, stn)
 
@@ -1838,26 +1955,29 @@ def process_batch(inputs):
 
     # filter for the concurrent data
     df = adf.copy().dropna(subset=[proxy_id, target_id], how="any")
-    counts = df[[proxy_id, target_id]].count(axis=0)
-
-    if counts[proxy_id] != counts[target_id]:
-        raise ValueError(f"Unequal counts for {proxy_id} and {target_id}")
-
     result["num_concurrent_obs"] = len(df)
+    
+    if df.empty:
+        num_complete_concurrent_years = 0
+    else:
+        df.reset_index(inplace=True)
+        num_complete_concurrent_years = count_complete_years(df, 'time', proxy_id)
+        
+    counts = df[[proxy_id, target_id]].count(axis=0)
     counts = adf.count(axis=0)
-
     proxy.n_obs, target.n_obs = counts[proxy_id], counts[target_id]
     result[f"proxy_n_obs"] = proxy.n_obs
     result[f"target_n_obs"] = target.n_obs
-
     result[f"proxy_frac_concurrent"] = len(df) / proxy.n_obs
     result[f"target_frac_concurrent"] = len(df) / target.n_obs
 
     if (counts[proxy_id] == 0) or (counts[target_id] == 0):
-        print(f"   Zero observation count detected.  Skipping.")
+        print(f"   Zero observations.  Skipping.")
         return None
 
-    if len(df) > min_observations:
+    # process the PMFs and divergences for concurrent data
+    # using a range of uniform priors via pseudo counts
+    if num_complete_concurrent_years > min_concurrent_years:
         # compute coefficient of determination
         result["cod"] = compute_cod(df, proxy, target)
 
@@ -1867,80 +1987,30 @@ def process_batch(inputs):
         # compute the Kling-Gupta efficiency
         result["kge"] = compute_kge(df, proxy, target)
 
-    # process the PMFs and divergences for concurrent data
-    # using a range of uniform priors via pseudo counts
-    if len(df) > min_observations:
         # df is concurrent data, so the results
         # are updating concurrent data here
         # df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
         concurrent_data = True
-        p_obs, p_sim, bin_edges = process_probabilities(
+        p_obs, p_sim, bin_edges, underspecified_flag = process_probabilities(
             df, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
         )
+        
         result = process_divergences(
             result, p_obs, p_sim, bin_edges, bitrate, concurrent_data
         )
 
-    if (target.n_obs > min_observations) & (proxy.n_obs > min_observations):
+    if (target.n_obs > 365 * 0.9) & (proxy.n_obs > 365 * 0.9):
         # adf is all data (includes non-concurrent), so the results
         # are updated if both series meet the minimum length
         concurrent_data = False
-        p_obs, p_sim, bin_edges = process_probabilities(
+        p_obs, p_sim, bin_edges, underspecified_flag = process_probabilities(
             adf, proxy, target, bitrate, concurrent_data, partial_counts, pseudo_counts
         )
         result = process_divergences(
             result, p_obs, p_sim, bin_edges, bitrate, concurrent_data
         )
+    result['underspecified_model_flag'] = underspecified_flag
     return result
-
-
-def process_pairwise_comparisons(inputs, bitrate):
-    """
-    Processes pairwise comparisons in batches, saving results to CSV files and handling already processed batches.
-
-    Parameters
-    ----------
-    inputs : list
-        A list of input pairs to be processed.
-    bitrate : int
-        The bitrate to be used for processing.
-    out_fname : str
-        The base output file name for saving the results.
-    batch_size : int
-        The number of pairs to process in each batch.
-
-    Returns
-    -------
-    list
-        A list of file paths to the processed batch result files.
-
-    Notes
-    -----
-    - If the input list is empty, the function prints a message and returns None.
-    - The function divides the input pairs into batches and processes each batch separately.
-    - Already processed batches are skipped to avoid redundant computation.
-    - Results of each batch are saved to a CSV file, and the paths to these files are returned.
-
-    Example
-    -------
-    >>> inputs = [('A', 'X'), ('B', 'Y'), ('C', 'Z')]
-    >>> bitrate = 4
-    >>> out_fname = 'results.csv'
-    >>> batch_size = 500
-    >>> batch_files = process_pairwise_comparisons(inputs, bitrate, out_fname, batch_size)
-    >>> print(batch_files)
-    ['path/to/results_batch_0.csv', 'path/to/results_batch_1.csv']
-    """
-
-    with mp.Pool() as pool:
-       results = pool.map(process_batch, inputs)
-       results = [r for r in results if r is not None]
-
-    if len(results) == 0:
-        return pd.DataFrame()
-
-    new_results_df = pd.DataFrame(results)
-    return new_results_df
 
 
 def check_distribution(p, q, c):
@@ -2022,28 +2092,36 @@ def process_KL_divergence(p_obs, p_sim, bitrate, concurrent_data):
     for c in p_sim.columns:
         if c == "q_sim_no_prior":
             continue
-        q = p_sim[c].values
-        p = p_obs
+
+        # explicitly set data types before vectorization
+        p = np.array(p_obs, dtype=np.float64)
+        q = np.array(p_sim["q_sim_no_prior"].values, dtype=np.float64)
+        r = np.array(p_sim[c].values, dtype=np.float64) # the posterior
+        
+        # Raise error if any r[i] == 0, as log(p/r) is undefined for those cases
+        if np.any(r == 0):
+            raise ValueError("Posterior R contains zero entries, which is not allowed.")
 
         # ensure that the probabilities sum to 1
-        check_distribution(p, q, c)
+        check_distribution(p, r, c)
 
-        label = "dkl_nonconcurrent_" + "_".join(c.split("_")[1:])
+        label = "dkl_nonconcurrent_" + "_".join(c.split("_")[1:])        
         if concurrent_data is True:
             label = "dkl_concurrent_" + "_".join(c.split("_")[1:])
 
-        kld = 0
-        for i in range(len(p)):
-            if (p[i] == 0) | (q[i] == 0):
-                # we define 0 * log(0/0) = 0
-                # but q[i] should not be zero because
-                # we added a pseudo-count (Dirichlet) prior
-                continue
-            if q[i] == 0:
-                raise Exception(f"q[i] is zero at i={i}")
-            else:
-                kld = p[i] * np.log2(p[i] / q[i])
-                df.loc[i + 1, label] = kld
+        # compute the distortion due to the prior assumed on Q
+        mask = (p > 0) & (r > 0)
+        kld_array = np.zeros_like(p)
+        kld_array[mask] = p[mask] * np.log2(p[mask] / r[mask])
+        df[label] = kld_array
+            
+        # compute DKL(Q||R), or the distortion of Q 
+        # due to the assumed prior
+        mask = (q > 0) & (r > 0)
+        distortion = np.zeros_like(q)
+        distortion[mask] = q[mask] * np.log2(q[mask] / r[mask])
+        label = "dkl_prior_distortion_" + "_".join(c.split("_")[1:])
+        df[label] = distortion
 
     sum_dkl = df.sum()
 
