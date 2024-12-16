@@ -1,4 +1,15 @@
 Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 778, in _async_poll_for_reply
+    msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 182, in ensure_async
+    result = await obj
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_client/channels.py", line 315, in get_msg
+    raise Empty
+_queue.Empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
@@ -9,58 +20,18 @@ Traceback (most recent call last):
     return future.result()
   File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
     await self.async_execute_cell(
-  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
-    await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
-    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
-nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
-------------------
-resid_plots = []
-
-for b in test_results.keys():
-    print(f' bitrate = {b}')
-    attr_groups = test_results[b].keys()
-    # for group in attr_groups:
-    group = '+soil'
-    rdf = runoff_test_results[group]['test_df']
-    rdf['residuals'] = rdf['predicted'] - rdf['actual']
-    
-    assert (sorted(rdf['official_id']) == sorted(hdf['official_id']))
-    
-    hdf = test_results[b][group]['test_df']
-    hdf['residuals'] = hdf['predicted'] - hdf['actual']
-
-    xx, yy = rdf['residuals'], hdf['residuals']
-    slope, intercept, r, p, se = linregress(xx, yy)
-    
-    sfig = figure(title=f'Runoff & Entropy Prediction Residuals Correlation Test ', width=600, height=400)
-    sfig.scatter(xx, yy, size=3, alpha=0.8)
-    xpred = np.linspace(min(xx), max(xx), 100)
-    ybf = [slope * e + intercept for e in xpred]
-    sfig.line(xpred, ybf, color='red', line_width=3, line_dash='dashed', legend_label=f'R²={r**2:.2f}')
-    # plot a 1:1 line
-    sfig.line([min(yy), max(yy)], [min(yy), max(yy)], color='black', line_dash='dotted', 
-              line_width=2, legend_label='1:1')
-    sfig.xaxis.axis_label = 'Runoff Prediction Residuals [mm/day]'
-    sfig.yaxis.axis_label = 'Entropy Prediction Residuals [bits/sample]'
-    sfig.legend.location = 'top_left'
-    
-    resid_plots.append(sfig)
-
-------------------
-
------ stdout -----
- bitrate = 4
-------------------
-
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[16], line 11[0m
-[1;32m      8[0m rdf [38;5;241m=[39m runoff_test_results[group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
-[1;32m      9[0m rdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m rdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m rdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
-[0;32m---> 11[0m [38;5;28;01massert[39;00m ([38;5;28msorted[39m(rdf[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]) [38;5;241m==[39m [38;5;28msorted[39m([43mhdf[49m[[38;5;124m'[39m[38;5;124mofficial_id[39m[38;5;124m'[39m]))
-[1;32m     13[0m hdf [38;5;241m=[39m test_results[b][group][[38;5;124m'[39m[38;5;124mtest_df[39m[38;5;124m'[39m]
-[1;32m     14[0m hdf[[38;5;124m'[39m[38;5;124mresiduals[39m[38;5;124m'[39m] [38;5;241m=[39m hdf[[38;5;124m'[39m[38;5;124mpredicted[39m[38;5;124m'[39m] [38;5;241m-[39m hdf[[38;5;124m'[39m[38;5;124mactual[39m[38;5;124m'[39m]
-
-[0;31mNameError[0m: name 'hdf' is not defined
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1001, in async_execute_cell
+    exec_reply = await self.task_poll_for_reply
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 802, in _async_poll_for_reply
+    error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, cell)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 852, in _async_handle_timeout
+    raise CellTimeoutError.error_from_timeout_and_cell(
+nbclient.exceptions.CellTimeoutError: A cell timed out while it was being executed, after 30 seconds.
+The message was: Cell execution timed out.
+Here is a preview of the cell contents:
+-------------------
+['# filter for minimum record', "STREAMFLOW_DIR = '/media/danbot2/Samsung_T5/geospatial_data/HYSETS_data/hysets_series'", 'for i, row in df.iterrows():', "    stn_id = row['official_id']", '    fpath = os.path.join(STREAMFLOW_DIR, f"{stn_id}.csv")        ']
+...
+['        # causes me grief.', "        stn_id = f'0{stn_id}'", "        df.loc[i, 'official_id'] = stn_id", "    df.loc[i, 'seasonal'] = dpf.check_if_seasonal(stn_df, 'time', stn_id)", "    df.loc[i, 'n_complete_years'] = dpf.count_complete_years(stn_df, 'time', stn_id)"]
+-------------------
 

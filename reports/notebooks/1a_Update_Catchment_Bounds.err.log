@@ -30,8 +30,10 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-["remaining_stns = remaining_stns.sort_values(by=['region_code'])", 'remaining_stns.reset_index(inplace=True, drop=True)', 'pour_pt_filenames = []', '', 'for i, row in remaining_stns.iterrows():']
-...
-['            for f in os.listdir(stn_folder):', '                if any([f.endswith(e) for e in remove_extensions]):', '                    os.remove(os.path.join(stn_folder, f))', '        ', "        print(f'   ...processed {stn_id}, saved to {streams_path}')"]
+for i, row in bcub_gdf.iterrows():
+    stn_id = row['Official_ID']
+    stn_df = dpf.get_timeseries_data(stn_id)
+    bcub_gdf.loc[i, 'seasonal'] = dpf.check_if_seasonal(stn_df, 'time', stn_id)
+    bcub_gdf.loc[i, 'n_complete_years'] = dpf.count_complete_years(stn_df, 'time', stn_id)
 -------------------
 

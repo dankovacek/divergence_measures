@@ -1,0 +1,61 @@
+Traceback (most recent call last):
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/danbot2/code_5820/data_analysis/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+quantization_noise_results = {}
+n = 0
+binning_method='log'
+for stn in filtered_stns:
+    test_df = dpf.get_timeseries_data(stn)
+    test_df.dropna(subset=[stn], inplace=True)
+    test_bs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    data = test_df[stn].dropna().values
+    for b in test_bs:
+        high_res_probs, b1_bin_dict, b2_bin_dict = remap_low_to_high_resolution(data, b, max(test_bs), which_binning=binning_method)
+        continuous_b1 = fit_continuous_distributions(data, b1_bin_dict[binning_method]['edges'])
+        continuous_b2 = fit_continuous_distributions(data, b2_bin_dict[binning_method]['edges'])
+        # print(continuous_b1)
+        # print(continuous_b2)
+        # print(asdf)
+        quantization_noise_results[stn] = [kl_divergence_between_quantizations(test_df, b, max(test_bs), stn) for b in test_bs]
+    n += 1
+    if n % 10 == 0:
+        print(f'    {n}/{len(filtered_stns)} completed')
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[13], line 16[0m
+[1;32m     12[0m     continuous_b2 [38;5;241m=[39m fit_continuous_distributions(data, b2_bin_dict[binning_method][[38;5;124m'[39m[38;5;124medges[39m[38;5;124m'[39m])
+[1;32m     13[0m     [38;5;66;03m# print(continuous_b1)[39;00m
+[1;32m     14[0m     [38;5;66;03m# print(continuous_b2)[39;00m
+[1;32m     15[0m     [38;5;66;03m# print(asdf)[39;00m
+[0;32m---> 16[0m     quantization_noise_results[stn] [38;5;241m=[39m [kl_divergence_between_quantizations(test_df, b, [38;5;28mmax[39m(test_bs), stn) [38;5;28;01mfor[39;00m b [38;5;129;01min[39;00m test_bs]
+[1;32m     17[0m n [38;5;241m+[39m[38;5;241m=[39m [38;5;241m1[39m
+[1;32m     18[0m [38;5;28;01mif[39;00m n [38;5;241m%[39m [38;5;241m10[39m [38;5;241m==[39m [38;5;241m0[39m:
+
+Cell [0;32mIn[13], line 16[0m, in [0;36m<listcomp>[0;34m(.0)[0m
+[1;32m     12[0m     continuous_b2 [38;5;241m=[39m fit_continuous_distributions(data, b2_bin_dict[binning_method][[38;5;124m'[39m[38;5;124medges[39m[38;5;124m'[39m])
+[1;32m     13[0m     [38;5;66;03m# print(continuous_b1)[39;00m
+[1;32m     14[0m     [38;5;66;03m# print(continuous_b2)[39;00m
+[1;32m     15[0m     [38;5;66;03m# print(asdf)[39;00m
+[0;32m---> 16[0m     quantization_noise_results[stn] [38;5;241m=[39m [[43mkl_divergence_between_quantizations[49m(test_df, b, [38;5;28mmax[39m(test_bs), stn) [38;5;28;01mfor[39;00m b [38;5;129;01min[39;00m test_bs]
+[1;32m     17[0m n [38;5;241m+[39m[38;5;241m=[39m [38;5;241m1[39m
+[1;32m     18[0m [38;5;28;01mif[39;00m n [38;5;241m%[39m [38;5;241m10[39m [38;5;241m==[39m [38;5;241m0[39m:
+
+[0;31mNameError[0m: name 'kl_divergence_between_quantizations' is not defined
+
